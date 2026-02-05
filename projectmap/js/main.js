@@ -24,3 +24,18 @@ function fly() {
     }
   }
 }
+
+
+function showSection(sectionId) {
+  const sections = document.querySelectorAll(".admin-section");
+
+  sections.forEach(section => {
+    section.style.display = "none";
+  });
+
+  const target = document.getElementById(sectionId);
+  if(target) {
+    target.style.display = "block";
+  }
+}
+
