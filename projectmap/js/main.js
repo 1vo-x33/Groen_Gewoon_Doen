@@ -15,7 +15,10 @@ function fly() {
         elem.style.position = '';
         elem.style.top = '';
         elem.style.left = '';
+        elem.style.zIndex = '1';
     } else {
+      elem.style.position = 'absolute';
+      elem.style.zIndex='10';
       angle += 0.05;
       let x = centerX + radiusX * Math.sin(angle);
       let y = centerY + radiusY * Math.sin(2 * angle);
