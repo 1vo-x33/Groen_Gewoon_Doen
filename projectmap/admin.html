@@ -16,15 +16,15 @@
     
     <nav>
         <ul>
-            <li>Orders</li>
-            <li>Paketten</li>
-            <li>Tarieven</li>
+            <button onclick="showSection('orders')">Orders</button>
+            <button onclick="showSection('paketten')">Paketten</button>
+            <button onclick="showSection('tarieven')">Tarieven</button>
         </ul>
     </nav>
 
     <hr>
 
-    <section>
+    <section id="orders" class="admin-section">
         <h2>Orders Overzicht</h2>
         <table border="1"> 
             <thead>
@@ -68,7 +68,7 @@
 
     <hr>
 
-        <section>
+        <section id="paketten" class="admin-section">
             <h2>Pakketten Beheren</h2>
            <table border="1">
             <thead>
@@ -104,7 +104,7 @@
 
         <hr>
 
-        <section>
+        <section id="tarieven" class="admin-section">
         <h2>Tarieven Beheren (Optional)</h2>
         <form>
             <table border="1">
@@ -119,6 +119,6 @@
         </form>
     </section>
     
-    <script src="js/admin.js"></script>
+    <script src="js/main.js"></script>
   </body>
 </html>
