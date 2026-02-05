@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 let animationId = null;
 
 function fly() {
@@ -92,8 +92,7 @@ function showSection(sectionId) {
 }
 
 
-=======
->>>>>>> 8ad6e7a3ffaff35d9916f9905f5c48f98a63cc8c
+
 let grass = [] 
 
 function setup(){
