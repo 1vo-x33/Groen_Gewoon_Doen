@@ -1,13 +1,124 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Projectmap - Admin</title>
-  <link rel="stylesheet" href="./style.css">
-</head>
-<body>
-  <h1>Admin</h1>
-  <script type="module" src="./js/admin.js"></script>
-</body>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Groen_Gewoon_Doen_Admin</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <h1>Admin Panel</h1>
+
+    <header>
+        <p><strong>Admin – Groen & Gewoon Doen</strong></p>
+        <button type="button">Logout</button>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><strong>Orders</strong></li>
+            <li>Paketten</li>
+            <li>Tarieven</li>
+        </ul>
+    </nav>
+
+    <hr>
+
+    <section>
+        <h2>Orders Overzicht</h2>
+        <table border="1"> 
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Klant</th>
+                    <th>Details</th>
+                    <th>Offerte</th>
+                    <th>Status</th>
+                    <th>Actos</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#001</td>
+                    <td>Klant Naam</td>
+                    <td>Details tekst...</td>
+                    <td>€ 0,00</td>
+                    <td>In behandeling</td>
+                    <td><button>Inplannen</button></td>
+                </tr>
+                <tr>
+                    <td>#002</td>
+                    <td>Klant Naam</td>
+                    <td>Details tekst...</td>
+                    <td>€ 0,00</td>
+                    <td>Wachtend</td>
+                    <td><button>Afgerond</button></td>
+                </tr>
+                <tr>
+                    <td>#003</td>
+                    <td>Klant Naam</td>
+                    <td>Details tekst...</td>
+                    <td>€ 0,00</td>
+                    <td>Klaar</td>
+                    <td><button>Afgerond</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <hr>
+
+        <section>
+            <h2>Pakketten Beheren</h2>
+           <table border="1">
+            <thead>
+                <tr>
+                    <th>Naam</th>
+                    <th>Prijs</th>
+                    <th><button>Bewerk</button></th>
+                    <th><button>Verwijder</button></th>
+                    <th><button>Vragen</button></th>
+                </tr>
+            </thead>
+        </table>
+
+        <form>
+            <fieldset>
+                <legend>Nieuw Pakket</legend>
+                    <p>
+                        <label for="naam">Naam:</label>
+                        <input type="text" id="naam" name="naam">
+                    </p>
+                    <p>
+                        <label for="beschrijving">beschrijving:</label>
+                        <input type="text" id="beschrijving" name="beschrijving">
+                    </p>
+                    <p>
+                        <label for="prijs">Prijs:</label>
+                        <input type="number" id="prijs" name="prijs">
+                    </p>
+                    <button type="submit">Toevoegen</button>   
+            </fieldset>
+        </form>
+        </section>
+
+        <hr>
+
+        <section>
+        <h2>Tarieven Beheren (Optional)</h2>
+        <form>
+            <table border="1">
+                <tr>
+                    <td><label for="gras">Prijs per m² Gras</label></td>
+                    <td><input type="text" id="gras"></td>
+                    <td><label for="tegels">Prijs per m² Tegels</label></td>
+                    <td><input type="text" id="tegels"></td>
+                    <td><button type="submit">Opslaan</button></td>
+                </tr>
+            </table>
+        </form>
+    </section>
+    
+    <script src="js/admin.js"></script>
+  </body>
 </html>
