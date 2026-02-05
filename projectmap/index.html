@@ -1,22 +1,107 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Projectmap - Home</title>
-  <link rel="stylesheet" href="./style.css">
-  <style>
-    h1 {text-align: center;}
-    h2 {text-align: center;}
-    p  {text-align: center;}
-  </style>
-  <h1>Groen & Gewoon Doen</h1>
-  <hr>
-  <h2>Welkom!</h2>
-  <p>Bestel uw tuinservice eenvoudig online!</p>
-</head>
-<body>
-  <h1></h1>
-  <script type="module" src="./js/main.js"></script>
-</body>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Groen & Gewoon Doen - Home</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/addons/p5.sound.min.js"></script>
+  </head>
+  <body>
+    <h1>Groen & Gewoon Doen</h1>
+
+    <header>
+        <p><strong>Welkom bij uw professionele tuinservice!</strong></p>
+        <button type="button">Inloggen</button>
+    </header>
+    
+    <nav>
+        <ul>
+            <button onclick="showSection('standaard')">Standaard Pakketten</button>
+            <button onclick="showSection('custom')">Custom Offerte</button>
+        </ul>
+    </nav>
+
+    <hr>
+
+    <section id="standaard" class="admin-section">
+        <h2>Standaard Pakketten</h2>
+        <table border="1"> 
+            <thead>
+                <tr>
+                    <th>Pakket Naam</th>
+                    <th>Beschrijving</th>
+                    <th>Selectie</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Miet planten</td>
+                    <td>Basis tuinonderhoud met diverse planten.</td>
+                    <td><button onclick="myFunction()">Bestel</button></td>
+                </tr>
+                <tr>
+                    <td>Venus fly trap</td>
+                    <td>Exotische verzorging voor vleesetende planten.</td>
+                    <td><button onclick="myFunction()">Bestel</button></td>
+                </tr>
+                <tr>
+                    <td>Coca colief</td>
+                    <td>Speciale bladvorming en verzorging.</td>
+                    <td><button onclick="myFunction()">Bestel</button></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <form id="packageForm">
+            <fieldset>
+                <legend>Snel Bestellen</legend>
+                <p>
+                    <label for="packages">Kies een pakket:</label>
+                    <select name="packages" id="packages" required>
+                        <option value="">Selecteer...</option>
+                        <option value="Pakket 1">Miet planten</option>
+                        <option value="Pakket 2">Venus fly trap</option>
+                        <option value="Pakket 3">Coca colief</option>
+                    </select>
+                </p>
+                <button type="submit">Bestel Nu</button> 
+            </fieldset>
+        </form>
+    </section>
+
+    <hr>
+
+    <section id="custom" class="admin-section">
+        <h2>Custom Offerte Aanvragen</h2>
+        <form id="customForm">
+            <table border="1">
+                <tr>
+                    <td><label for="grass">M² gras</label></td>
+                    <td><input type="number" id="grass" name="grass" step="0.1"></td>
+                    <td><label for="tiles">M² tegels</label></td>
+                    <td><input type="number" id="tiles" name="tiles" step="0.1"></td>
+                </tr>
+                <tr>
+                    <td><label for="hedge">Meters heg</label></td>
+                    <td><input type="number" id="hedge" name="hedge" step="0.1"></td>
+                    <td><label for="options1">Opties</label></td>
+                    <td><input type="text" id="options1" placeholder="Uw wensen..."></td>
+                </tr>
+            </table>
+            <p style="text-align: center; margin-top: 10px;">
+                <button type="submit">Offerte aanvragen</button>
+            </p>
+        </form>
+    </section>
+
+    <hr>
+
+    <footer>
+        <p>&copy; 2024 Groen & Gewoon Doen - Professionele tuinservice</p>
+    </footer>
+    
+    <script src="js/main.js"></script>
+  </body>
 </html>
