@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 let animationId = null;
 
 function fly() {
@@ -91,6 +92,8 @@ function showSection(sectionId) {
 }
 
 
+=======
+>>>>>>> 8ad6e7a3ffaff35d9916f9905f5c48f98a63cc8c
 let grass = [] 
 
 function setup(){
@@ -103,6 +106,19 @@ function setup(){
   // Add initial grass
   for (let i = 0; i < 20; i++) {
     grass.push(new Grass(random(width)));
+  }
+}
+
+function showSection(sectionId) {
+  const sections = document.querySelectorAll(".admin-section");
+
+  sections.forEach(section => {
+    section.style.display = "none";
+  });
+
+  const target = document.getElementById(sectionId);
+  if(target) {
+    target.style.display = "block";
   }
 }
 
