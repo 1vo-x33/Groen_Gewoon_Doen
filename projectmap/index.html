@@ -13,7 +13,21 @@
 
     <header>
         <p><strong>Welkom bij uw professionele tuinservice!</strong></p>
-        <button type="button">Inloggen</button>
+        <div class="container">
+            <a href="#" class="button" id="button">Login</a>
+        </div>
+        <div class="popup">
+            <div class="popup-content">
+                <input type="text" placeholder="Username">
+                <input type="Password" placeholder="Password">
+                <a href="" class="button">Login</a>
+            </div>
+        </div>
+        <script>
+            document.getElementById("button").addEventListener("click", function(){
+                document.querySelector(".popup").style.display = "flex";
+            })
+        </script>
     </header>
     
     <nav>
