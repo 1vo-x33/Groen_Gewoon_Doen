@@ -21,9 +21,19 @@
                 document.querySelector(".popup").style.display = "flex";
             })
         </script>
-    </header>
+        </header>
     
-    <nav>
+        <div class="popup">
+            <div class="popup-content">
+                <form id="loginForm" onsubmit="event.preventDefault(); getInfo();">
+                    <input type="text" id="username" placeholder="Username">
+                    <input type="password" id="password" placeholder="Password">
+                    <button type="submit" class="button">Login</button>
+                </form>
+            </div>
+        </div>
+
+        <nav>
         <ul>
             <button onclick="showSection('standaard')">Standaard Pakketten</button>
             <button onclick="showSection('custom')">Custom Offerte</button>
@@ -43,13 +53,6 @@
                 </tr>
             </thead>
             <tbody>
-                <div class="popup">
-                    <div class="popup-content">
-                        <input type="text" placeholder="Username">
-                        <input type="Password" placeholder="Password">
-                        <a href="" class="button">Login</a>
-                    </div>
-                </div>
                 <tr>
                     <td>Miet planten</td>
                     <td>Basis tuinonderhoud met diverse planten.</td>

@@ -1,4 +1,33 @@
 
+
+let objPeople = [
+  {
+    username : "user",
+    password : "password"
+  },
+  {
+    username : "admin",
+    password : "superadmin"
+  }
+]
+
+function getInfo() {
+  let username = document.getElementById('username').value
+  var password = document.getElementById('password').value
+
+  for (let i = 0 ; i< objPeople.length;i++) {
+    if (username == objPeople[i].username && password == objPeople[i].password) {
+      console.log(username + " Logged in");
+      const popup = document.querySelector('.popup');
+      if (popup) popup.style.display = 'none';
+      return;
+    }
+  }
+  console.log('incorrect username or password g')
+}
+
+
+
 let animationId = null;
 
 function fly() {
@@ -35,6 +64,8 @@ function fly() {
   
   animate();
 }
+
+
 
 function handlePackageForm(e) {
   e.preventDefault();
