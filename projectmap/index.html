@@ -16,13 +16,6 @@
         <div class="container">
             <a href="#" class="button" id="button">Login</a>
         </div>
-        <div class="popup">
-            <div class="popup-content">
-                <input type="text" placeholder="Username">
-                <input type="Password" placeholder="Password">
-                <a href="" class="button">Login</a>
-            </div>
-        </div>
         <script>
             document.getElementById("button").addEventListener("click", function(){
                 document.querySelector(".popup").style.display = "flex";
@@ -50,6 +43,13 @@
                 </tr>
             </thead>
             <tbody>
+                <div class="popup">
+                    <div class="popup-content">
+                        <input type="text" placeholder="Username">
+                        <input type="Password" placeholder="Password">
+                        <a href="" class="button">Login</a>
+                    </div>
+                </div>
                 <tr>
                     <td>Miet planten</td>
                     <td>Basis tuinonderhoud met diverse planten.</td>
