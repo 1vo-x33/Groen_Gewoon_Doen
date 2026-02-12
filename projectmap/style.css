@@ -17,7 +17,7 @@ body {
 }
 /* Month header */
 .month {
-  padding: 70px 25px;
+  padding: 30px 0px;
   width: 100%;
   background: #1abc9c;
   text-align: center;
@@ -67,15 +67,19 @@ body {
   padding: 10px 0;
   background: #eee;
   margin: 0;
+  height: 12rem;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  align-items: stretch;
 }
 
 .days li {
   list-style-type: none;
-  display: inline-block;
-  width: 13.6%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  margin-bottom: 5px;
-  font-size:12px;
+  font-size:20px;
   color: #777;
 }
 
@@ -89,12 +93,14 @@ body {
 /* Highlight selected day */
 .days li.selected,
 .days li .selected {
-  padding: 5px;
+  padding-top: 3px;
   background: #1abc9c;
   color: white !important;
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.2s ease;
+  position: inherit;
+  height: 100%;
 }
 
 .days li:hover {
