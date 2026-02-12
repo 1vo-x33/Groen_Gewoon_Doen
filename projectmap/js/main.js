@@ -96,6 +96,39 @@ function handleCustomForm(e) {
   alert('Offerte aangevraagd! We nemen spoedig contact op.');
 }
 
+let selectedDate = null;
+
+// Calendar functionality
+function initCalendar() {
+  const days = document.querySelectorAll('.days li');
+  
+  days.forEach(day => {
+    day.addEventListener('click', function() {
+      // Remove previous selection
+      days.forEach(d => {
+        d.classList.remove('selected');
+        const span = d.querySelector('span');
+        if (span) {
+          span.classList.remove('selected');
+        }
+      });
+      
+      // Add selection to clicked day
+      this.classList.add('selected');
+      const span = this.querySelector('span');
+      if (span) {
+        span.classList.add('selected');
+      }
+      
+      // Store selected date
+      selectedDate = this.textContent.trim();
+      console.log('Selected date:', selectedDate);
+      
+      // No push notifications - just log to console
+    });
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const packageForm = document.getElementById('packageForm');
   const customForm = document.getElementById('customForm');
@@ -107,6 +140,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (customForm) {
     customForm.addEventListener('submit', handleCustomForm);
   }
+  
+  // Initialize calendar
+  initCalendar();
 });
 
 function showSection(sectionId) {
