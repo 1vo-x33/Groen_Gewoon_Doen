@@ -20,6 +20,12 @@ function getInfo() {
       console.log(username + " Logged in");
       const popup = document.querySelector('.popup');
       if (popup) popup.style.display = 'none';
+      
+      if (username === 'admin') {
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = 'index.html';
+      }
       return;
     }
   }
