@@ -1,15 +1,16 @@
-const http = require('node:http');
-
-const hostname = '127.0.0.1';
+const express = require('express');
+const path = require('path');
+const app = express();
 const port = 3000;
 
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello, World!\n');
+// Dit vertelt de server dat hij alle bestanden in de huidige map mag laten zien (CSS, plaatjes, etc.)
+app.use(express.static(__dirname));
+
+// Dit stuurt je index.html naar de browser
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+app.listen(port, () => {
+  console.log(`Server draait op http://localhost:${port}`);
 });
