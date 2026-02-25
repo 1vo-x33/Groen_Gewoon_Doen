@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "naam": "Miet planten",
+    "beschrijving": "Basis tuinonderhoud met diverse planten."
+  },
+  {
+    "id": 2,
+    "naam": "Venus fly trap",
+    "beschrijving": "Exotische verzorging voor vleesetende planten."
+  },
+  {
+    "id": 3,
+    "naam": "Coca colief",
+    "beschrijving": "Speciale bladvorming en verzorging."
+  },
+  {
+    "id": 4,
+    "naam": "de Sagoenie package",
+    "beschrijving": "de speciale sagoenie item  "
+  }
+]

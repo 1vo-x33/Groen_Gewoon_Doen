@@ -129,9 +129,60 @@ function initCalendar() {
   });
 }
 
+async function loadPackages() {
+    try {
+        const response = await fetch('./data/packages.json');
+        
+        // Check of het bestand wel gevonden wordt
+        if (!response.ok) throw new Error('JSON bestand niet gevonden');
+        
+        const packages = await response.json();
+        
+        const selectElement = document.getElementById('packages');
+        const tableBody = document.getElementById('packageTableBody');
+
+        // 1. Vul de Dropdown (Select)
+        if (selectElement) {
+            selectElement.innerHTML = '<option value="">Selecteer...</option>';
+            packages.forEach(pkg => {
+                const option = document.createElement('option');
+                option.value = pkg.naam;
+                option.textContent = pkg.naam;
+                selectElement.appendChild(option);
+            });
+        }
+
+        // 2. Vul de Tabel
+        if (tableBody) {
+            tableBody.innerHTML = ''; // Maak de tabel leeg
+            packages.forEach(pkg => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${pkg.naam}</td>
+                    <td>${pkg.beschrijving}</td>
+                    <td><button type="button" onclick="handlePackageOrder('${pkg.naam}')">Bestel</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        console.log("Pakketten succesvol ingeladen!");
+    } catch (error) {
+        console.error('Fout bij het laden van pakketten:', error);
+    }
+}
+
+function handlePackageOrder(packageName) {
+  console.log('Package ordered:', packageName);
+  alert(`Bestelling geplaatst: ${packageName}`);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const packageForm = document.getElementById('packageForm');
   const customForm = document.getElementById('customForm');
+  
+  // Load packages from JSON
+  loadPackages();
   
   if (packageForm) {
     packageForm.addEventListener('submit', handlePackageForm);
