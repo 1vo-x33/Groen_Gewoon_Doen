@@ -279,6 +279,23 @@ button:hover {
     animation: slideIn 0.3s ease-out;
 }
 
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    color: #333;
+    transform: scale(1.1);
+}
+
 @keyframes slideIn {
     from {
         opacity: 0;
