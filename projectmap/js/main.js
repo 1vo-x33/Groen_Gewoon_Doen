@@ -1,40 +1,42 @@
 
+async function getInfo() {
+    const usernameInput = document.getElementById('username').value;
+    const passwordInput = document.getElementById('password').value;
 
-let objPeople = [
-  {
-    username : "user",
-    password : "password"
-  },
-  {
-    username : "admin",
-    password : "superadmin"
-  }
-]
+    try {
+        const response = await fetch('./data/users.json');
+        
+        if (!response.ok) {
+            throw new Error('Kon gebruikerslijst niet laden');
+        }
 
-function getInfo() {
-  let username = document.getElementById('username').value
-  var password = document.getElementById('password').value
+        const users = await response.json();
 
-  for (let i = 0 ; i< objPeople.length;i++) {
-    if (username == objPeople[i].username && password == objPeople[i].password) {
-      console.log(username + " Logged in");
-      const popup = document.querySelector('.popup');
-      if (popup) popup.style.display = 'none';
-      
-      if (username === 'admin') {
-        window.location.href = 'admin.html';
-      } else {
-        window.location.href = 'index.html';
-      }
-      return;
+
+        const foundUser = users.find(u => u.username === usernameInput && u.password === passwordInput);
+
+        if (foundUser) {
+            console.log(foundUser.username + " ingelogd met rol: " + foundUser.role);
+            
+  
+            const popup = document.querySelector('.popup');
+            if (popup) popup.style.display = 'none';
+          
+            if (foundUser.role === 'admin') {
+                window.location.href = 'admin.html';
+            } else {
+                window.location.href = 'index.html';
+            }
+        } else {
+            alert('Onjuiste gebruikersnaam of wachtwoord');
+            console.log('Login mislukt');
+        }
+
+    } catch (error) {
+        console.error('Fout bij inloggen:', error);
+        alert('Er is een technisch probleem bij het inloggen.');
     }
-  }
-  console.log('incorrect username or password g')
 }
-
-
-
-let animationId = null;
 
 function fly() {
   const elem = document.getElementById("spitfire");
