@@ -23,20 +23,20 @@
                 document.querySelector(".popup").style.display = "flex";
             })
         </script>
-        </header>
-    
-        <div class="popup">
-            <div class="popup-content">
-                <h2>Login</h2>
-                <form id="loginForm" onsubmit="event.preventDefault(); getInfo();">
-                    <input type="text" id="username" placeholder="Username">
-                    <input type="password" id="password" placeholder="Password">
-                    <button type="submit" class="button">Login</button>
-                </form>
-            </div>
-        </div>
+    </header>
 
-        <nav>
+    <div class="popup">
+        <div class="popup-content">
+            <h2>Login</h2>
+            <form id="loginForm" onsubmit="event.preventDefault(); getInfo();">
+                <input type="text" id="username" placeholder="Username">
+                <input type="password" id="password" placeholder="Password">
+                <button type="submit" class="button">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <nav>
         <ul>
             <button onclick="showSection('standaard')">Standaard Pakketten</button>
             <button onclick="showSection('custom')">Custom Offerte</button>
@@ -72,7 +72,7 @@
             </fieldset>
         </form>
     </section>
-    </div>
+
     <section id="custom" class="admin-section">
         <h2>Custom Offerte Aanvragen</h2>
         <form id="customForm">
@@ -96,63 +96,53 @@
         </form>
     </section>
 
-    <div class="calendar">
-        <hr>
-                     
-        <div class="month">
-            <ul>
-                <li class="prev">&#10094;</li>
-                <li class="next">&#10095;</li>
-                <li>August<br><span style="font-size:18px">2025</span></li>
-            </ul>
-
+    <!-- Calendar integrated as a booking section -->
+    <section class="calendar-section">
+        <div class="calendar-intro">
+            <h2>Afspraak Inplannen</h2>
+            <p>Kies een datum om uw tuinafspraak in te plannen. Beschikbare dagen zijn groen gemarkeerd.</p>
         </div>
 
+        <div class="calendar-wrapper">
+            <div class="calendar">
+                <div class="month">
+                    <ul>
+                        <li class="prev" onclick="changeMonth(-1)">&#10094;</li>
+                        <li class="next" onclick="changeMonth(1)">&#10095;</li>
+                        <li id="monthLabel">August<br><span style="font-size:18px">2025</span></li>
+                    </ul>
+                </div>
 
-        <ul class="weekdays">
-            <li>Monday</li>
-            <li>Tuesday</li>
-            <li>Wednesday</li>
-            <li>Thursday</li>
-            <li>Friday</li>
-            <li>Saturday</li>
-            <li>Sunday</li>
-        </ul>
+                <ul class="weekdays">
+                    <li>Ma</li>
+                    <li>Di</li>
+                    <li>Wo</li>
+                    <li>Do</li>
+                    <li>Vr</li>
+                    <li>Za</li>
+                    <li>Zo</li>
+                </ul>
 
-        <ul class="days">
-            <li>1</li>
-            <li>2</li>
-            <li>3</li>
-            <li>4</li>
-            <li>5</li>
-            <li>6</li>
-            <li>7</li>
-            <li>8</li>
-            <li>9</li>
-            <li>10</li>
-            <li>11</li>
-            <li>12</li>
-            <li>13</li>
-            <li>14</li>
-            <li>15</li>
-            <li>16</li>
-            <li>17</li>
-            <li>18</li>
-            <li>19</li>
-            <li>20</li>
-            <li>21</li>
-            <li>22</li>
-            <li>23</li>
-            <li>24</li>
-            <li>25</li>
-            <li>26</li>
-            <li>27</li>
-            <li>28</li>
-            <li>29</li>
-            <li>30</li>
-            <li>31</li>
-        </ul>
-    <hr>
+                <ul class="days" id="calendarDays">
+                    <!-- Days rendered by JS -->
+                </ul>
+            </div>
+
+            <div class="calendar-sidebar">
+                <div class="calendar-legend">
+                    <h3>Legenda</h3>
+                    <div class="legend-item"><span class="dot dot-available"></span> Beschikbaar</div>
+                    <div class="legend-item"><span class="dot dot-selected"></span> Geselecteerd</div>
+                    <div class="legend-item"><span class="dot dot-busy"></span> Volgeboekt</div>
+                </div>
+
+                <div class="calendar-booking" id="bookingPanel">
+                    <h3>Geen datum geselecteerd</h3>
+                    <p>Selecteer een beschikbare datum in de kalender om een afspraak te maken.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <footer>
         <p>&copy; 2026 Groen & Gewoon Doen - Professionele tuinservice</p>
