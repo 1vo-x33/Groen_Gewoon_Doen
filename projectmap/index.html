@@ -1,14 +1,16 @@
 <!doctype html>
 <html lang="nl">
-  <head>
+
+<head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Groen & Gewoon Doen - Home</title>
     <link rel="stylesheet" href="./style.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/addons/p5.sound.min.js"></script>
-  </head>
-  <body>
+</head>
+
+<body>
     <h1>Groen & Gewoon Doen</h1>
 
     <header>
@@ -19,10 +21,43 @@
         <script>
             document.getElementById("button").addEventListener("click", function(){
                 document.querySelector(".popup").style.display = "flex";
-            })
+            });
+            
+            document.querySelector(".close-btn").addEventListener("click", function(){
+                document.querySelector(".popup").style.display = "none";
+            });
+            
+            document.querySelector(".popup").addEventListener("click", function(e){
+                if (e.target === document.querySelector(".popup")) {
+                    document.querySelector(".popup").style.display = "none";
+                }
+            });
         </script>
     </header>
     
+    <div class="popup">
+        <div class="popup-content">
+            <span class="close-btn">&times;</span>
+            <h2>Login</h2>
+            <form id="loginForm" onsubmit="event.preventDefault(); getInfo();">
+                <input type="text" id="username" placeholder="Username">
+                <input type="password" id="password" placeholder="Password">
+                <button type="submit" class="button">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="popup">
+        <div class="popup-content">
+            <h2>Login</h2>
+            <form id="loginForm" onsubmit="event.preventDefault(); getInfo();">
+                <input type="text" id="username" placeholder="Username">
+                <input type="password" id="password" placeholder="Password">
+                <button type="submit" class="button">Login</button>
+            </form>
+        </div>
+    </div>
+
     <nav>
         <ul>
             <button onclick="showSection('standaard')">Standaard Pakketten</button>
@@ -34,7 +69,7 @@
 
     <section id="standaard" class="admin-section">
         <h2>Standaard Pakketten</h2>
-        <table border="1"> 
+        <table border="1">
             <thead>
                 <tr>
                     <th>Pakket Naam</th>
@@ -42,29 +77,7 @@
                     <th>Selectie</th>
                 </tr>
             </thead>
-            <tbody>
-                <div class="popup">
-                    <div class="popup-content">
-                        <input type="text" placeholder="Username">
-                        <input type="Password" placeholder="Password">
-                        <a href="" class="button">Login</a>
-                    </div>
-                </div>
-                <tr>
-                    <td>Miet planten</td>
-                    <td>Basis tuinonderhoud met diverse planten.</td>
-                    <td><button onclick="myFunction()">Bestel</button></td>
-                </tr>
-                <tr>
-                    <td>Venus fly trap</td>
-                    <td>Exotische verzorging voor vleesetende planten.</td>
-                    <td><button onclick="myFunction()">Bestel</button></td>
-                </tr>
-                <tr>
-                    <td>Coca colief</td>
-                    <td>Speciale bladvorming en verzorging.</td>
-                    <td><button onclick="myFunction()">Bestel</button></td>
-                </tr>
+            <tbody id="packageTableBody">
             </tbody>
         </table>
 
@@ -75,17 +88,12 @@
                     <label for="packages">Kies een pakket:</label>
                     <select name="packages" id="packages" required>
                         <option value="">Selecteer...</option>
-                        <option value="Pakket 1">Miet planten</option>
-                        <option value="Pakket 2">Venus fly trap</option>
-                        <option value="Pakket 3">Coca colief</option>
                     </select>
                 </p>
-                <button type="submit">Bestel Nu</button> 
+                <button type="submit">Bestel Nu</button>
             </fieldset>
         </form>
     </section>
-
-    <hr>
 
     <section id="custom" class="admin-section">
         <h2>Custom Offerte Aanvragen</h2>
@@ -110,12 +118,59 @@
         </form>
     </section>
 
-    <hr>
+    <!-- Calendar integrated as a booking section -->
+    <section class="calendar-section">
+        <div class="calendar-intro">
+            <h2>Afspraak Inplannen</h2>
+            <p>Kies een datum om uw tuinafspraak in te plannen. Beschikbare dagen zijn groen gemarkeerd.</p>
+        </div>
+
+        <div class="calendar-wrapper">
+            <div class="calendar">
+                <div class="month">
+                    <ul>
+                        <li class="prev" onclick="changeMonth(-1)">&#10094;</li>
+                        <li class="next" onclick="changeMonth(1)">&#10095;</li>
+                        <li id="monthLabel">August<br><span style="font-size:18px">2025</span></li>
+                    </ul>
+                </div>
+
+                <ul class="weekdays">
+                    <li>Ma</li>
+                    <li>Di</li>
+                    <li>Wo</li>
+                    <li>Do</li>
+                    <li>Vr</li>
+                    <li>Za</li>
+                    <li>Zo</li>
+                </ul>
+
+                <ul class="days" id="calendarDays">
+                    <!-- Days rendered by JS -->
+                </ul>
+            </div>
+
+            <div class="calendar-sidebar">
+                <div class="calendar-legend">
+                    <h3>Legenda</h3>
+                    <div class="legend-item"><span class="dot dot-available"></span> Beschikbaar</div>
+                    <div class="legend-item"><span class="dot dot-selected"></span> Geselecteerd</div>
+                    <div class="legend-item"><span class="dot dot-busy"></span> Volgeboekt</div>
+                </div>
+
+                <div class="calendar-booking" id="bookingPanel">
+                    <h3>Geen datum geselecteerd</h3>
+                    <p>Selecteer een beschikbare datum in de kalender om een afspraak te maken.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <footer>
-        <p>&copy; 2024 Groen & Gewoon Doen - Professionele tuinservice</p>
+        <p>&copy; 2026 Groen & Gewoon Doen - Professionele tuinservice</p>
     </footer>
-    
+
     <script src="js/main.js"></script>
-  </body>
+</body>
+
 </html>
