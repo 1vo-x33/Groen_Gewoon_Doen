@@ -1,124 +1,231 @@
 <!doctype html>
 <html lang="nl">
-  <head>
+<head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Groen_Gewoon_Doen_Admin</title>
-    <link rel="stylesheet" href="./style.css" />
-  </head>
-  <body>
-    <h1>Admin Panel</h1>
+    <title>Admin – Groen & Gewoon Doen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body class="admin-body">
 
-    <header>
-        <p><strong>Admin – Groen & Gewoon Doen</strong></p>
-        <button type="button">Logout</button>
-    </header>
-    
+<!-- HEADER -->
+<header>
+    <div class="hdr-brand">
+        Groen &amp; Gewoon Doen
+        <span>Admin Panel</span>
+    </div>
+    <button type="button" onclick="window.location.href='index.html'">Uitloggen</button>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+    <!-- SIDEBAR -->
     <nav>
         <ul>
-            <button onclick="showSection('orders')">Orders</button>
-            <button onclick="showSection('paketten')">Paketten</button>
-            <button onclick="showSection('tarieven')">Tarieven</button>
+            <div class="nav-label">Beheer</div>
+            <button id="nav-orders"   onclick="showSection('orders')"   class="nav-active">Orders</button>
+            <button id="nav-paketten" onclick="showSection('paketten')">Paketten</button>
+            <button id="nav-tarieven" onclick="showSection('tarieven')">Tarieven</button>
         </ul>
     </nav>
 
-    <hr>
+    <!-- MAIN CONTENT -->
+    <div class="admin-main">
 
-    <section id="orders" class="admin-section">
-        <h2>Orders Overzicht</h2>
-        <table border="1"> 
-            <thead>
-                <tr>
-                    <th>Order ID</th>
-                    <th>Klant</th>
-                    <th>Details</th>
-                    <th>Offerte</th>
-                    <th>Status</th>
-                    <th>Actos</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>#001</td>
-                    <td>Klant Naam</td>
-                    <td>Details tekst...</td>
-                    <td>€ 0,00</td>
-                    <td>In behandeling</td>
-                    <td><button>Inplannen</button></td>
-                </tr>
-                <tr>
-                    <td>#002</td>
-                    <td>Klant Naam</td>
-                    <td>Details tekst...</td>
-                    <td>€ 0,00</td>
-                    <td>Wachtend</td>
-                    <td><button>Afgerond</button></td>
-                </tr>
-                <tr>
-                    <td>#003</td>
-                    <td>Klant Naam</td>
-                    <td>Details tekst...</td>
-                    <td>€ 0,00</td>
-                    <td>Klaar</td>
-                    <td><button>Afgerond</button></td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
+        <!-- ORDERS -->
+        <section id="orders" class="admin-section">
+            <div class="page-title-row">
+                <div class="page-title">
+                    <h2>Orders</h2>
+                    <p>Overzicht van alle opdrachten</p>
+                </div>
+                <button class="btn btn-solid">+ Nieuwe order</button>
+            </div>
 
-    <hr>
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-label">Nieuw</div>
+                    <div class="stat-value">3</div>
+                    <div class="stat-sub warn">Wacht op verwerking</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Ingepland</div>
+                    <div class="stat-value">7</div>
+                    <div class="stat-sub ok">Deze week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Afgerond</div>
+                    <div class="stat-value">41</div>
+                    <div class="stat-sub ok">Deze maand</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Omzet</div>
+                    <div class="stat-value">&euro;4.2k</div>
+                    <div class="stat-sub ok">+12% vs vorige maand</div>
+                </div>
+            </div>
 
-        <section id="paketten" class="admin-section">
-            <h2>Pakketten Beheren</h2>
-           <table border="1">
-            <thead>
-                <tr>
-                    <th>Naam</th>
-                    <th>Prijs</th>
-                    <th><button>Bewerk</button></th>
-                    <th><button>Verwijder</button></th>
-                    <th><button>Vragen</button></th>
-                </tr>
-            </thead>
-        </table>
-
-        <form>
-            <fieldset>
-                <legend>Nieuw Pakket</legend>
-                    <p>
-                        <label for="naam">Naam:</label>
-                        <input type="text" id="naam" name="naam">
-                    </p>
-                    <p>
-                        <label for="beschrijving">beschrijving:</label>
-                        <input type="text" id="beschrijving" name="beschrijving">
-                    </p>
-                    <p>
-                        <label for="prijs">Prijs:</label>
-                        <input type="number" id="prijs" name="prijs">
-                    </p>
-                    <button type="submit">Toevoegen</button>   
-            </fieldset>
-        </form>
+            <div class="table-card">
+                <div class="table-card-head">
+                    <h3>Alle orders</h3>
+                    <input type="search" placeholder="Zoek op naam of ID...">
+                </div>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Klant</th>
+                            <th>Details</th>
+                            <th>Offerte</th>
+                            <th>Status</th>
+                            <th>Acties</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>#001</strong></td>
+                            <td>Maria van den Berg</td>
+                            <td>Gazon + heg, 45&nbsp;m&sup2;</td>
+                            <td>&euro;&nbsp;89,00</td>
+                            <td><span class="badge badge-blue">In behandeling</span></td>
+                            <td class="td-btns">
+                                <button class="btn btn-warn btn-sm">Inplannen</button>
+                                <button class="btn btn-ghost btn-sm">Bewerken</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>#002</strong></td>
+                            <td>Pieter Jansen</td>
+                            <td>Custom: 60&nbsp;m&sup2; gras, 20&nbsp;m heg</td>
+                            <td>&euro;&nbsp;122,00</td>
+                            <td><span class="badge badge-yellow">Wachtend</span></td>
+                            <td class="td-btns">
+                                <button class="btn btn-solid btn-sm">Afgerond</button>
+                                <button class="btn btn-ghost btn-sm">Bewerken</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>#003</strong></td>
+                            <td>Sandra de Boer</td>
+                            <td>Compleet pakket, seizoensonderhoud</td>
+                            <td>&euro;&nbsp;139,00</td>
+                            <td><span class="badge badge-green">Klaar</span></td>
+                            <td class="td-btns">
+                                <button class="btn btn-ghost btn-sm">Factuur</button>
+                                <button class="btn btn-danger btn-sm">Verwijder</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
 
-        <hr>
+        <!-- PAKETTEN -->
+        <section id="paketten" class="admin-section">
+            <div class="page-title">
+                <h2>Pakketten</h2>
+                <p>Beheer de beschikbare dienstpakketten</p>
+            </div>
 
+            <div class="table-card">
+                <div class="table-card-head">
+                    <h3>Actieve pakketten</h3>
+                </div>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>Naam</th>
+                            <th>Beschrijving</th>
+                            <th>Prijs</th>
+                            <th>Bewerk</th>
+                            <th>Verwijder</th>
+                            <th>Vragen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="packageTableBody">
+                        <!-- populated by loadPackages() in main.js -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-card">
+                <h3>Nieuw pakket toevoegen</h3>
+                <form onsubmit="event.preventDefault()">
+                    <fieldset>
+                        <legend>Nieuw Pakket</legend>
+                        <div class="form-p">
+                            <label for="naam">Naam:</label>
+                            <input type="text"   id="naam"         name="naam"         placeholder="Pakketnaam">
+                        </div>
+                        <div class="form-p">
+                            <label for="beschrijving">Beschrijving:</label>
+                            <input type="text"   id="beschrijving" name="beschrijving" placeholder="Korte omschrijving">
+                        </div>
+                        <div class="form-p">
+                            <label for="prijs">Prijs (&euro;):</label>
+                            <input type="number" id="prijs"        name="prijs"        placeholder="0.00" step="0.01">
+                        </div>
+                        <button type="submit" class="btn btn-solid">Toevoegen</button>
+                    </fieldset>
+                </form>
+            </div>
+        </section>
+
+        <!-- TARIEVEN -->
         <section id="tarieven" class="admin-section">
-        <h2>Tarieven Beheren (Optional)</h2>
-        <form>
-            <table border="1">
-                <tr>
-                    <td><label for="gras">Prijs per m² Gras</label></td>
-                    <td><input type="text" id="gras"></td>
-                    <td><label for="tegels">Prijs per m² Tegels</label></td>
-                    <td><input type="text" id="tegels"></td>
-                    <td><button type="submit">Opslaan</button></td>
-                </tr>
-            </table>
-        </form>
-    </section>
-    
-    <script src="js/main.js"></script>
-  </body>
+            <div class="page-title">
+                <h2>Tarieven</h2>
+                <p>Basistarieven voor de offertecalculator op de website</p>
+            </div>
+
+            <div class="form-card">
+                <h3>Tarieven per eenheid</h3>
+                <form onsubmit="event.preventDefault()">
+
+                    <!-- Hidden inputs for JS compatibility -->
+                    <table class="js-hidden">
+                        <tr>
+                            <td><label for="gras">Prijs per m&sup2; Gras</label></td>
+                            <td><input type="text" id="gras"></td>
+                            <td><label for="tegels">Prijs per m&sup2; Tegels</label></td>
+                            <td><input type="text" id="tegels"></td>
+                        </tr>
+                    </table>
+
+                    <div class="tarief-grid">
+                        <div class="tarief-item">
+                            <label for="grasV">Prijs per m&sup2; gras</label>
+                            <input type="number" id="grasV"       value="1.20" step="0.01">
+                            <small>&euro; per vierkante meter</small>
+                        </div>
+                        <div class="tarief-item">
+                            <label for="tegelsV">Prijs per m&sup2; tegels</label>
+                            <input type="number" id="tegelsV"     value="0.80" step="0.01">
+                            <small>&euro; per vierkante meter</small>
+                        </div>
+                        <div class="tarief-item">
+                            <label for="hegV">Prijs per m heg</label>
+                            <input type="number" id="hegV"        value="2.50" step="0.01">
+                            <small>&euro; per strekkende meter</small>
+                        </div>
+                        <div class="tarief-item">
+                            <label for="uurtariefV">Uurtarief maatwerk</label>
+                            <input type="number" id="uurtariefV"  value="45.00" step="0.01">
+                            <small>&euro; per uur</small>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-solid">Tarieven opslaan</button>
+                </form>
+            </div>
+        </section>
+
+    </div><!-- /admin-main -->
+</div><!-- /layout -->
+
+<script src="js/main.js"></script>
+</body>
 </html>

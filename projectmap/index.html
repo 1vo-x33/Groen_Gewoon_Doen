@@ -1,176 +1,310 @@
 <!doctype html>
 <html lang="nl">
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Groen & Gewoon Doen - Home</title>
-    <link rel="stylesheet" href="./style.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/p5.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/addons/p5.sound.min.js"></script>
+    <title>Groen & Gewoon Doen – Tuinservice</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-    <h1>Groen & Gewoon Doen</h1>
 
-    <header>
-        <p><strong>Welkom bij uw professionele tuinservice!</strong></p>
-        <div class="container">
-            <a href="#" class="button" id="button">Login</a>
-        </div>
-        <script>
-            document.getElementById("button").addEventListener("click", function(){
-                document.querySelector(".popup").style.display = "flex";
-            });
-            
-            document.querySelector(".close-btn").addEventListener("click", function(){
-                document.querySelector(".popup").style.display = "none";
-            });
-            
-            document.querySelector(".popup").addEventListener("click", function(e){
-                if (e.target === document.querySelector(".popup")) {
-                    document.querySelector(".popup").style.display = "none";
-                }
-            });
-        </script>
-    </header>
-    
-    <div class="popup">
-        <div class="popup-content">
-            <span class="close-btn">&times;</span>
-            <h2>Login</h2>
-            <form id="loginForm" onsubmit="event.preventDefault(); getInfo();">
-                <input type="text" id="username" placeholder="Username">
-                <input type="password" id="password" placeholder="Password">
-                <button type="submit" class="button">Login</button>
-            </form>
+<!-- TOPBAR -->
+<div class="topbar">
+    <span>06-12345678 &nbsp;&middot;&nbsp; info@groengewoon.nl</span>
+    <span>Rotterdam &amp; omgeving &nbsp;&middot;&nbsp; Ma&ndash;Vr 08:00&ndash;18:00</span>
+</div>
+
+<!-- HEADER -->
+<div class="site-header">
+    <a href="index.html" class="logo">Groen &amp; <span>Gewoon Doen</span></a>
+    <div class="hdr-links">
+        <a href="#diensten">Diensten</a>
+        <a href="#pakketten">Pakketten</a>
+        <a href="#offerte">Offerte</a>
+        <a href="#agenda">Afspraak</a>
+    </div>
+    <div class="hdr-actions">
+        <a href="#" id="button" class="btn btn-outline">Inloggen</a>
+        <a href="#pakketten" class="btn btn-solid">Boek Nu</a>
+    </div>
+</div>
+
+<!-- LOGIN POPUP -->
+<div class="popup">
+    <div class="popup-content">
+        <span class="close-btn">&times;</span>
+        <h2>Inloggen</h2>
+        <form id="loginForm" onsubmit="event.preventDefault(); getInfo();">
+            <input type="text"     id="username" placeholder="Gebruikersnaam">
+            <input type="password" id="password" placeholder="Wachtwoord">
+            <button type="submit" class="button">Inloggen</button>
+        </form>
+    </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+    <div class="hero-inner">
+        <h1>Uw tuin verzorgd,<br><em>gewoon goed werk.</em></h1>
+        <p>Professioneel gazon maaien, heg knippen en tegelonderhoud in Rotterdam en omgeving. Geen gedoe, gewoon doen.</p>
+        <div class="hero-btns">
+            <a href="#pakketten" class="btn-hero">Bekijk pakketten</a>
+            <a href="#offerte"   class="btn-hero-ghost">Gratis offerte</a>
         </div>
     </div>
+</div>
 
-    <div class="popup">
-        <div class="popup-content">
-            <h2>Login</h2>
-            <form id="loginForm" onsubmit="event.preventDefault(); getInfo();">
-                <input type="text" id="username" placeholder="Username">
-                <input type="password" id="password" placeholder="Password">
-                <button type="submit" class="button">Login</button>
-            </form>
+<!-- DIENSTEN -->
+<div id="diensten" class="diensten-wrap">
+    <div class="diensten">
+        <div class="dienst">
+            <div class="dienst-bar"></div>
+            <h4>Gazon maaien</h4>
+            <p>Wekelijks of tweewekelijks gemaaid, incl. randafwerking en afvoer.</p>
+        </div>
+        <div class="dienst">
+            <div class="dienst-bar"></div>
+            <h4>Heg knippen</h4>
+            <p>Hagen en struiken netjes gesnoeid en in vorm gehouden.</p>
+        </div>
+        <div class="dienst">
+            <div class="dienst-bar"></div>
+            <h4>Tegelwerk</h4>
+            <p>Onkruid verwijderen, voegen reinigen en terras schoonmaken.</p>
+        </div>
+        <div class="dienst">
+            <div class="dienst-bar"></div>
+            <h4>Volledig onderhoud</h4>
+            <p>Alles-in-een: een nette tuin het hele jaar door.</p>
         </div>
     </div>
+</div>
 
-    <nav>
-        <ul>
-            <button onclick="showSection('standaard')">Standaard Pakketten</button>
-            <button onclick="showSection('custom')">Custom Offerte</button>
-        </ul>
-    </nav>
+<!-- SECTION HEADER -->
+<div id="pakketten" class="wrap">
+    <div class="section-head">
+        <h2>Pakketten &amp; Offerte</h2>
+        <p>Kies een standaardpakket of vraag een offerte op maat aan.</p>
+    </div>
+</div>
 
-    <hr>
+<!-- TAB NAV -->
+<nav>
+    <ul>
+        <button id="tab-standaard" class="tab-active" onclick="showSection('standaard')">Standaard Pakketten</button>
+        <button id="tab-custom"    onclick="showSection('custom')">Custom Offerte</button>
+    </ul>
+</nav>
 
+<hr>
+
+<div class="wrap">
+
+    <!-- STANDAARD PAKKETTEN -->
     <section id="standaard" class="admin-section">
-        <h2>Standaard Pakketten</h2>
-        <table border="1">
+
+        <table class="pkg-table">
             <thead>
                 <tr>
-                    <th>Pakket Naam</th>
-                    <th>Beschrijving</th>
-                    <th>Selectie</th>
+                    <th>Pakket</th>
+                    <th>Inhoud</th>
+                    <th>Prijs</th>
+                    <th></th>
                 </tr>
             </thead>
-            <tbody id="packageTableBody">
+            <tbody>
+                <tr>
+                    <td><strong>Basis</strong></td>
+                    <td class="td-muted">Gazon maaien &middot; onkruid verwijderen &middot; afval meenemen</td>
+                    <td><span class="pkg-price">&euro;&nbsp;49</span> <span class="pkg-unit">/bezoek</span></td>
+                    <td><button class="btn btn-outline btn-sm" onclick="selectPkg('basis')">Kiezen</button></td>
+                </tr>
+                <tr class="tr-featured">
+                    <td><strong>Compleet</strong><span class="badge-pop">Populair</span></td>
+                    <td class="td-muted">Basis + heg knippen &middot; randafwerking &middot; bladblazeren</td>
+                    <td><span class="pkg-price">&euro;&nbsp;89</span> <span class="pkg-unit">/bezoek</span></td>
+                    <td><button class="btn btn-solid btn-sm" onclick="selectPkg('compleet')">Kiezen</button></td>
+                </tr>
+                <tr>
+                    <td><strong>Premium</strong></td>
+                    <td class="td-muted">Compleet + terrasreiniging &middot; seizoensplanting &middot; prioriteit</td>
+                    <td><span class="pkg-price">&euro;&nbsp;139</span> <span class="pkg-unit">/bezoek</span></td>
+                    <td><button class="btn btn-outline btn-sm" onclick="selectPkg('premium')">Kiezen</button></td>
+                </tr>
             </tbody>
         </table>
 
+        <!-- Hidden table — populated by loadPackages() in main.js -->
+        <table class="js-hidden">
+            <thead>
+                <tr><th>Pakket Naam</th><th>Beschrijving</th><th>Selectie</th></tr>
+            </thead>
+            <tbody id="packageTableBody"></tbody>
+        </table>
+
+        <!-- Quick order form -->
         <form id="packageForm">
             <fieldset>
                 <legend>Snel Bestellen</legend>
-                <p>
-                    <label for="packages">Kies een pakket:</label>
-                    <select name="packages" id="packages" required>
-                        <option value="">Selecteer...</option>
-                    </select>
-                </p>
-                <button type="submit">Bestel Nu</button>
+                <div class="form-row">
+                    <div class="fg">
+                        <label for="packages">Pakket</label>
+                        <select name="packages" id="packages" required>
+                            <option value="">Selecteer pakket...</option>
+                        </select>
+                    </div>
+                    <div class="fg">
+                        <label for="orderName">Naam</label>
+                        <input type="text" id="orderName" placeholder="Uw naam">
+                    </div>
+                    <div class="fg">
+                        <label for="orderPhone">Telefoon</label>
+                        <input type="tel" id="orderPhone" placeholder="06-12345678">
+                    </div>
+                    <div class="fg-btn">
+                        <button type="submit" class="btn btn-solid">Bestellen</button>
+                    </div>
+                </div>
             </fieldset>
         </form>
     </section>
 
-    <section id="custom" class="admin-section">
-        <h2>Custom Offerte Aanvragen</h2>
+    <!-- CUSTOM OFFERTE -->
+    <section id="custom" class="admin-section" id="offerte">
+
+        <!-- Hidden inputs — read by handleCustomForm() in main.js -->
+        <table class="js-hidden">
+            <tr>
+                <td><label for="grass">M² gras</label></td>
+                <td><input type="number" id="grass"    name="grass"    step="0.1"></td>
+                <td><label for="tiles">M² tegels</label></td>
+                <td><input type="number" id="tiles"    name="tiles"    step="0.1"></td>
+            </tr>
+            <tr>
+                <td><label for="hedge">Meters heg</label></td>
+                <td><input type="number" id="hedge"    name="hedge"    step="0.1"></td>
+                <td><label for="options1">Opties</label></td>
+                <td><input type="text"   id="options1" name="options1" placeholder="Uw wensen..."></td>
+            </tr>
+        </table>
+
         <form id="customForm">
-            <table border="1">
-                <tr>
-                    <td><label for="grass">M² gras</label></td>
-                    <td><input type="number" id="grass" name="grass" step="0.1"></td>
-                    <td><label for="tiles">M² tegels</label></td>
-                    <td><input type="number" id="tiles" name="tiles" step="0.1"></td>
-                </tr>
-                <tr>
-                    <td><label for="hedge">Meters heg</label></td>
-                    <td><input type="number" id="hedge" name="hedge" step="0.1"></td>
-                    <td><label for="options1">Opties</label></td>
-                    <td><input type="text" id="options1" placeholder="Uw wensen..."></td>
-                </tr>
-            </table>
-            <p style="text-align: center; margin-top: 10px;">
-                <button type="submit">Offerte aanvragen</button>
-            </p>
+            <div class="custom-grid">
+                <div class="fg">
+                    <label for="cNaam">Naam *</label>
+                    <input type="text"  id="cNaam"  placeholder="Jan de Vries" required>
+                </div>
+                <div class="fg">
+                    <label for="cEmail">E-mail *</label>
+                    <input type="email" id="cEmail" placeholder="jan@email.nl" required>
+                </div>
+                <div class="fg">
+                    <label for="cTel">Telefoon</label>
+                    <input type="tel"   id="cTel"   placeholder="06-12345678">
+                </div>
+                <div class="fg">
+                    <label for="cAdres">Adres tuin</label>
+                    <input type="text"  id="cAdres" placeholder="Straat 1, Rotterdam">
+                </div>
+                <div class="fg">
+                    <label for="grassV">M&sup2; gras</label>
+                    <input type="number" id="grassV" placeholder="0" step="0.1">
+                </div>
+                <div class="fg">
+                    <label for="tilesV">M&sup2; tegels / terras</label>
+                    <input type="number" id="tilesV" placeholder="0" step="0.1">
+                </div>
+                <div class="fg">
+                    <label for="hedgeV">Meters heg</label>
+                    <input type="number" id="hedgeV" placeholder="0" step="0.1">
+                </div>
+                <div class="fg">
+                    <label for="options1V">Extra wensen</label>
+                    <input type="text"   id="options1V" placeholder="Bijv. bladblazeren...">
+                </div>
+            </div>
+
+            <div class="price-est">
+                <h4>Geschatte prijs <span class="est-note">(indicatie, excl. BTW)</span></h4>
+                <div class="est-line">
+                    <span>Gras (<span id="eGM">0</span> m&sup2;)</span>
+                    <span>&euro; <span id="eGP">0,00</span></span>
+                </div>
+                <div class="est-line">
+                    <span>Tegels (<span id="eTM">0</span> m&sup2;)</span>
+                    <span>&euro; <span id="eTP">0,00</span></span>
+                </div>
+                <div class="est-line">
+                    <span>Heg (<span id="eHM">0</span> m)</span>
+                    <span>&euro; <span id="eHP">0,00</span></span>
+                </div>
+                <div class="est-total">
+                    <span>Totaal</span>
+                    <span>&euro; <span id="eTot">0,00</span></span>
+                </div>
+            </div>
+
+            <div class="form-submit">
+                <button type="submit" class="btn btn-solid btn-lg">Offerte aanvragen</button>
+            </div>
         </form>
     </section>
 
-    <!-- Calendar integrated as a booking section -->
-    <section class="calendar-section">
-        <div class="calendar-intro">
-            <h2>Afspraak Inplannen</h2>
-            <p>Kies een datum om uw tuinafspraak in te plannen. Beschikbare dagen zijn groen gemarkeerd.</p>
-        </div>
+</div><!-- /wrap -->
 
-        <div class="calendar-wrapper">
-            <div class="calendar">
-                <div class="month">
-                    <ul>
-                        <li class="prev" onclick="changeMonth(-1)">&#10094;</li>
-                        <li class="next" onclick="changeMonth(1)">&#10095;</li>
-                        <li id="monthLabel">August<br><span style="font-size:18px">2025</span></li>
-                    </ul>
-                </div>
-
-                <ul class="weekdays">
-                    <li>Ma</li>
-                    <li>Di</li>
-                    <li>Wo</li>
-                    <li>Do</li>
-                    <li>Vr</li>
-                    <li>Za</li>
-                    <li>Zo</li>
-                </ul>
-
-                <ul class="days" id="calendarDays">
-                    <!-- Days rendered by JS -->
+<!-- KALENDER -->
+<div id="agenda" class="cal-section">
+    <div class="cal-head">
+        <h2>Afspraak Inplannen</h2>
+        <p>Kies een beschikbare datum. Groene dagen zijn vrij.</p>
+    </div>
+    <div class="calendar-wrapper">
+        <div class="calendar">
+            <div class="month">
+                <ul>
+                    <li class="prev" onclick="changeMonth(-1)">&#10094;</li>
+                    <li class="next" onclick="changeMonth(1)">&#10095;</li>
+                    <li id="monthLabel">Augustus<br><span class="month-year">2025</span></li>
                 </ul>
             </div>
-
-            <div class="calendar-sidebar">
-                <div class="calendar-legend">
-                    <h3>Legenda</h3>
-                    <div class="legend-item"><span class="dot dot-available"></span> Beschikbaar</div>
-                    <div class="legend-item"><span class="dot dot-selected"></span> Geselecteerd</div>
-                    <div class="legend-item"><span class="dot dot-busy"></span> Volgeboekt</div>
-                </div>
-
-                <div class="calendar-booking" id="bookingPanel">
-                    <h3>Geen datum geselecteerd</h3>
-                    <p>Selecteer een beschikbare datum in de kalender om een afspraak te maken.</p>
-                </div>
+            <ul class="weekdays">
+                <li>Ma</li><li>Di</li><li>Wo</li><li>Do</li><li>Vr</li><li>Za</li><li>Zo</li>
+            </ul>
+            <ul class="days" id="calendarDays"></ul>
+        </div>
+        <div class="calendar-sidebar">
+            <div class="calendar-legend">
+                <h3>Legenda</h3>
+                <div class="legend-item"><span class="dot dot-available"></span> Beschikbaar</div>
+                <div class="legend-item"><span class="dot dot-selected"></span> Geselecteerd</div>
+                <div class="legend-item"><span class="dot dot-busy"></span> Volgeboekt</div>
+            </div>
+            <div class="calendar-booking" id="bookingPanel">
+                <h3>Geen datum geselecteerd</h3>
+                <p>Selecteer een beschikbare datum om een afspraak te maken.</p>
             </div>
         </div>
-    </section>
+    </div>
+</div>
 
-    <footer>
-        <p>&copy; 2026 Groen & Gewoon Doen - Professionele tuinservice</p>
-    </footer>
+<!-- CONTACT -->
+<div class="contact-band">
+    <div>
+        <h3>Vragen? Bel of mail gerust.</h3>
+        <p>Reactie binnen &eacute;&eacute;n werkdag &nbsp;&middot;&nbsp; 06-12345678 &nbsp;&middot;&nbsp; info@groengewoon.nl</p>
+    </div>
+    <div class="contact-btns">
+        <a href="tel:0612345678"             class="btn btn-white">Bellen</a>
+        <a href="mailto:info@groengewoon.nl" class="btn btn-white-ghost">E-mail sturen</a>
+    </div>
+</div>
 
-    <script src="js/main.js"></script>
+<footer>
+    <p>&copy; 2026 Groen &amp; Gewoon Doen &nbsp;&middot;&nbsp; Rotterdam &nbsp;&middot;&nbsp; KVK 12345678</p>
+</footer>
+
+<script src="js/main.js"></script>
 </body>
-
 </html>
