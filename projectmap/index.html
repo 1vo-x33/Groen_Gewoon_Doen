@@ -56,33 +56,14 @@
     </div>
 </div>
 
-<!-- DIENSTEN -->
+<!-- DIENSTEN — filled by loadDiensten() -->
 <div id="diensten" class="diensten-wrap">
-    <div class="diensten">
-        <div class="dienst">
-            <div class="dienst-bar"></div>
-            <h4>Gazon maaien</h4>
-            <p>Wekelijks of tweewekelijks gemaaid, incl. randafwerking en afvoer.</p>
-        </div>
-        <div class="dienst">
-            <div class="dienst-bar"></div>
-            <h4>Heg knippen</h4>
-            <p>Hagen en struiken netjes gesnoeid en in vorm gehouden.</p>
-        </div>
-        <div class="dienst">
-            <div class="dienst-bar"></div>
-            <h4>Tegelwerk</h4>
-            <p>Onkruid verwijderen, voegen reinigen en terras schoonmaken.</p>
-        </div>
-        <div class="dienst">
-            <div class="dienst-bar"></div>
-            <h4>Volledig onderhoud</h4>
-            <p>Alles-in-een: een nette tuin het hele jaar door.</p>
-        </div>
+    <div class="diensten" id="dienstenGrid">
+        <!-- JS renders dienst cards here from data/diensten.json -->
     </div>
 </div>
 
-<!-- SECTION HEADER -->
+<!-- PAKKETTEN SECTION HEADER -->
 <div id="pakketten" class="wrap">
     <div class="section-head">
         <h2>Pakketten &amp; Offerte</h2>
@@ -105,6 +86,10 @@
     <!-- STANDAARD PAKKETTEN -->
     <section id="standaard" class="admin-section">
 
+        <!--
+            Package table — filled by loadPackages() from data/packages.json.
+            thead stays in HTML; tbody is rendered by JS.
+        -->
         <table class="pkg-table">
             <thead>
                 <tr>
@@ -114,34 +99,9 @@
                     <th></th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td><strong>Basis</strong></td>
-                    <td class="td-muted">Gazon maaien &middot; onkruid verwijderen &middot; afval meenemen</td>
-                    <td><span class="pkg-price">&euro;&nbsp;49</span> <span class="pkg-unit">/bezoek</span></td>
-                    <td><button class="btn btn-outline btn-sm" onclick="selectPkg('basis')">Kiezen</button></td>
-                </tr>
-                <tr class="tr-featured">
-                    <td><strong>Compleet</strong><span class="badge-pop">Populair</span></td>
-                    <td class="td-muted">Basis + heg knippen &middot; randafwerking &middot; bladblazeren</td>
-                    <td><span class="pkg-price">&euro;&nbsp;89</span> <span class="pkg-unit">/bezoek</span></td>
-                    <td><button class="btn btn-solid btn-sm" onclick="selectPkg('compleet')">Kiezen</button></td>
-                </tr>
-                <tr>
-                    <td><strong>Premium</strong></td>
-                    <td class="td-muted">Compleet + terrasreiniging &middot; seizoensplanting &middot; prioriteit</td>
-                    <td><span class="pkg-price">&euro;&nbsp;139</span> <span class="pkg-unit">/bezoek</span></td>
-                    <td><button class="btn btn-outline btn-sm" onclick="selectPkg('premium')">Kiezen</button></td>
-                </tr>
+            <tbody id="packageTableBody">
+                <!-- JS renders rows here -->
             </tbody>
-        </table>
-
-        <!-- Hidden table — populated by loadPackages() in main.js -->
-        <table class="js-hidden">
-            <thead>
-                <tr><th>Pakket Naam</th><th>Beschrijving</th><th>Selectie</th></tr>
-            </thead>
-            <tbody id="packageTableBody"></tbody>
         </table>
 
         <!-- Quick order form -->
@@ -151,6 +111,9 @@
                 <div class="form-row">
                     <div class="fg">
                         <label for="packages">Pakket</label>
+                        <!--
+                            Options filled by loadPackages() from data/packages.json
+                        -->
                         <select name="packages" id="packages" required>
                             <option value="">Selecteer pakket...</option>
                         </select>
@@ -172,23 +135,16 @@
     </section>
 
     <!-- CUSTOM OFFERTE -->
-    <section id="custom" class="admin-section" id="offerte">
+    <section id="custom" class="admin-section">
 
-        <!-- Hidden inputs — read by handleCustomForm() in main.js -->
-        <table class="js-hidden">
-            <tr>
-                <td><label for="grass">M² gras</label></td>
-                <td><input type="number" id="grass"    name="grass"    step="0.1"></td>
-                <td><label for="tiles">M² tegels</label></td>
-                <td><input type="number" id="tiles"    name="tiles"    step="0.1"></td>
-            </tr>
-            <tr>
-                <td><label for="hedge">Meters heg</label></td>
-                <td><input type="number" id="hedge"    name="hedge"    step="0.1"></td>
-                <td><label for="options1">Opties</label></td>
-                <td><input type="text"   id="options1" name="options1" placeholder="Uw wensen..."></td>
-            </tr>
-        </table>
+        <!--
+            Hidden inputs read by handleCustomForm().
+            These mirror the visible inputs so the original FormData logic still works.
+        -->
+        <input type="hidden" id="grass"    name="grass">
+        <input type="hidden" id="tiles"    name="tiles">
+        <input type="hidden" id="hedge"    name="hedge">
+        <input type="hidden" id="options1" name="options1">
 
         <form id="customForm">
             <div class="custom-grid">
@@ -222,22 +178,26 @@
                 </div>
                 <div class="fg">
                     <label for="options1V">Extra wensen</label>
-                    <input type="text"   id="options1V" placeholder="Bijv. bladblazeren...">
+                    <input type="text" id="options1V" placeholder="Bijv. bladblazeren...">
                 </div>
             </div>
 
+            <!--
+                Price estimate — labels and rates filled by loadTarieven()
+                from data/tarieven.json. Amounts updated live by updateCalc().
+            -->
             <div class="price-est">
                 <h4>Geschatte prijs <span class="est-note">(indicatie, excl. BTW)</span></h4>
                 <div class="est-line">
-                    <span>Gras (<span id="eGM">0</span> m&sup2;)</span>
+                    <span>Gras (<span id="eGM">0</span> m&sup2;, &euro; <span id="eGRate">–</span>/m&sup2;)</span>
                     <span>&euro; <span id="eGP">0,00</span></span>
                 </div>
                 <div class="est-line">
-                    <span>Tegels (<span id="eTM">0</span> m&sup2;)</span>
+                    <span>Tegels (<span id="eTM">0</span> m&sup2;, &euro; <span id="eTRate">–</span>/m&sup2;)</span>
                     <span>&euro; <span id="eTP">0,00</span></span>
                 </div>
                 <div class="est-line">
-                    <span>Heg (<span id="eHM">0</span> m)</span>
+                    <span>Heg (<span id="eHM">0</span> m, &euro; <span id="eHRate">–</span>/m)</span>
                     <span>&euro; <span id="eHP">0,00</span></span>
                 </div>
                 <div class="est-total">
@@ -266,7 +226,7 @@
                 <ul>
                     <li class="prev" onclick="changeMonth(-1)">&#10094;</li>
                     <li class="next" onclick="changeMonth(1)">&#10095;</li>
-                    <li id="monthLabel">Augustus<br><span class="month-year">2025</span></li>
+                    <li id="monthLabel"></li>
                 </ul>
             </div>
             <ul class="weekdays">

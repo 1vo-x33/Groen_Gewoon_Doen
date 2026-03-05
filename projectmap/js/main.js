@@ -1,346 +1,559 @@
 // ============================================================
 //  GROEN & GEWOON DOEN — js/main.js
+//
+//  Verwachte data bestanden in ./data/
+//
+//  users.json      [ { id, username, password, role } ]
+//  packages.json   [ { id, naam, beschrijving, prijs } ]
+//  diensten.json   [ { id, naam, beschrijving } ]
+//  orders.json     [ { id, klant, pakket, details, offerte, status } ]
+//  tarieven.json   { gras, tegels, heg, uurtarief }
 // ============================================================
+
 
 // ============================================================
 //  LOGIN
 // ============================================================
 
 async function getInfo() {
-    const usernameInput = document.getElementById('username').value;
-    const passwordInput = document.getElementById('password').value;
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
 
     try {
-        const response = await fetch('./data/users.json');
+        const res = await fetch('./data/users.json');
+        if (!res.ok) throw new Error('Kon gebruikerslijst niet laden');
+        const users = await res.json();
 
-        if (!response.ok) throw new Error('Kon gebruikerslijst niet laden');
+        // users.json: [ { id, username, password, role } ]
+        const user = users.find(u => u.username === username && u.password === password);
 
-        const users = await response.json();
-        const foundUser = users.find(u => u.username === usernameInput && u.password === passwordInput);
-
-        if (foundUser) {
-            console.log(foundUser.username + ' ingelogd met rol: ' + foundUser.role);
-
+        if (user) {
+            console.log(user.username + ' ingelogd als: ' + user.role);
             const popup = document.querySelector('.popup');
             if (popup) popup.style.display = 'none';
-
-            if (foundUser.role === 'admin') {
-                window.location.href = 'admin.html';
-            } else {
-                window.location.href = 'index.html';
-            }
+            window.location.href = user.role === 'admin' ? 'admin.html' : 'index.html';
         } else {
             alert('Onjuiste gebruikersnaam of wachtwoord');
-            console.log('Login mislukt');
         }
-    } catch (error) {
-        console.error('Fout bij inloggen:', error);
+    } catch (err) {
+        console.error('Fout bij inloggen:', err);
         alert('Er is een technisch probleem bij het inloggen.');
     }
 }
 
+
 // ============================================================
-//  POPUP OPEN / CLOSE  (index.html)
+//  POPUP  (index)
 // ============================================================
 
 function initPopup() {
-    const loginBtn = document.getElementById('button');
-    const popup    = document.querySelector('.popup');
-    const closeBtn = document.querySelector('.close-btn');
+    const btn   = document.getElementById('button');
+    const popup = document.querySelector('.popup');
+    const close = document.querySelector('.close-btn');
+    if (!btn || !popup) return;
 
-    if (!loginBtn || !popup) return;
-
-    loginBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        popup.style.display = 'flex';
-    });
-
-    if (closeBtn) {
-        closeBtn.addEventListener('click', function () {
-            popup.style.display = 'none';
-        });
-    }
-
-    popup.addEventListener('click', function (e) {
-        if (e.target === popup) popup.style.display = 'none';
-    });
+    btn.addEventListener('click', e => { e.preventDefault(); popup.style.display = 'flex'; });
+    if (close) close.addEventListener('click', () => { popup.style.display = 'none'; });
+    popup.addEventListener('click', e => { if (e.target === popup) popup.style.display = 'none'; });
 }
 
+
 // ============================================================
-//  TAB / SECTION SWITCHING
-//  Works on both index (tab buttons) and admin (sidebar nav)
+//  SECTION / TAB SWITCHING
 // ============================================================
 
-function showSection(sectionId) {
-    // Hide all admin sections
-    document.querySelectorAll('.admin-section').forEach(function (s) {
+function showSection(id) {
+    document.querySelectorAll('.admin-section').forEach(s => {
         s.style.display = 'none';
         s.classList.remove('active');
     });
 
-    // Show the requested one
-    var target = document.getElementById(sectionId);
-    if (target) {
-        target.style.display = 'block';
-        target.classList.add('active');
-    }
+    const target = document.getElementById(id);
+    if (target) { target.style.display = 'block'; target.classList.add('active'); }
 
-    // Update index tab buttons
-    document.querySelectorAll('nav ul button[id^="tab-"]').forEach(function (b) {
-        b.classList.remove('tab-active');
-    });
-    var tab = document.getElementById('tab-' + sectionId);
+    // index tab buttons
+    document.querySelectorAll('nav ul button[id^="tab-"]').forEach(b => b.classList.remove('tab-active'));
+    const tab = document.getElementById('tab-' + id);
     if (tab) tab.classList.add('tab-active');
 
-    // Update admin sidebar buttons
-    document.querySelectorAll('nav ul button[id^="nav-"]').forEach(function (b) {
-        b.classList.remove('nav-active');
-    });
-    var navBtn = document.getElementById('nav-' + sectionId);
-    if (navBtn) navBtn.classList.add('nav-active');
+    // admin sidebar buttons
+    document.querySelectorAll('nav ul button[id^="nav-"]').forEach(b => b.classList.remove('nav-active'));
+    const nav = document.getElementById('nav-' + id);
+    if (nav) nav.classList.add('nav-active');
 }
 
+
 // ============================================================
-//  PACKAGE FORMS  (index.html)
+//  DIENSTEN  (index) — data/diensten.json
+//  Velden: { id, naam, beschrijving }
 // ============================================================
 
-function handlePackageForm(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const selectedPackage = formData.get('packages');
+async function loadDiensten() {
+    const grid = document.getElementById('dienstenGrid');
+    if (!grid) return;
 
-    if (!selectedPackage) {
-        alert('Selecteer eerst een pakket');
-        return;
+    try {
+        const res      = await fetch('./data/diensten.json');
+        if (!res.ok) throw new Error('diensten.json niet gevonden');
+        const diensten = await res.json();
+
+        grid.innerHTML = '';
+        diensten.forEach(d => {
+            const div = document.createElement('div');
+            div.className = 'dienst';
+            // gebruik d.naam (niet d.titel)
+            div.innerHTML =
+                '<div class="dienst-bar"></div>' +
+                '<h4>' + d.naam + '</h4>' +
+                '<p>'  + d.beschrijving + '</p>';
+            grid.appendChild(div);
+        });
+    } catch (err) {
+        console.error('Fout bij laden diensten:', err);
+        grid.innerHTML = '<p class="load-error">Diensten konden niet worden geladen.</p>';
     }
-
-    console.log('Package ordered:', selectedPackage);
-    alert('Bestelling geplaatst: ' + selectedPackage);
 }
 
-function handleCustomForm(e) {
-    e.preventDefault();
-
-    // Sync visible inputs → hidden inputs before reading FormData
-    syncVisibleToHidden();
-
-    const formData = new FormData(e.target);
-    const orderData = {
-        grass:    formData.get('grass')    || 0,
-        tiles:    formData.get('tiles')    || 0,
-        hedge:    formData.get('hedge')    || 0,
-        options1: formData.get('options1') || '',
-        options2: formData.get('options2') || ''
-    };
-
-    console.log('Custom quote requested:', orderData);
-    alert('Offerte aangevraagd! We nemen spoedig contact op.');
-}
-
-function handlePackageOrder(packageName) {
-    console.log('Package ordered:', packageName);
-    alert('Bestelling geplaatst: ' + packageName);
-}
-
-// Select a package by keyword and scroll to the order form
-function selectPkg(val) {
-    var sel = document.getElementById('packages');
-    if (!sel) return;
-    for (var i = 0; i < sel.options.length; i++) {
-        if (sel.options[i].value.toLowerCase().includes(val)) {
-            sel.selectedIndex = i;
-            break;
-        }
-    }
-    var form = document.getElementById('packageForm');
-    if (form) form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
 
 // ============================================================
-//  PACKAGES — load from JSON  (index + admin)
+//  PACKAGES  (index + admin) — data/packages.json
+//  Velden: { id, naam, beschrijving, prijs }
+//  Geen 'populair' veld — eerste pakket is standaard uitgelicht
 // ============================================================
 
 async function loadPackages() {
     try {
-        const response = await fetch('./data/packages.json');
-        if (!response.ok) throw new Error('JSON bestand niet gevonden');
+        const res      = await fetch('./data/packages.json');
+        if (!res.ok) throw new Error('packages.json niet gevonden');
+        const packages = await res.json();
 
-        const packages = await response.json();
+        const isAdmin = document.body.classList.contains('admin-body');
 
-        const selectElement = document.getElementById('packages');
-        const tableBody     = document.getElementById('packageTableBody');
-
-        if (selectElement) {
-            selectElement.innerHTML = '<option value="">Selecteer...</option>';
-            packages.forEach(function (pkg) {
-                var option = document.createElement('option');
-                option.value       = pkg.naam;
-                option.textContent = pkg.naam;
-                selectElement.appendChild(option);
-            });
+        if (isAdmin) {
+            renderAdminPackageTable(packages);
+        } else {
+            renderPackageTable(packages);
+            renderPackageSelect(packages);
         }
-
-        if (tableBody) {
-            tableBody.innerHTML = '';
-            packages.forEach(function (pkg) {
-                var row = document.createElement('tr');
-                row.innerHTML =
-                    '<td>' + pkg.naam + '</td>' +
-                    '<td>' + pkg.beschrijving + '</td>' +
-                    '<td><button type="button" onclick="handlePackageOrder(\'' + pkg.naam + '\')">Bestel</button></td>';
-                tableBody.appendChild(row);
-            });
-        }
-
-        console.log('Pakketten succesvol ingeladen!');
-    } catch (error) {
-        console.error('Fout bij het laden van pakketten:', error);
+    } catch (err) {
+        console.error('Fout bij laden pakketten:', err);
     }
 }
 
-// ============================================================
-//  PRICE CALCULATOR  (index.html — custom offerte)
-// ============================================================
+// index: tabel met pakket-rijen
+function renderPackageTable(packages) {
+    const tbody = document.getElementById('packageTableBody');
+    if (!tbody) return;
 
-var rates = { grass: 1.20, tiles: 0.80, hedge: 2.50 };
+    tbody.innerHTML = '';
+    packages.forEach((pkg, index) => {
+        const tr = document.createElement('tr');
 
-function fmt(n) {
-    return n.toFixed(2).replace('.', ',');
+        // Markeer het middelste pakket als aanbevolen (of het eerste als er maar 1 is)
+        const isAanbevolen = packages.length >= 3
+            ? index === Math.floor(packages.length / 2)
+            : index === 0;
+
+        if (isAanbevolen) tr.classList.add('tr-featured');
+
+        tr.innerHTML =
+            '<td>' +
+                '<strong>' + pkg.naam + '</strong>' +
+                (isAanbevolen ? '<span class="badge-pop">Aanbevolen</span>' : '') +
+            '</td>' +
+            '<td class="td-muted">' + pkg.beschrijving + '</td>' +
+            '<td>' +
+                '<span class="pkg-price">&euro;&nbsp;' + pkg.prijs + '</span>' +
+                ' <span class="pkg-unit">/bezoek</span>' +
+            '</td>' +
+            '<td>' +
+                '<button class="btn btn-' + (isAanbevolen ? 'solid' : 'outline') + ' btn-sm"' +
+                    ' onclick="selectPkg(' + pkg.id + ')">' +
+                    'Kiezen' +
+                '</button>' +
+            '</td>';
+
+        tbody.appendChild(tr);
+    });
 }
 
-// Mirror visible inputs to the hidden inputs that handleCustomForm reads
+// index: <select> dropdown in bestelformulier
+function renderPackageSelect(packages) {
+    const sel = document.getElementById('packages');
+    if (!sel) return;
+
+    sel.innerHTML = '<option value="">Selecteer pakket...</option>';
+    packages.forEach(pkg => {
+        const opt = document.createElement('option');
+        opt.value = pkg.id;
+        opt.textContent = pkg.naam + ' — \u20ac' + pkg.prijs;
+        sel.appendChild(opt);
+    });
+}
+
+// admin: beheertabel
+function renderAdminPackageTable(packages) {
+    const tbody = document.getElementById('packageTableBody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+    packages.forEach(pkg => {
+        const tr = document.createElement('tr');
+        tr.innerHTML =
+            '<td><strong>' + pkg.naam + '</strong></td>' +
+            '<td class="td-muted">' + pkg.beschrijving + '</td>' +
+            '<td>&euro;&nbsp;' + pkg.prijs + '</td>' +
+            '<td><button class="btn btn-ghost btn-sm" onclick="editPackage(' + pkg.id + ')">Bewerken</button></td>' +
+            '<td><button class="btn btn-danger btn-sm" onclick="deletePackage(' + pkg.id + ', \'' + pkg.naam + '\')">Verwijder</button></td>' +
+            '<td><button class="btn btn-ghost btn-sm" onclick="viewPackageQuestions(' + pkg.id + ')">Vragen</button></td>';
+        tbody.appendChild(tr);
+    });
+}
+
+// Selecteer pakket via id, scroll naar bestelformulier
+function selectPkg(id) {
+    const sel = document.getElementById('packages');
+    if (!sel) return;
+    for (let i = 0; i < sel.options.length; i++) {
+        if (parseInt(sel.options[i].value) === id) { sel.selectedIndex = i; break; }
+    }
+    const form = document.getElementById('packageForm');
+    if (form) form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function editPackage(id)                     { alert('Bewerken: pakket #' + id + ' (nog te implementeren)'); }
+function deletePackage(id, naam)             { if (confirm('Verwijder pakket "' + naam + '"?')) alert('Verwijderd (nog te implementeren)'); }
+function viewPackageQuestions(id)            { alert('Vragen voor pakket #' + id + ' (nog te implementeren)'); }
+
+function handleNewPackage() {
+    const naam         = document.getElementById('naam').value;
+    const beschrijving = document.getElementById('beschrijving').value;
+    const prijs        = document.getElementById('prijs').value;
+    console.log('Nieuw pakket:', { naam, beschrijving, prijs });
+    alert('Pakket "' + naam + '" toegevoegd (nog te implementeren in backend).');
+}
+
+function openNewOrderForm() {
+    alert('Nieuwe order formulier (nog te implementeren).');
+}
+
+
+// ============================================================
+//  TARIEVEN  (index + admin) — data/tarieven.json
+//  Velden: { gras, tegels, heg, uurtarief }
+// ============================================================
+
+var rates = { gras: 0, tegels: 0, heg: 0, uurtarief: 0 };
+
+async function loadTarieven() {
+    try {
+        const res      = await fetch('./data/tarieven.json');
+        if (!res.ok) throw new Error('tarieven.json niet gevonden');
+        const tarieven = await res.json();
+
+        rates.gras      = tarieven.gras      || 0;
+        rates.tegels    = tarieven.tegels    || 0;
+        rates.heg       = tarieven.heg       || 0;
+        rates.uurtarief = tarieven.uurtarief || 0;
+
+        // Tarieven tonen in de prijsschatter (index)
+        setText('eGRate', fmt(rates.gras));
+        setText('eTRate', fmt(rates.tegels));
+        setText('eHRate', fmt(rates.heg));
+
+        // Tarieven invullen in admin-formulier
+        setVal('tGras',      tarieven.gras);
+        setVal('tTegels',    tarieven.tegels);
+        setVal('tHeg',       tarieven.heg);
+        setVal('tUurtarief', tarieven.uurtarief);
+
+        updateCalc();
+    } catch (err) {
+        console.error('Fout bij laden tarieven:', err);
+    }
+}
+
+function saveTarieven() {
+    const data = {
+        gras:      parseFloat(document.getElementById('tGras').value)      || 0,
+        tegels:    parseFloat(document.getElementById('tTegels').value)    || 0,
+        heg:       parseFloat(document.getElementById('tHeg').value)       || 0,
+        uurtarief: parseFloat(document.getElementById('tUurtarief').value) || 0
+    };
+    console.log('Tarieven opslaan:', data);
+    alert('Tarieven opgeslagen (nog te implementeren in backend).\n' + JSON.stringify(data, null, 2));
+}
+
+
+// ============================================================
+//  ORDERS  (admin) — data/orders.json
+//  Velden: { id, klant, pakket, details, offerte, status }
+// ============================================================
+
+async function loadOrders() {
+    const tbody    = document.getElementById('ordersTableBody');
+    const statsDiv = document.getElementById('orderStats');
+    if (!tbody) return;
+
+    try {
+        const res    = await fetch('./data/orders.json');
+        if (!res.ok) throw new Error('orders.json niet gevonden');
+        const orders = await res.json();
+
+        renderOrderStats(orders, statsDiv);
+        renderOrdersTable(orders, tbody);
+
+        // Live zoeken
+        const searchInput = document.getElementById('orderSearch');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                const q = this.value.toLowerCase();
+                const filtered = orders.filter(o =>
+                    String(o.id).toLowerCase().includes(q) ||
+                    o.klant.toLowerCase().includes(q)
+                );
+                renderOrdersTable(filtered, tbody);
+            });
+        }
+    } catch (err) {
+        console.error('Fout bij laden orders:', err);
+        tbody.innerHTML = '<tr><td colspan="6" class="load-error">Orders konden niet worden geladen.</td></tr>';
+    }
+}
+
+function renderOrderStats(orders, container) {
+    if (!container) return;
+
+    const nieuw     = orders.filter(o => o.status === 'Nieuw').length;
+    const ingepland = orders.filter(o => o.status === 'Ingepland').length;
+    const afgerond  = orders.filter(o => o.status === 'Klaar').length;
+    const omzet     = orders
+        .filter(o => o.status === 'Klaar')
+        .reduce((sum, o) => sum + (parseFloat(o.offerte) || 0), 0);
+
+    container.innerHTML =
+        statCard('Nieuw',     nieuw,                     nieuw > 0 ? 'warn' : 'ok', 'Wacht op verwerking') +
+        statCard('Ingepland', ingepland,                 'ok', 'Deze week') +
+        statCard('Afgerond',  afgerond,                  'ok', 'Deze maand') +
+        statCard('Omzet',     '&euro;' + fmt(omzet),     'ok', 'Afgeronde orders');
+}
+
+function statCard(label, value, modifier, sub) {
+    return '<div class="stat-card">' +
+        '<div class="stat-label">'              + label + '</div>' +
+        '<div class="stat-value">'              + value + '</div>' +
+        '<div class="stat-sub ' + modifier + '">' + sub + '</div>' +
+    '</div>';
+}
+
+const STATUS_BADGE = {
+    'Nieuw':          'badge-blue',
+    'In behandeling': 'badge-blue',
+    'Ingepland':      'badge-blue',
+    'Wachtend':       'badge-yellow',
+    'Klaar':          'badge-green',
+    'Geannuleerd':    'badge-red'
+};
+
+function renderOrdersTable(orders, tbody) {
+    tbody.innerHTML = '';
+
+    if (orders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="td-empty">Geen orders gevonden.</td></tr>';
+        return;
+    }
+
+    orders.forEach(o => {
+        const badge  = STATUS_BADGE[o.status] || 'badge-blue';
+        const acties = buildOrderActions(o);
+        const tr     = document.createElement('tr');
+
+        tr.innerHTML =
+            '<td><strong>#' + o.id + '</strong></td>' +
+            '<td>' + o.klant + '</td>' +
+            '<td class="td-muted">' + (o.details || o.pakket || '–') + '</td>' +
+            '<td>&euro;&nbsp;' + parseFloat(o.offerte || 0).toFixed(2).replace('.', ',') + '</td>' +
+            '<td><span class="badge ' + badge + '">' + o.status + '</span></td>' +
+            '<td class="td-btns">' + acties + '</td>';
+
+        tbody.appendChild(tr);
+    });
+}
+
+function buildOrderActions(order) {
+    switch (order.status) {
+        case 'Nieuw':
+        case 'In behandeling':
+            return btn('warn',   'Inplannen', 'planOrder('     + order.id + ')') +
+                   btn('ghost',  'Bewerken',  'editOrder('     + order.id + ')');
+        case 'Ingepland':
+        case 'Wachtend':
+            return btn('solid',  'Afgerond',  'completeOrder(' + order.id + ')') +
+                   btn('ghost',  'Bewerken',  'editOrder('     + order.id + ')');
+        case 'Klaar':
+            return btn('ghost',  'Factuur',   'invoiceOrder('  + order.id + ')') +
+                   btn('danger', 'Verwijder', 'deleteOrder('   + order.id + ')');
+        default:
+            return btn('ghost',  'Bewerken',  'editOrder('     + order.id + ')');
+    }
+}
+
+function btn(style, label, onclick) {
+    return '<button class="btn btn-' + style + ' btn-sm" onclick="' + onclick + '">' + label + '</button>';
+}
+
+function planOrder(id)     { alert('Inplannen: order #' + id + ' (nog te implementeren)'); }
+function editOrder(id)     { alert('Bewerken: order #'  + id + ' (nog te implementeren)'); }
+function completeOrder(id) { alert('Afgerond: order #'  + id + ' (nog te implementeren)'); }
+function invoiceOrder(id)  { alert('Factuur: order #'   + id + ' (nog te implementeren)'); }
+function deleteOrder(id)   { if (confirm('Order #' + id + ' verwijderen?')) alert('Verwijderd (nog te implementeren)'); }
+
+
+// ============================================================
+//  BESTELFORMULIER  (index)
+// ============================================================
+
+function handlePackageForm(e) {
+    e.preventDefault();
+    const pkgId = new FormData(e.target).get('packages');
+    if (!pkgId) { alert('Selecteer eerst een pakket'); return; }
+    console.log('Bestelling pakket id:', pkgId);
+    alert('Bestelling geplaatst! (nog te implementeren in backend)');
+}
+
+function handleCustomForm(e) {
+    e.preventDefault();
+    syncVisibleToHidden();
+
+    const order = {
+        grass:    document.getElementById('grass').value    || 0,
+        tiles:    document.getElementById('tiles').value    || 0,
+        hedge:    document.getElementById('hedge').value    || 0,
+        options1: document.getElementById('options1').value || ''
+    };
+    console.log('Offerte aangevraagd:', order);
+    alert('Offerte aangevraagd! We nemen spoedig contact op.');
+}
+
+
+// ============================================================
+//  PRIJSSCHATTER  (index)
+// ============================================================
+
 function syncVisibleToHidden() {
-    var map = { grassV: 'grass', tilesV: 'tiles', hedgeV: 'hedge', options1V: 'options1' };
-    Object.keys(map).forEach(function (visId) {
-        var vis    = document.getElementById(visId);
-        var hidden = document.getElementById(map[visId]);
-        if (vis && hidden) hidden.value = vis.value;
+    const map = { grassV: 'grass', tilesV: 'tiles', hedgeV: 'hedge', options1V: 'options1' };
+    Object.entries(map).forEach(([visId, hidId]) => {
+        const vis = document.getElementById(visId);
+        const hid = document.getElementById(hidId);
+        if (vis && hid) hid.value = vis.value;
     });
 }
 
 function updateCalc() {
     syncVisibleToHidden();
 
-    var g = parseFloat(document.getElementById('grassV').value)  || 0;
-    var t = parseFloat(document.getElementById('tilesV').value)  || 0;
-    var h = parseFloat(document.getElementById('hedgeV').value)  || 0;
+    const g  = parseFloat(document.getElementById('grassV')?.value)  || 0;
+    const t  = parseFloat(document.getElementById('tilesV')?.value)  || 0;
+    const h  = parseFloat(document.getElementById('hedgeV')?.value)  || 0;
+    const gp = g * rates.gras;
+    const tp = t * rates.tegels;
+    const hp = h * rates.heg;
 
-    var gp = g * rates.grass;
-    var tp = t * rates.tiles;
-    var hp = h * rates.hedge;
-
-    setText('eGM', g);
-    setText('eTM', t);
-    setText('eHM', h);
-    setText('eGP', fmt(gp));
-    setText('eTP', fmt(tp));
-    setText('eHP', fmt(hp));
+    setText('eGM',  g);
+    setText('eTM',  t);
+    setText('eHM',  h);
+    setText('eGP',  fmt(gp));
+    setText('eTP',  fmt(tp));
+    setText('eHP',  fmt(hp));
     setText('eTot', fmt(gp + tp + hp));
 }
 
-function setText(id, val) {
-    var el = document.getElementById(id);
-    if (el) el.textContent = val;
-}
-
 function initPriceCalc() {
-    ['grassV', 'tilesV', 'hedgeV'].forEach(function (id) {
-        var el = document.getElementById(id);
+    ['grassV', 'tilesV', 'hedgeV'].forEach(id => {
+        const el = document.getElementById(id);
         if (el) el.addEventListener('input', updateCalc);
     });
-
-    var opt = document.getElementById('options1V');
-    if (opt) {
-        opt.addEventListener('input', function () {
-            var hidden = document.getElementById('options1');
-            if (hidden) hidden.value = opt.value;
-        });
-    }
+    const opt1 = document.getElementById('options1V');
+    if (opt1) opt1.addEventListener('input', () => {
+        const h = document.getElementById('options1');
+        if (h) h.value = opt1.value;
+    });
 }
 
+
 // ============================================================
-//  CALENDAR
+//  KALENDER
 // ============================================================
 
-var monthNames = [
+const MAANDEN = [
     'Januari','Februari','Maart','April','Mei','Juni',
     'Juli','Augustus','September','Oktober','November','December'
 ];
+const DAGEN = ['Zondag','Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Zaterdag'];
 
-// Simulate some busy days per "month-year" key
-var busyDays = {
+const busyDays = {
     '7-2025': [3, 10, 17, 24],
     '8-2025': [5, 12, 19, 26]
 };
 
-var currentMonth = new Date().getMonth();
-var currentYear  = new Date().getFullYear();
-var selectedDay  = null;
+let currentMonth = new Date().getMonth();
+let currentYear  = new Date().getFullYear();
+let selectedDay  = null;
 
 function renderCalendar() {
-    var label = document.getElementById('monthLabel');
+    const label = document.getElementById('monthLabel');
     if (!label) return;
 
-    label.innerHTML = monthNames[currentMonth] +
-        '<br><span class="month-year">' + currentYear + '</span>';
+    label.innerHTML = MAANDEN[currentMonth] + '<br><span class="month-year">' + currentYear + '</span>';
 
-    var daysList = document.getElementById('calendarDays');
-    daysList.innerHTML = '';
+    const list        = document.getElementById('calendarDays');
+    list.innerHTML    = '';
+    const firstDay    = new Date(currentYear, currentMonth, 1).getDay();
+    const offset      = firstDay === 0 ? 6 : firstDay - 1;
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const today       = new Date();
+    const busy        = busyDays[currentMonth + '-' + currentYear] || [];
 
-    var firstDay    = new Date(currentYear, currentMonth, 1).getDay();
-    var offset      = (firstDay === 0) ? 6 : firstDay - 1;
-    var daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    var today       = new Date();
-    var key         = currentMonth + '-' + currentYear;
-    var busy        = busyDays[key] || [];
-
-    for (var i = 0; i < offset; i++) {
-        var empty = document.createElement('li');
-        empty.classList.add('empty');
-        daysList.appendChild(empty);
+    for (let i = 0; i < offset; i++) {
+        const li = document.createElement('li');
+        li.className = 'empty';
+        list.appendChild(li);
     }
 
-    for (var d = 1; d <= daysInMonth; d++) {
-        var li      = document.createElement('li');
-        var dayDate = new Date(currentYear, currentMonth, d);
-        var isWeekend  = dayDate.getDay() === 0 || dayDate.getDay() === 6;
-        var isBusy     = busy.includes(d);
-        var isPast     = dayDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        var isToday    = dayDate.toDateString() === today.toDateString();
-        var isSelected = selectedDay &&
-                         selectedDay.d === d &&
-                         selectedDay.m === currentMonth &&
-                         selectedDay.y === currentYear;
+    for (let d = 1; d <= daysInMonth; d++) {
+        const li      = document.createElement('li');
+        const dayDate = new Date(currentYear, currentMonth, d);
+        const isWeekend  = dayDate.getDay() === 0 || dayDate.getDay() === 6;
+        const isBusy     = busy.includes(d);
+        const isPast     = dayDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const isToday    = dayDate.toDateString() === today.toDateString();
+        const isSelected = selectedDay &&
+                           selectedDay.d === d &&
+                           selectedDay.m === currentMonth &&
+                           selectedDay.y === currentYear;
 
         if (isToday)    li.classList.add('today');
         if (isSelected) li.classList.add('selected');
 
         if (isBusy || isWeekend || isPast) {
             li.classList.add('busy');
-            li.innerHTML = '<span>' + d + '</span>';
         } else {
             li.classList.add('available');
-            li.innerHTML = '<span>' + d + '</span>';
-            (function (day, month, year, date) {
-                li.addEventListener('click', function () {
-                    selectDay(day, month, year, date);
-                });
-            })(d, currentMonth, currentYear, dayDate);
+            li.addEventListener('click', () => selectDay(d, currentMonth, currentYear, dayDate));
         }
 
-        daysList.appendChild(li);
+        li.innerHTML = '<span>' + d + '</span>';
+        list.appendChild(li);
     }
 }
 
 function selectDay(d, m, y, dateObj) {
-    selectedDay = { d: d, m: m, y: y };
-
-    var panel = document.getElementById('bookingPanel');
+    selectedDay = { d, m, y };
+    const panel = document.getElementById('bookingPanel');
     if (!panel) return;
 
-    var dayNames = ['Zondag','Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Zaterdag'];
     panel.innerHTML =
-        '<h3>' + dayNames[dateObj.getDay()] + ' ' + d + ' ' + monthNames[m] + ' ' + y + '</h3>' +
+        '<h3>' + DAGEN[dateObj.getDay()] + ' ' + d + ' ' + MAANDEN[m] + ' ' + y + '</h3>' +
         '<p>Vul uw gegevens in om de afspraak te bevestigen.</p>' +
         '<div class="booking-form">' +
             '<input type="text" placeholder="Uw naam">' +
@@ -352,7 +565,7 @@ function selectDay(d, m, y, dateObj) {
 }
 
 function confirmBooking() {
-    var panel = document.getElementById('bookingPanel');
+    const panel = document.getElementById('bookingPanel');
     if (panel) {
         panel.innerHTML =
             '<h3>Afspraak aangevraagd!</h3>' +
@@ -369,35 +582,26 @@ function changeMonth(dir) {
     renderCalendar();
 }
 
+
 // ============================================================
-//  P5.JS GRASS BACKGROUND
+//  P5.JS GRAS ACHTERGROND
 // ============================================================
 
-var grass = [];
-var animationId;
+let grass = [];
+let animationId;
 
 function setup() {
     createCanvas(window.innerWidth, window.innerHeight);
-    var canvas = document.querySelector('canvas');
-    if (!canvas) return;
-    canvas.style.position = 'fixed';
-    canvas.style.top      = '0';
-    canvas.style.left     = '0';
-    canvas.style.zIndex   = '-1';
-    for (var i = 0; i < 20; i++) {
-        grass.push(new Grass(random(width)));
-    }
+    const c = document.querySelector('canvas');
+    if (!c) return;
+    c.style.cssText = 'position:fixed;top:0;left:0;z-index:-1;';
+    for (let i = 0; i < 20; i++) grass.push(new Grass(random(width)));
 }
 
 function draw() {
     background(255);
-    for (var g of grass) {
-        g.show();
-        g.update();
-    }
-    if (grass.length < 50) {
-        grass.push(new Grass(random(width)));
-    }
+    for (const g of grass) { g.show(); g.update(); }
+    if (grass.length < 50) grass.push(new Grass(random(width)));
 }
 
 class Grass {
@@ -407,85 +611,59 @@ class Grass {
         this.len   = random(15, 30);
         this.color = color(34, 139, 34);
     }
-    show() {
-        stroke(this.color);
-        strokeWeight(2);
-        line(this.pos.x, this.pos.y, this.pos.x, this.pos.y - this.len);
-    }
-    update() {
-        this.pos.add(this.vel);
-        if (this.pos.y > height + 100) grass.shift();
-    }
+    show()   { stroke(this.color); strokeWeight(2); line(this.pos.x, this.pos.y, this.pos.x, this.pos.y - this.len); }
+    update() { this.pos.add(this.vel); if (this.pos.y > height + 100) grass.shift(); }
 }
 
-// ============================================================
-//  SPITFIRE  (easter egg)
-// ============================================================
-
 function fly() {
-    var elem = document.getElementById('spitfire');
+    const elem = document.getElementById('spitfire');
     if (!elem) return;
-
     elem.style.position = 'absolute';
-    var angle   = 0;
-    var centerX = window.innerWidth  / 2 - 50;
-    var centerY = window.innerHeight / 2 - 50;
-    var radiusX = 200;
-    var radiusY = 100;
-
+    let angle = 0;
+    const cx = window.innerWidth / 2 - 50, cy = window.innerHeight / 2 - 50;
     if (animationId) cancelAnimationFrame(animationId);
-
     function animate() {
-        if (angle >= 8 * Math.PI) {
-            elem.style.position = '';
-            elem.style.top      = '';
-            elem.style.left     = '';
-            return;
-        }
+        if (angle >= 8 * Math.PI) { elem.style.cssText = ''; return; }
         angle += 0.05;
-        elem.style.left = (centerX + radiusX * Math.sin(angle))      + 'px';
-        elem.style.top  = (centerY + radiusY * Math.sin(2 * angle))  + 'px';
+        elem.style.left = (cx + 200 * Math.sin(angle))     + 'px';
+        elem.style.top  = (cy + 100 * Math.sin(2 * angle)) + 'px';
         animationId = requestAnimationFrame(animate);
     }
     animate();
 }
 
-// ============================================================
-//  ADMIN SECTION INIT
-// ============================================================
-
-function initAdmin() {
-    // Default to orders section
-    showSection('orders');
-}
 
 // ============================================================
-//  BOOT
+//  HULPFUNCTIES
 // ============================================================
 
-document.addEventListener('DOMContentLoaded', function () {
-    // --- Index page ---
-    initPopup();
-    loadPackages();
-    initPriceCalc();
+function fmt(n)        { return Number(n).toFixed(2).replace('.', ','); }
+function setText(id, v){ const el = document.getElementById(id); if (el) el.textContent = v; }
+function setVal(id, v) { const el = document.getElementById(id); if (el && v !== undefined) el.value = v; }
 
-    var packageForm = document.getElementById('packageForm');
-    var customForm  = document.getElementById('customForm');
-    if (packageForm) packageForm.addEventListener('submit', handlePackageForm);
-    if (customForm)  customForm.addEventListener('submit', handleCustomForm);
 
-    // Show standaard tab by default on index
-    if (document.getElementById('standaard')) {
+// ============================================================
+//  OPSTARTEN
+// ============================================================
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const isAdmin = document.body.classList.contains('admin-body');
+
+    if (isAdmin) {
+        await Promise.all([ loadPackages(), loadOrders(), loadTarieven() ]);
+        showSection('orders');
+    } else {
+        initPopup();
+        initPriceCalc();
+
+        await Promise.all([ loadDiensten(), loadPackages(), loadTarieven() ]);
+
+        const packageForm = document.getElementById('packageForm');
+        const customForm  = document.getElementById('customForm');
+        if (packageForm) packageForm.addEventListener('submit', handlePackageForm);
+        if (customForm)  customForm.addEventListener('submit', handleCustomForm);
+
         showSection('standaard');
-    }
-
-    // Render calendar if present
-    if (document.getElementById('calendarDays')) {
-        renderCalendar();
-    }
-
-    // --- Admin page ---
-    if (document.querySelector('.admin-body')) {
-        initAdmin();
+        if (document.getElementById('calendarDays')) renderCalendar();
     }
 });

@@ -26,7 +26,7 @@
     <nav>
         <ul>
             <div class="nav-label">Beheer</div>
-            <button id="nav-orders"   onclick="showSection('orders')"   class="nav-active">Orders</button>
+            <button id="nav-orders"   onclick="showSection('orders')">Orders</button>
             <button id="nav-paketten" onclick="showSection('paketten')">Paketten</button>
             <button id="nav-tarieven" onclick="showSection('tarieven')">Tarieven</button>
         </ul>
@@ -42,38 +42,25 @@
                     <h2>Orders</h2>
                     <p>Overzicht van alle opdrachten</p>
                 </div>
-                <button class="btn btn-solid">+ Nieuwe order</button>
+                <button class="btn btn-solid" onclick="openNewOrderForm()">+ Nieuwe order</button>
             </div>
 
-            <div class="stats-row">
-                <div class="stat-card">
-                    <div class="stat-label">Nieuw</div>
-                    <div class="stat-value">3</div>
-                    <div class="stat-sub warn">Wacht op verwerking</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Ingepland</div>
-                    <div class="stat-value">7</div>
-                    <div class="stat-sub ok">Deze week</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Afgerond</div>
-                    <div class="stat-value">41</div>
-                    <div class="stat-sub ok">Deze maand</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Omzet</div>
-                    <div class="stat-value">&euro;4.2k</div>
-                    <div class="stat-sub ok">+12% vs vorige maand</div>
-                </div>
+            <!--
+                Stats filled by loadOrders() from data/orders.json
+            -->
+            <div class="stats-row" id="orderStats">
+                <!-- JS renders stat cards here -->
             </div>
 
             <div class="table-card">
                 <div class="table-card-head">
                     <h3>Alle orders</h3>
-                    <input type="search" placeholder="Zoek op naam of ID...">
+                    <input type="search" id="orderSearch" placeholder="Zoek op naam of ID...">
                 </div>
-                <table border="1">
+                <!--
+                    Table body filled by loadOrders() from data/orders.json
+                -->
+                <table>
                     <thead>
                         <tr>
                             <th>Order ID</th>
@@ -84,40 +71,8 @@
                             <th>Acties</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>#001</strong></td>
-                            <td>Maria van den Berg</td>
-                            <td>Gazon + heg, 45&nbsp;m&sup2;</td>
-                            <td>&euro;&nbsp;89,00</td>
-                            <td><span class="badge badge-blue">In behandeling</span></td>
-                            <td class="td-btns">
-                                <button class="btn btn-warn btn-sm">Inplannen</button>
-                                <button class="btn btn-ghost btn-sm">Bewerken</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>#002</strong></td>
-                            <td>Pieter Jansen</td>
-                            <td>Custom: 60&nbsp;m&sup2; gras, 20&nbsp;m heg</td>
-                            <td>&euro;&nbsp;122,00</td>
-                            <td><span class="badge badge-yellow">Wachtend</span></td>
-                            <td class="td-btns">
-                                <button class="btn btn-solid btn-sm">Afgerond</button>
-                                <button class="btn btn-ghost btn-sm">Bewerken</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>#003</strong></td>
-                            <td>Sandra de Boer</td>
-                            <td>Compleet pakket, seizoensonderhoud</td>
-                            <td>&euro;&nbsp;139,00</td>
-                            <td><span class="badge badge-green">Klaar</span></td>
-                            <td class="td-btns">
-                                <button class="btn btn-ghost btn-sm">Factuur</button>
-                                <button class="btn btn-danger btn-sm">Verwijder</button>
-                            </td>
-                        </tr>
+                    <tbody id="ordersTableBody">
+                        <!-- JS renders rows here -->
                     </tbody>
                 </table>
             </div>
@@ -134,7 +89,10 @@
                 <div class="table-card-head">
                     <h3>Actieve pakketten</h3>
                 </div>
-                <table border="1">
+                <!--
+                    Table body filled by loadPackages() from data/packages.json
+                -->
+                <table>
                     <thead>
                         <tr>
                             <th>Naam</th>
@@ -146,27 +104,27 @@
                         </tr>
                     </thead>
                     <tbody id="packageTableBody">
-                        <!-- populated by loadPackages() in main.js -->
+                        <!-- JS renders rows here -->
                     </tbody>
                 </table>
             </div>
 
             <div class="form-card">
                 <h3>Nieuw pakket toevoegen</h3>
-                <form onsubmit="event.preventDefault()">
+                <form id="newPackageForm" onsubmit="event.preventDefault(); handleNewPackage();">
                     <fieldset>
                         <legend>Nieuw Pakket</legend>
                         <div class="form-p">
                             <label for="naam">Naam:</label>
-                            <input type="text"   id="naam"         name="naam"         placeholder="Pakketnaam">
+                            <input type="text"   id="naam"         name="naam"         placeholder="Pakketnaam" required>
                         </div>
                         <div class="form-p">
                             <label for="beschrijving">Beschrijving:</label>
-                            <input type="text"   id="beschrijving" name="beschrijving" placeholder="Korte omschrijving">
+                            <input type="text"   id="beschrijving" name="beschrijving" placeholder="Korte omschrijving" required>
                         </div>
                         <div class="form-p">
                             <label for="prijs">Prijs (&euro;):</label>
-                            <input type="number" id="prijs"        name="prijs"        placeholder="0.00" step="0.01">
+                            <input type="number" id="prijs"        name="prijs"        placeholder="0.00" step="0.01" required>
                         </div>
                         <button type="submit" class="btn btn-solid">Toevoegen</button>
                     </fieldset>
@@ -183,41 +141,33 @@
 
             <div class="form-card">
                 <h3>Tarieven per eenheid</h3>
-                <form onsubmit="event.preventDefault()">
-
-                    <!-- Hidden inputs for JS compatibility -->
-                    <table class="js-hidden">
-                        <tr>
-                            <td><label for="gras">Prijs per m&sup2; Gras</label></td>
-                            <td><input type="text" id="gras"></td>
-                            <td><label for="tegels">Prijs per m&sup2; Tegels</label></td>
-                            <td><input type="text" id="tegels"></td>
-                        </tr>
-                    </table>
-
+                <!--
+                    Input values filled by loadTarieven() from data/tarieven.json.
+                    On save, writeTarieven() writes back to the JSON.
+                -->
+                <form id="tarievenForm" onsubmit="event.preventDefault(); saveTarieven();">
                     <div class="tarief-grid">
                         <div class="tarief-item">
-                            <label for="grasV">Prijs per m&sup2; gras</label>
-                            <input type="number" id="grasV"       value="1.20" step="0.01">
+                            <label for="tGras">Prijs per m&sup2; gras</label>
+                            <input type="number" id="tGras"      step="0.01" placeholder="0.00">
                             <small>&euro; per vierkante meter</small>
                         </div>
                         <div class="tarief-item">
-                            <label for="tegelsV">Prijs per m&sup2; tegels</label>
-                            <input type="number" id="tegelsV"     value="0.80" step="0.01">
+                            <label for="tTegels">Prijs per m&sup2; tegels</label>
+                            <input type="number" id="tTegels"    step="0.01" placeholder="0.00">
                             <small>&euro; per vierkante meter</small>
                         </div>
                         <div class="tarief-item">
-                            <label for="hegV">Prijs per m heg</label>
-                            <input type="number" id="hegV"        value="2.50" step="0.01">
+                            <label for="tHeg">Prijs per m heg</label>
+                            <input type="number" id="tHeg"       step="0.01" placeholder="0.00">
                             <small>&euro; per strekkende meter</small>
                         </div>
                         <div class="tarief-item">
-                            <label for="uurtariefV">Uurtarief maatwerk</label>
-                            <input type="number" id="uurtariefV"  value="45.00" step="0.01">
+                            <label for="tUurtarief">Uurtarief maatwerk</label>
+                            <input type="number" id="tUurtarief" step="0.01" placeholder="0.00">
                             <small>&euro; per uur</small>
                         </div>
                     </div>
-
                     <button type="submit" class="btn btn-solid">Tarieven opslaan</button>
                 </form>
             </div>
