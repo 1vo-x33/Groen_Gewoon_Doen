@@ -64,6 +64,7 @@ h1, h2, h3 {
 
 .btn-sm  { padding: 6px 14px; font-size: 13px; }
 .btn-lg  { padding: 12px 40px; font-size: 15px; }
+.btn-full { width: 100%; text-align: center; }
 
 .btn-solid {
     background: var(--green);
@@ -164,6 +165,14 @@ h1, h2, h3 {
     gap: 14px;
     align-items: flex-end;
     flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+/* Vertical form column for pakket bestelformulier */
+.form-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
     margin-top: 14px;
 }
 
@@ -586,6 +595,76 @@ nav ul button.tab-active { color: var(--green); border-bottom-color: var(--green
 }
 
 /* ============================================================
+   ORDER + CALENDAR SIDE-BY-SIDE LAYOUT
+   ============================================================ */
+
+.order-with-cal {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 24px;
+    align-items: start;
+    margin-top: 20px;
+}
+
+/* ============================================================
+   INLINE CALENDAR
+   ============================================================ */
+
+.inline-cal-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.inline-cal-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--muted);
+    padding-bottom: 4px;
+}
+
+.cal-legend-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.cal-legend-inline span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* ============================================================
+   CHOSEN DATE DISPLAY
+   ============================================================ */
+
+.chosen-date-display {
+    padding: 9px 12px;
+    border: 1.5px dashed var(--border);
+    border-radius: 4px;
+    background: var(--white);
+    font-size: 13px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.no-date {
+    color: var(--muted);
+    font-style: italic;
+}
+
+.date-chosen {
+    color: var(--green-dark);
+    font-weight: 600;
+}
+
+/* ============================================================
    CUSTOM OFFERTE FORM  (index)
    ============================================================ */
 
@@ -635,27 +714,10 @@ nav ul button.tab-active { color: var(--green); border-bottom-color: var(--green
 }
 
 /* ============================================================
-   CALENDAR SECTION  (index)
+   CALENDAR (shared styles for both inline calendars)
    ============================================================ */
 
-.cal-section {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 0 40px 60px;
-}
-
-.cal-head { margin-bottom: 20px; padding-top: 48px; }
-.cal-head h2 { font-size: 24px; color: var(--green-dark); }
-.cal-head p  { color: var(--muted); font-size: 14px; margin-top: 4px; }
-
-.calendar-wrapper {
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-}
-
 .calendar {
-    flex: 1;
     border: 1px solid var(--border);
     border-radius: 4px;
     overflow: hidden;
@@ -681,33 +743,33 @@ nav ul button.tab-active { color: var(--green); border-bottom-color: var(--green
 
 .month ul li {
     color: var(--white);
-    font-size: 15px;
+    font-size: 14px;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 1px;
     font-weight: 600;
 }
 
-.month-year { font-size: 15px; }
+.month-year { font-size: 13px; }
 
 .month .prev,
 .month .next {
     position: absolute;
     cursor: pointer;
-    font-size: 15px;
-    padding: 4px 12px;
+    font-size: 13px;
+    padding: 4px 10px;
     border-radius: 3px;
     letter-spacing: 0;
     transition: background 0.15s;
 }
-.month .prev { left: 8px; }
-.month .next { right: 8px; }
+.month .prev { left: 4px; }
+.month .next { right: 4px; }
 .month .prev:hover,
 .month .next:hover { background: rgba(255, 255, 255, 0.15); }
 
 /* Weekday labels */
 .weekdays {
     margin: 0;
-    padding: 8px 6px;
+    padding: 6px 4px;
     background: var(--green-light);
     list-style: none;
     display: grid;
@@ -717,22 +779,22 @@ nav ul button.tab-active { color: var(--green); border-bottom-color: var(--green
 
 .weekdays li {
     text-align: center;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     color: var(--green-dark);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
 }
 
 /* Day grid */
 .days {
-    padding: 8px 6px;
+    padding: 6px 4px;
     background: var(--white);
     margin: 0;
     list-style: none;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 3px;
+    gap: 2px;
 }
 
 .days li {
@@ -740,8 +802,8 @@ nav ul button.tab-active { color: var(--green); border-bottom-color: var(--green
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
-    min-height: 38px;
+    font-size: 13px;
+    min-height: 32px;
     border-radius: 3px;
     color: var(--text);
 }
@@ -777,85 +839,17 @@ nav ul button.tab-active { color: var(--green); border-bottom-color: var(--green
     border-color: var(--green-dark) !important;
 }
 
-/* Calendar sidebar */
-.calendar-sidebar {
-    width: 210px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.calendar-legend {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 14px;
-}
-
-.calendar-legend h3 {
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--muted);
-    margin-bottom: 10px;
-}
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    margin-bottom: 6px;
-}
-
+/* Legend dots */
 .dot {
     display: inline-block;
-    width: 12px;
-    height: 12px;
+    width: 11px;
+    height: 11px;
     border-radius: 2px;
     flex-shrink: 0;
 }
 .dot-available { background: var(--green-light); border: 1.5px solid #c0d8c8; }
 .dot-selected  { background: var(--green); }
 .dot-busy      { background: #f5f5f5; border: 1px solid #e8e8e8; }
-
-.calendar-booking {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 14px;
-    font-size: 13px;
-    color: var(--muted);
-}
-.calendar-booking h3 { font-size: 14px; color: var(--text); font-weight: 700; margin-bottom: 8px; font-family: 'Source Sans 3', sans-serif; }
-.calendar-booking p  { margin-bottom: 10px; line-height: 1.5; }
-
-.booking-form input {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1.5px solid var(--border);
-    border-radius: 3px;
-    font-size: 13px;
-    font-family: 'Source Sans 3', sans-serif;
-    margin-bottom: 8px;
-}
-
-.booking-form button {
-    width: 100%;
-    background: var(--green);
-    color: var(--white);
-    border: none;
-    padding: 9px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 700;
-    font-family: 'Source Sans 3', sans-serif;
-}
-.booking-form button:hover { background: var(--green-dark); }
 
 /* ============================================================
    CONTACT BAND  (index)
@@ -940,7 +934,6 @@ header button:hover { background: rgba(255, 255, 255, 0.18); color: var(--white)
     min-height: calc(100vh - 60px);
 }
 
-/* Admin sidebar nav */
 .admin-body nav {
     width: 200px;
     background: var(--white);
@@ -1178,8 +1171,7 @@ header button:hover { background: rgba(255, 255, 255, 0.18); color: var(--white)
 @media (max-width: 800px) {
     .diensten          { grid-template-columns: 1fr 1fr; }
     .custom-grid       { grid-template-columns: 1fr; }
-    .calendar-wrapper  { flex-direction: column; }
-    .calendar-sidebar  { width: 100%; }
+    .order-with-cal    { grid-template-columns: 1fr; }
     .hdr-links         { display: none; }
     .contact-band      { flex-direction: column; text-align: center; }
     .stats-row         { grid-template-columns: 1fr 1fr; }
@@ -1189,7 +1181,7 @@ header button:hover { background: rgba(255, 255, 255, 0.18); color: var(--white)
 
 @media (max-width: 560px) {
     .topbar, .site-header, .wrap,
-    .cal-section, .hero, .contact-band,
+    .hero, .contact-band,
     .diensten-wrap { padding-left: 20px; padding-right: 20px; }
     .diensten      { grid-template-columns: 1fr; }
     .stats-row     { grid-template-columns: 1fr; }
