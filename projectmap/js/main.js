@@ -283,7 +283,7 @@ function openNewOrderForm() {
 // ... (rest of the code remains the same)
 
 // ============================================================
-//  TARIEVEN  (index + admin) — data/rates.json
+//  TARIEVEN  (index + admin) — data/tarieven.json
 //  Velden: { gras, tegels, heg, uurtarief }
 // ============================================================
 
@@ -291,8 +291,8 @@ var rates = { gras: 0, tegels: 0, heg: 0, uurtarief: 0 };
 
 async function loadTarieven() {
     try {
-        const res      = await fetch('./data/rates.json');
-        if (!res.ok) throw new Error('rates.json niet gevonden');
+        const res      = await fetch('./data/tarieven.json');
+        if (!res.ok) throw new Error('tarieven.json niet gevonden');
         const tarieven = await res.json();
 
         rates.gras      = tarieven.gras      || 0;
@@ -313,43 +313,6 @@ async function loadTarieven() {
     } catch (err) {
         console.error('Fout bij laden tarieven:', err);
     }
-}
-
-async function loadRates() {
-    try {
-        const res   = await fetch('./data/rates.json');
-        if (!res.ok) throw new Error('rates.json niet gevonden');
-        const rates = await res.json();
-
-        // Store rates globally so calculateQuote() can use them
-        window.rates = rates;
-
-        // Display rates in the HTML
-        // TODO: Update eGRate with rates.gras
-        // TODO: Update eTRate with rates.tegels
-        // TODO: Update eHRate with rates.heg
-
-        // Trigger calculation
-        calculateQuote();
-
-    } catch (err) {
-        console.error('Fout bij laden rates:', err);
-    }
-}
-
-function calculateQuote() {
-    // Get input values
-
-    const grassV = parseFloat(document.getElementById('grassV').value) || 0;
-    const tilesV = parseFloat(document.getElementById('tilesV').value) || 0;
-    const hedgeV = parseFloat(document.getElementById('hedgeV').value) || 0;
-
-     // Get rates (from window.rates set by loadRates)
-    const rates = window.rates || { gras: 0, tegels: 0, heg: 0 };
-
-    // TODO: Calculate totals
-    // TODO: Update HTML elements with amounts and prices
-    // TODO: Calculate and show grand total
 }
 
 function saveTarieven() {
