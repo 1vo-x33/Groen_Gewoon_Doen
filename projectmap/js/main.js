@@ -192,33 +192,90 @@ function selectPkg(id) {
     if (form) form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-function editPackage(id)          { alert('Bewerken: pakket #' + id + ' (nog te implementeren)'); }
-function deletePackage(id, naam)  { if (confirm('Verwijder pakket "' + naam + '"?')) alert('Verwijderd (nog te implementeren)'); }
-function viewPackageQuestions(id) { alert('Vragen voor pakket #' + id + ' (nog te implementeren)'); }
+async function editPackage(id) {
+    const naam = prompt('Nieuwe naam:');
+    if (!naam) return;
+    const beschrijving = prompt('Nieuwe beschrijving:');
+    const prijs = prompt('Nieuwe prijs (€):');
+    if (!prijs) return;
+    try {
+        const res = await fetch('/api/packages/' + id, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ naam, beschrijving, prijs: parseFloat(prijs) })
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert('Pakket bijgewerkt!');
+            loadPackages();
+        } else {
+            alert('Fout: ' + result.error);
+        }
+    } catch (err) {
+        console.error('Fout bij bewerken pakket:', err);
+        alert('Er is een fout opgetreden.');
+    }
+}
 
-function handleNewPackage() {
+async function deletePackage(id, naam) {
+    if (!confirm('Verwijder pakket "' + naam + '"?')) return;
+    try {
+        const res = await fetch('/api/packages/' + id, { method: 'DELETE' });
+        const result = await res.json();
+        if (result.success) {
+            alert('Pakket verwijderd!');
+            loadPackages();
+        } else {
+            alert('Fout: ' + result.error);
+        }
+    } catch (err) {
+        console.error('Fout bij verwijderen pakket:', err);
+        alert('Er is een fout opgetreden.');
+    }
+}
+function viewPackageQuestions(id)            { alert('Vragen voor pakket #' + id + ' (nog te implementeren)'); }
+
+async function handleNewPackage() {
     const naam         = document.getElementById('naam').value;
     const beschrijving = document.getElementById('beschrijving').value;
     const prijs        = document.getElementById('prijs').value;
-    console.log('Nieuw pakket:', { naam, beschrijving, prijs });
-    alert('Pakket "' + naam + '" toegevoegd (nog te implementeren in backend).');
+    try {
+        const res = await fetch('/api/packages/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ naam, beschrijving, prijs: parseFloat(prijs) })
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert('Pakket "' + naam + '" toegevoegd!');
+            document.getElementById('newPackageForm').reset();
+            loadPackages();
+        } else {
+            alert('Fout: ' + result.error);
+        }
+    } catch (err) {
+        console.error('Fout bij toevoegen pakket:', err);
+        alert('Er is een fout opgetreden.');
+    }
 }
 
 function openNewOrderForm() {
     alert('Nieuwe order formulier (nog te implementeren).');
 }
 
+// ... (rest of the code remains the same)
 
 // ============================================================
-//  TARIEVEN  (index + admin) — data/tarieven.json
+//  TARIEVEN  (index + admin) — data/rates.json
+//  Velden: { gras, tegels, heg, uurtarief }
 // ============================================================
 
 var rates = { gras: 0, tegels: 0, heg: 0, uurtarief: 0 };
 
 async function loadTarieven() {
     try {
-        const res      = await fetch('./data/tarieven.json');
-        if (!res.ok) throw new Error('tarieven.json niet gevonden');
+        const res      = await fetch('./data/rates.json');
+        if (!res.ok) throw new Error('rates.json niet gevonden');
         const tarieven = await res.json();
 
         rates.gras      = tarieven.gras      || 0;
@@ -241,6 +298,43 @@ async function loadTarieven() {
     }
 }
 
+async function loadRates() {
+    try {
+        const res   = await fetch('./data/rates.json');
+        if (!res.ok) throw new Error('rates.json niet gevonden');
+        const rates = await res.json();
+
+        // Store rates globally so calculateQuote() can use them
+        window.rates = rates;
+
+        // Display rates in the HTML
+        // TODO: Update eGRate with rates.gras
+        // TODO: Update eTRate with rates.tegels
+        // TODO: Update eHRate with rates.heg
+
+        // Trigger calculation
+        calculateQuote();
+
+    } catch (err) {
+        console.error('Fout bij laden rates:', err);
+    }
+}
+
+function calculateQuote() {
+    // Get input values
+
+    const grassV = parseFloat(document.getElementById('grassV').value) || 0;
+    const tilesV = parseFloat(document.getElementById('tilesV').value) || 0;
+    const hedgeV = parseFloat(document.getElementById('hedgeV').value) || 0;
+
+     // Get rates (from window.rates set by loadRates)
+    const rates = window.rates || { gras: 0, tegels: 0, heg: 0 };
+
+    // TODO: Calculate totals
+    // TODO: Update HTML elements with amounts and prices
+    // TODO: Calculate and show grand total
+}
+
 function saveTarieven() {
     const data = {
         gras:      parseFloat(document.getElementById('tGras').value)      || 0,
@@ -248,14 +342,24 @@ function saveTarieven() {
         heg:       parseFloat(document.getElementById('tHeg').value)       || 0,
         uurtarief: parseFloat(document.getElementById('tUurtarief').value) || 0
     };
-    console.log('Tarieven opslaan:', data);
-    alert('Tarieven opgeslagen (nog te implementeren in backend).\n' + JSON.stringify(data, null, 2));
+    try {
+        const res = await fetch('/api/tarieven', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert('Tarieven opgeslagen!');
+            rates = { ...data };
+        } else {
+            alert('Fout: ' + result.error);
+        }
+    } catch (err) {
+        console.error('Fout bij opslaan tarieven:', err);
+        alert('Er is een fout opgetreden bij het opslaan.');
+    }
 }
-
-
-// ============================================================
-//  ORDERS  (admin) — data/orders.json
-// ============================================================
 
 async function loadOrders() {
     const tbody    = document.getElementById('ordersTableBody');
