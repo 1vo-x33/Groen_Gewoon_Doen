@@ -66,6 +66,10 @@ function showSection(id) {
 // ============================================================
 //  DIENSTEN  (index) — data/diensten.json
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+//  Velden: { id, naam, beschrijving }
+>>>>>>> parent of 542de71 (Added tarieven.json and fixed agenda)
 =======
 //  Velden: { id, naam, beschrijving }
 >>>>>>> parent of 542de71 (Added tarieven.json and fixed agenda)
@@ -247,6 +251,7 @@ async function loadTarieven() {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 async function loadRates() {
     try {
         const res   = await fetch('./data/rates.json');
@@ -284,6 +289,8 @@ function calculateQuote() {
     // TODO: Calculate and show grand total
 }
 
+=======
+>>>>>>> parent of 542de71 (Added tarieven.json and fixed agenda)
 =======
 >>>>>>> parent of 542de71 (Added tarieven.json and fixed agenda)
 function saveTarieven() {
