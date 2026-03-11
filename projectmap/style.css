@@ -1130,7 +1130,18 @@ header button:hover { background: rgba(255, 255, 255, 0.18); color: var(--white)
     font-family: 'Source Sans 3', sans-serif;
     width: 240px;
 }
-.form-p input:focus { outline: none; border-color: var(--green); }
+.form-p input:invalid:not(:placeholder-shown),
+.tarief-item input:invalid:not(:placeholder-shown) {
+    border-color: var(--danger);
+    background: #fdf0ee;
+}
+
+/* Highlight empty required price fields */
+.form-p input:required:invalid,
+.tarief-item input:required:invalid {
+    border-color: var(--danger);
+    background: #fdf0ee;
+}
 
 /* ============================================================
    TARIEVEN GRID  (admin)
