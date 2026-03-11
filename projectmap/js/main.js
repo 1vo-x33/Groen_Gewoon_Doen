@@ -1,3 +1,20 @@
+// ============================================================
+//  GROEN & GEWOON DOEN — js/main.js
+//
+//  Verwachte data bestanden in ./data/
+//
+//  users.json      [ { id, username, password, role } ]
+//  packages.json   [ { id, naam, beschrijving, prijs } ]
+//  diensten.json   [ { id, naam, beschrijving } ]
+//  orders.json     [ { id, klant, pakket, details, offerte, status } ]
+//  tarieven.json   { gras, tegels, heg, uurtarief }
+// ============================================================
+
+
+// ============================================================
+//  LOGIN
+// ============================================================
+
 async function getInfo() {
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
@@ -7,6 +24,7 @@ async function getInfo() {
         if (!res.ok) throw new Error('Kon gebruikerslijst niet laden');
         const users = await res.json();
 
+        // users.json: [ { id, username, password, role } ]
         const user = users.find(u => u.username === username && u.password === password);
 
         if (user) {
@@ -53,27 +71,19 @@ function showSection(id) {
     const target = document.getElementById(id);
     if (target) { target.style.display = 'block'; target.classList.add('active'); }
 
+    // index tab buttons
     document.querySelectorAll('nav ul button[id^="tab-"]').forEach(b => b.classList.remove('tab-active'));
     const tab = document.getElementById('tab-' + id);
     if (tab) tab.classList.add('tab-active');
 
+    // admin sidebar buttons
     document.querySelectorAll('nav ul button[id^="nav-"]').forEach(b => b.classList.remove('nav-active'));
     const nav = document.getElementById('nav-' + id);
     if (nav) nav.classList.add('nav-active');
 }
 
 
-// ============================================================
-//  DIENSTEN  (index) — data/diensten.json
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-//  Velden: { id, naam, beschrijving }
->>>>>>> parent of 542de71 (Added tarieven.json and fixed agenda)
-=======
-//  Velden: { id, naam, beschrijving }
->>>>>>> parent of 542de71 (Added tarieven.json and fixed agenda)
-// ============================================================
+
 
 async function loadDiensten() {
     const grid = document.getElementById('dienstenGrid');
@@ -88,6 +98,7 @@ async function loadDiensten() {
         diensten.forEach(d => {
             const div = document.createElement('div');
             div.className = 'dienst';
+            // gebruik d.naam (niet d.titel)
             div.innerHTML =
                 '<div class="dienst-bar"></div>' +
                 '<h4>' + d.naam + '</h4>' +
@@ -103,6 +114,8 @@ async function loadDiensten() {
 
 // ============================================================
 //  PACKAGES  (index + admin) — data/packages.json
+//  Velden: { id, naam, beschrijving, prijs }
+//  Geen 'populair' veld — eerste pakket is standaard uitgelicht
 // ============================================================
 
 async function loadPackages() {
@@ -124,6 +137,7 @@ async function loadPackages() {
     }
 }
 
+// index: tabel met pakket-rijen
 function renderPackageTable(packages) {
     const tbody = document.getElementById('packageTableBody');
     if (!tbody) return;
@@ -132,6 +146,7 @@ function renderPackageTable(packages) {
     packages.forEach((pkg, index) => {
         const tr = document.createElement('tr');
 
+        // Markeer het middelste pakket als aanbevolen (of het eerste als er maar 1 is)
         const isAanbevolen = packages.length >= 3
             ? index === Math.floor(packages.length / 2)
             : index === 0;
@@ -159,6 +174,7 @@ function renderPackageTable(packages) {
     });
 }
 
+// index: <select> dropdown in bestelformulier
 function renderPackageSelect(packages) {
     const sel = document.getElementById('packages');
     if (!sel) return;
@@ -172,6 +188,7 @@ function renderPackageSelect(packages) {
     });
 }
 
+// admin: beheertabel
 function renderAdminPackageTable(packages) {
     const tbody = document.getElementById('packageTableBody');
     if (!tbody) return;
@@ -190,6 +207,7 @@ function renderAdminPackageTable(packages) {
     });
 }
 
+// Selecteer pakket via id, scroll naar bestelformulier
 function selectPkg(id) {
     const sel = document.getElementById('packages');
     if (!sel) return;
@@ -200,35 +218,82 @@ function selectPkg(id) {
     if (form) form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-<<<<<<< HEAD
-function editPackage(id)                     { alert('Bewerken: pakket #' + id + ' (nog te implementeren)'); }
-function deletePackage(id, naam)             { if (confirm('Verwijder pakket "' + naam + '"?')) alert('Verwijderd (nog te implementeren)'); }
-function viewPackageQuestions(id)            { alert('Vragen voor pakket #' + id + ' (nog te implementeren)'); }
-=======
-function editPackage(id)          { alert('Bewerken: pakket #' + id + ' (nog te implementeren)'); }
-function deletePackage(id, naam)  { if (confirm('Verwijder pakket "' + naam + '"?')) alert('Verwijderd (nog te implementeren)'); }
-function viewPackageQuestions(id) { alert('Vragen voor pakket #' + id + ' (nog te implementeren)'); }
->>>>>>> parent of cab1d92 (Merge branch 'development' of https://github.com/1vo-x33/Groen_Gewoon_Doen into development)
+async function editPackage(id) {
+    const naam = prompt('Nieuwe naam:');
+    if (!naam) return;
+    const beschrijving = prompt('Nieuwe beschrijving:');
+    const prijs = prompt('Nieuwe prijs (€):');
+    if (!prijs) return;
+    try {
+        const res = await fetch('/api/packages/' + id, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ naam, beschrijving, prijs: parseFloat(prijs) })
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert('Pakket bijgewerkt!');
+            loadPackages();
+        } else {
+            alert('Fout: ' + result.error);
+        }
+    } catch (err) {
+        console.error('Fout bij bewerken pakket:', err);
+        alert('Er is een fout opgetreden.');
+    }
+}
 
-function handleNewPackage() {
+async function deletePackage(id, naam) {
+    if (!confirm('Verwijder pakket "' + naam + '"?')) return;
+    try {
+        const res = await fetch('/api/packages/' + id, { method: 'DELETE' });
+        const result = await res.json();
+        if (result.success) {
+            alert('Pakket verwijderd!');
+            loadPackages();
+        } else {
+            alert('Fout: ' + result.error);
+        }
+    } catch (err) {
+        console.error('Fout bij verwijderen pakket:', err);
+        alert('Er is een fout opgetreden.');
+    }
+}
+function viewPackageQuestions(id)            { alert('Vragen voor pakket #' + id + ' (nog te implementeren)'); }
+
+async function handleNewPackage() {
     const naam         = document.getElementById('naam').value;
     const beschrijving = document.getElementById('beschrijving').value;
     const prijs        = document.getElementById('prijs').value;
-    console.log('Nieuw pakket:', { naam, beschrijving, prijs });
-    alert('Pakket "' + naam + '" toegevoegd (nog te implementeren in backend).');
+    try {
+        const res = await fetch('/api/packages/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ naam, beschrijving, prijs: parseFloat(prijs) })
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert('Pakket "' + naam + '" toegevoegd!');
+            document.getElementById('newPackageForm').reset();
+            loadPackages();
+        } else {
+            alert('Fout: ' + result.error);
+        }
+    } catch (err) {
+        console.error('Fout bij toevoegen pakket:', err);
+        alert('Er is een fout opgetreden.');
+    }
 }
 
 function openNewOrderForm() {
     alert('Nieuwe order formulier (nog te implementeren).');
 }
 
+// ... (rest of the code remains the same)
 
 // ============================================================
 //  TARIEVEN  (index + admin) — data/tarieven.json
-<<<<<<< HEAD
-=======
 //  Velden: { gras, tegels, heg, uurtarief }
->>>>>>> 1267fd0e25bd7b4b1d16ab152ceede1ea62496c1
 // ============================================================
 
 var rates = { gras: 0, tegels: 0, heg: 0, uurtarief: 0 };
@@ -244,10 +309,12 @@ async function loadTarieven() {
         rates.heg       = tarieven.heg       || 0;
         rates.uurtarief = tarieven.uurtarief || 0;
 
+        // Tarieven tonen in de prijsschatter (index)
         setText('eGRate', fmt(rates.gras));
         setText('eTRate', fmt(rates.tegels));
         setText('eHRate', fmt(rates.heg));
 
+        // Tarieven invullen in admin-formulier
         setVal('tGras',      tarieven.gras);
         setVal('tTegels',    tarieven.tegels);
         setVal('tHeg',       tarieven.heg);
@@ -259,74 +326,31 @@ async function loadTarieven() {
     }
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-async function loadRates() {
-    try {
-        const res   = await fetch('./data/rates.json');
-        if (!res.ok) throw new Error('rates.json niet gevonden');
-        const rates = await res.json();
-
-        // Store rates globally so calculateQuote() can use them
-        window.rates = rates;
-
-        // Display rates in the HTML
-        // TODO: Update eGRate with rates.gras
-        // TODO: Update eTRate with rates.tegels
-        // TODO: Update eHRate with rates.heg
-
-        // Trigger calculation
-        calculateQuote();
-
-    } catch (err) {
-        console.error('Fout bij laden rates:', err);
-    }
-}
-
-function calculateQuote() {
-    // Get input values
-
-    const grassV = parseFloat(document.getElementById('grassV').value) || 0;
-    const tilesV = parseFloat(document.getElementById('tilesV').value) || 0;
-    const hedgeV = parseFloat(document.getElementById('hedgeV').value) || 0;
-
-     // Get rates (from window.rates set by loadRates)
-    const rates = window.rates || { gras: 0, tegels: 0, heg: 0 };
-
-    // TODO: Calculate totals
-    // TODO: Update HTML elements with amounts and prices
-    // TODO: Calculate and show grand total
-}
-
-=======
->>>>>>> parent of 542de71 (Added tarieven.json and fixed agenda)
-=======
->>>>>>> parent of 542de71 (Added tarieven.json and fixed agenda)
-=======
->>>>>>> parent of cab1d92 (Merge branch 'development' of https://github.com/1vo-x33/Groen_Gewoon_Doen into development)
-=======
->>>>>>> 1267fd0e25bd7b4b1d16ab152ceede1ea62496c1
-function saveTarieven() {
+async function saveTarieven() {
     const data = {
         gras:      parseFloat(document.getElementById('tGras').value)      || 0,
         tegels:    parseFloat(document.getElementById('tTegels').value)    || 0,
         heg:       parseFloat(document.getElementById('tHeg').value)       || 0,
         uurtarief: parseFloat(document.getElementById('tUurtarief').value) || 0
     };
-    console.log('Tarieven opslaan:', data);
-    alert('Tarieven opgeslagen (nog te implementeren in backend).\n' + JSON.stringify(data, null, 2));
+    try {
+        const res = await fetch('/api/tarieven', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert('Tarieven opgeslagen!');
+            rates = { ...data };
+        } else {
+            alert('Fout: ' + result.error);
+        }
+    } catch (err) {
+        console.error('Fout bij opslaan tarieven:', err);
+        alert('Er is een fout opgetreden bij het opslaan.');
+    }
 }
-
-
-// ============================================================
-//  ORDERS  (admin) — data/orders.json
-<<<<<<< HEAD
-//  Velden: { id, klant, pakket, details, offerte, status }
-=======
->>>>>>> parent of cab1d92 (Merge branch 'development' of https://github.com/1vo-x33/Groen_Gewoon_Doen into development)
-// ============================================================
 
 async function loadOrders() {
     const tbody    = document.getElementById('ordersTableBody');
@@ -341,6 +365,7 @@ async function loadOrders() {
         renderOrderStats(orders, statsDiv);
         renderOrdersTable(orders, tbody);
 
+        // Live zoeken
         const searchInput = document.getElementById('orderSearch');
         if (searchInput) {
             searchInput.addEventListener('input', function () {
@@ -453,29 +478,23 @@ function deleteOrder(id)   { if (confirm('Order #' + id + ' verwijderen?')) aler
 function handlePackageForm(e) {
     e.preventDefault();
     const pkgId = new FormData(e.target).get('packages');
-    const date  = document.getElementById('orderDate').value;
     if (!pkgId) { alert('Selecteer eerst een pakket'); return; }
-    if (!date)  { alert('Selecteer eerst een datum in de kalender'); return; }
-    console.log('Bestelling pakket id:', pkgId, 'datum:', date);
-    alert('Bestelling geplaatst voor ' + date + '! (nog te implementeren in backend)');
+    console.log('Bestelling pakket id:', pkgId);
+    alert('Bestelling geplaatst! (nog te implementeren in backend)');
 }
 
 function handleCustomForm(e) {
     e.preventDefault();
     syncVisibleToHidden();
 
-    const date = document.getElementById('customDate').value;
-    if (!date) { alert('Selecteer eerst een datum in de kalender'); return; }
-
     const order = {
         grass:    document.getElementById('grass').value    || 0,
         tiles:    document.getElementById('tiles').value    || 0,
         hedge:    document.getElementById('hedge').value    || 0,
-        options1: document.getElementById('options1').value || '',
-        date:     date
+        options1: document.getElementById('options1').value || ''
     };
     console.log('Offerte aangevraagd:', order);
-    alert('Offerte aangevraagd voor ' + date + '! We nemen spoedig contact op.');
+    alert('Offerte aangevraagd! We nemen spoedig contact op.');
 }
 
 
@@ -525,8 +544,7 @@ function initPriceCalc() {
 
 
 // ============================================================
-//  KALENDER — twee onafhankelijke inline kalenders
-//  context: 'standaard' | 'custom'
+//  KALENDER
 // ============================================================
 
 const MAANDEN = [
@@ -540,36 +558,23 @@ const busyDays = {
     '8-2025': [5, 12, 19, 26]
 };
 
-// State per kalender
-const calState = {
-    standaard: {
-        month:    new Date().getMonth(),
-        year:     new Date().getFullYear(),
-        selected: null
-    },
-    custom: {
-        month:    new Date().getMonth(),
-        year:     new Date().getFullYear(),
-        selected: null
-    }
-};
+let currentMonth = new Date().getMonth();
+let currentYear  = new Date().getFullYear();
+let selectedDay  = null;
 
-function renderCalendar(context) {
-    const s        = calState[context];
-    const labelId  = 'monthLabel'  + capitalize(context);
-    const daysId   = 'calDays'     + capitalize(context);
-    const label    = document.getElementById(labelId);
-    const list     = document.getElementById(daysId);
-    if (!label || !list) return;
+function renderCalendar() {
+    const label = document.getElementById('monthLabel');
+    if (!label) return;
 
-    label.innerHTML = MAANDEN[s.month] + '<br><span class="month-year">' + s.year + '</span>';
+    label.innerHTML = MAANDEN[currentMonth] + '<br><span class="month-year">' + currentYear + '</span>';
 
+    const list        = document.getElementById('calendarDays');
     list.innerHTML    = '';
-    const firstDay    = new Date(s.year, s.month, 1).getDay();
+    const firstDay    = new Date(currentYear, currentMonth, 1).getDay();
     const offset      = firstDay === 0 ? 6 : firstDay - 1;
-    const daysInMonth = new Date(s.year, s.month + 1, 0).getDate();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     const today       = new Date();
-    const busy        = busyDays[s.month + '-' + s.year] || [];
+    const busy        = busyDays[currentMonth + '-' + currentYear] || [];
 
     for (let i = 0; i < offset; i++) {
         const li = document.createElement('li');
@@ -579,15 +584,15 @@ function renderCalendar(context) {
 
     for (let d = 1; d <= daysInMonth; d++) {
         const li      = document.createElement('li');
-        const dayDate = new Date(s.year, s.month, d);
+        const dayDate = new Date(currentYear, currentMonth, d);
         const isWeekend  = dayDate.getDay() === 0 || dayDate.getDay() === 6;
         const isBusy     = busy.includes(d);
         const isPast     = dayDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
         const isToday    = dayDate.toDateString() === today.toDateString();
-        const isSelected = s.selected &&
-                           s.selected.d === d &&
-                           s.selected.m === s.month &&
-                           s.selected.y === s.year;
+        const isSelected = selectedDay &&
+                           selectedDay.d === d &&
+                           selectedDay.m === currentMonth &&
+                           selectedDay.y === currentYear;
 
         if (isToday)    li.classList.add('today');
         if (isSelected) li.classList.add('selected');
@@ -596,7 +601,7 @@ function renderCalendar(context) {
             li.classList.add('busy');
         } else {
             li.classList.add('available');
-            li.addEventListener('click', () => selectDay(d, s.month, s.year, dayDate, context));
+            li.addEventListener('click', () => selectDay(d, currentMonth, currentYear, dayDate));
         }
 
         li.innerHTML = '<span>' + d + '</span>';
@@ -604,40 +609,89 @@ function renderCalendar(context) {
     }
 }
 
-function selectDay(d, m, y, dateObj, context) {
-    const s = calState[context];
-    s.selected = { d, m, y };
+function selectDay(d, m, y, dateObj) {
+    selectedDay = { d, m, y };
+    const panel = document.getElementById('bookingPanel');
+    if (!panel) return;
 
-    // Format date nicely
-    const dateStr = DAGEN[dateObj.getDay()] + ' ' + d + ' ' + MAANDEN[m] + ' ' + y;
-    const isoStr  = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    panel.innerHTML =
+        '<h3>' + DAGEN[dateObj.getDay()] + ' ' + d + ' ' + MAANDEN[m] + ' ' + y + '</h3>' +
+        '<p>Vul uw gegevens in om de afspraak te bevestigen.</p>' +
+        '<div class="booking-form">' +
+            '<input type="text" placeholder="Uw naam">' +
+            '<input type="tel"  placeholder="Telefoonnummer">' +
+            '<button onclick="confirmBooking()">Afspraak Bevestigen</button>' +
+        '</div>';
 
-    // Update the display box and hidden input
-    if (context === 'standaard') {
-        const display = document.getElementById('chosenDateStandaard');
-        const hidden  = document.getElementById('orderDate');
-        if (display) display.innerHTML = '<span class="date-chosen">✓ ' + dateStr + '</span>';
-        if (hidden)  hidden.value = isoStr;
-    } else {
-        const display = document.getElementById('chosenDateCustom');
-        const hidden  = document.getElementById('customDate');
-        if (display) display.innerHTML = '<span class="date-chosen">✓ ' + dateStr + '</span>';
-        if (hidden)  hidden.value = isoStr;
+    renderCalendar();
+}
+
+function confirmBooking() {
+    const panel = document.getElementById('bookingPanel');
+    if (panel) {
+        panel.innerHTML =
+            '<h3>Afspraak aangevraagd!</h3>' +
+            '<p>We nemen zo snel mogelijk contact met u op om de afspraak te bevestigen.</p>';
     }
-
-    renderCalendar(context);
+    selectedDay = null;
+    renderCalendar();
 }
 
-function changeMonth(dir, context) {
-    const s = calState[context];
-    s.month += dir;
-    if (s.month > 11) { s.month = 0; s.year++; }
-    if (s.month < 0)  { s.month = 11; s.year--; }
-    renderCalendar(context);
+function changeMonth(dir) {
+    currentMonth += dir;
+    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    if (currentMonth < 0)  { currentMonth = 11; currentYear--; }
+    renderCalendar();
 }
 
-function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+
+// ============================================================
+//  P5.JS GRAS ACHTERGROND
+// ============================================================
+
+let grass = [];
+let animationId;
+
+function setup() {
+    createCanvas(window.innerWidth, window.innerHeight);
+    const c = document.querySelector('canvas');
+    if (!c) return;
+    c.style.cssText = 'position:fixed;top:0;left:0;z-index:-1;';
+    for (let i = 0; i < 20; i++) grass.push(new Grass(random(width)));
+}
+
+function draw() {
+    background(255);
+    for (const g of grass) { g.show(); g.update(); }
+    if (grass.length < 50) grass.push(new Grass(random(width)));
+}
+
+class Grass {
+    constructor(x) {
+        this.pos   = createVector(x, random(-30, 0));
+        this.vel   = createVector(0, random(7, 10));
+        this.len   = random(15, 30);
+        this.color = color(34, 139, 34);
+    }
+    show()   { stroke(this.color); strokeWeight(2); line(this.pos.x, this.pos.y, this.pos.x, this.pos.y - this.len); }
+    update() { this.pos.add(this.vel); if (this.pos.y > height + 100) grass.shift(); }
+}
+
+function fly() {
+    const elem = document.getElementById('spitfire');
+    if (!elem) return;
+    elem.style.position = 'absolute';
+    let angle = 0;
+    const cx = window.innerWidth / 2 - 50, cy = window.innerHeight / 2 - 50;
+    if (animationId) cancelAnimationFrame(animationId);
+    function animate() {
+        if (angle >= 8 * Math.PI) { elem.style.cssText = ''; return; }
+        angle += 0.05;
+        elem.style.left = (cx + 200 * Math.sin(angle))     + 'px';
+        elem.style.top  = (cy + 100 * Math.sin(2 * angle)) + 'px';
+        animationId = requestAnimationFrame(animate);
+    }
+    animate();
 }
 
 
@@ -672,9 +726,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (customForm)  customForm.addEventListener('submit', handleCustomForm);
 
         showSection('standaard');
-
-        // Render both inline calendars
-        renderCalendar('standaard');
-        renderCalendar('custom');
+        if (document.getElementById('calendarDays')) renderCalendar();
     }
 });
