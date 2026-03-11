@@ -225,6 +225,10 @@ function openNewOrderForm() {
 
 // ============================================================
 //  TARIEVEN  (index + admin) — data/tarieven.json
+<<<<<<< HEAD
+=======
+//  Velden: { gras, tegels, heg, uurtarief }
+>>>>>>> 1267fd0e25bd7b4b1d16ab152ceede1ea62496c1
 // ============================================================
 
 var rates = { gras: 0, tegels: 0, heg: 0, uurtarief: 0 };
@@ -255,6 +259,7 @@ async function loadTarieven() {
     }
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -301,6 +306,8 @@ function calculateQuote() {
 >>>>>>> parent of 542de71 (Added tarieven.json and fixed agenda)
 =======
 >>>>>>> parent of cab1d92 (Merge branch 'development' of https://github.com/1vo-x33/Groen_Gewoon_Doen into development)
+=======
+>>>>>>> 1267fd0e25bd7b4b1d16ab152ceede1ea62496c1
 function saveTarieven() {
     const data = {
         gras:      parseFloat(document.getElementById('tGras').value)      || 0,
