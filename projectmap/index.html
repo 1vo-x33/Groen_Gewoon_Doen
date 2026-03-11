@@ -23,7 +23,6 @@
         <a href="#diensten">Diensten</a>
         <a href="#pakketten">Pakketten</a>
         <a href="#offerte">Offerte</a>
-        <a href="#agenda">Afspraak</a>
     </div>
     <div class="hdr-actions">
         <a href="#" id="button" class="btn btn-outline">Inloggen</a>
@@ -86,10 +85,6 @@
     <!-- STANDAARD PAKKETTEN -->
     <section id="standaard" class="admin-section">
 
-        <!--
-            Package table — filled by loadPackages() from data/packages.json.
-            thead stays in HTML; tbody is rendered by JS.
-        -->
         <table class="pkg-table">
             <thead>
                 <tr>
@@ -104,150 +99,174 @@
             </tbody>
         </table>
 
-        <!-- Quick order form -->
-        <form id="packageForm">
-            <fieldset>
-                <legend>Snel Bestellen</legend>
-                <div class="form-row">
-                    <div class="fg">
-                        <label for="packages">Pakket</label>
-                        <!--
-                            Options filled by loadPackages() from data/packages.json
-                        -->
-                        <select name="packages" id="packages" required>
-                            <option value="">Selecteer pakket...</option>
-                        </select>
+        <!-- Quick order form + calendar side by side -->
+        <div class="order-with-cal">
+            <form id="packageForm">
+                <fieldset>
+                    <legend>Snel Bestellen</legend>
+                    <div class="form-col">
+                        <div class="fg">
+                            <label for="packages">Pakket</label>
+                            <select name="packages" id="packages" required>
+                                <option value="">Selecteer pakket...</option>
+                            </select>
+                        </div>
+                        <div class="fg">
+                            <label for="orderName">Naam</label>
+                            <input type="text" id="orderName" placeholder="Uw naam">
+                        </div>
+                        <div class="fg">
+                            <label for="orderPhone">Telefoon</label>
+                            <input type="tel" id="orderPhone" placeholder="06-12345678">
+                        </div>
+
+                        <!-- Chosen date display -->
+                        <div class="fg">
+                            <label>Gewenste datum</label>
+                            <div class="chosen-date-display" id="chosenDateStandaard">
+                                <span class="no-date">Kies een datum in de kalender →</span>
+                            </div>
+                            <input type="hidden" id="orderDate" name="orderDate">
+                        </div>
+
+                        <div class="fg-btn" style="margin-top:8px;">
+                            <button type="submit" class="btn btn-solid btn-full">Bestellen</button>
+                        </div>
                     </div>
-                    <div class="fg">
-                        <label for="orderName">Naam</label>
-                        <input type="text" id="orderName" placeholder="Uw naam">
+                </fieldset>
+            </form>
+
+            <!-- Inline calendar for pakket -->
+            <div class="inline-cal-wrap">
+                <div class="inline-cal-label">Kies een datum</div>
+                <div class="calendar" id="calStandaard">
+                    <div class="month">
+                        <ul>
+                            <li class="prev" onclick="changeMonth(-1, 'standaard')">&#10094;</li>
+                            <li class="next" onclick="changeMonth(1, 'standaard')">&#10095;</li>
+                            <li id="monthLabelStandaard"></li>
+                        </ul>
                     </div>
-                    <div class="fg">
-                        <label for="orderPhone">Telefoon</label>
-                        <input type="tel" id="orderPhone" placeholder="06-12345678">
-                    </div>
-                    <div class="fg-btn">
-                        <button type="submit" class="btn btn-solid">Bestellen</button>
-                    </div>
+                    <ul class="weekdays">
+                        <li>Ma</li><li>Di</li><li>Wo</li><li>Do</li><li>Vr</li><li>Za</li><li>Zo</li>
+                    </ul>
+                    <ul class="days" id="calDaysStandaard"></ul>
                 </div>
-            </fieldset>
-        </form>
+                <div class="cal-legend-inline">
+                    <span><span class="dot dot-available"></span> Beschikbaar</span>
+                    <span><span class="dot dot-selected"></span> Geselecteerd</span>
+                    <span><span class="dot dot-busy"></span> Volgeboekt</span>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- CUSTOM OFFERTE -->
-    <section id="custom" class="admin-section">
+    <section id="custom" class="admin-section" id="offerte">
 
-        <!--
-            Hidden inputs read by handleCustomForm().
-            These mirror the visible inputs so the original FormData logic still works.
-        -->
         <input type="hidden" id="grass"    name="grass">
         <input type="hidden" id="tiles"    name="tiles">
         <input type="hidden" id="hedge"    name="hedge">
         <input type="hidden" id="options1" name="options1">
 
-        <form id="customForm">
-            <div class="custom-grid">
-                <div class="fg">
-                    <label for="cNaam">Naam *</label>
-                    <input type="text"  id="cNaam"  placeholder="Jan de Vries" required>
+        <!-- Two-column layout: form left, calendar right -->
+        <div class="order-with-cal" style="align-items:flex-start;">
+            <form id="customForm">
+                <div class="custom-grid">
+                    <div class="fg">
+                        <label for="cNaam">Naam *</label>
+                        <input type="text"  id="cNaam"  placeholder="Jan de Vries" required>
+                    </div>
+                    <div class="fg">
+                        <label for="cEmail">E-mail *</label>
+                        <input type="email" id="cEmail" placeholder="jan@email.nl" required>
+                    </div>
+                    <div class="fg">
+                        <label for="cTel">Telefoon</label>
+                        <input type="tel"   id="cTel"   placeholder="06-12345678">
+                    </div>
+                    <div class="fg">
+                        <label for="cAdres">Adres tuin</label>
+                        <input type="text"  id="cAdres" placeholder="Straat 1, Rotterdam">
+                    </div>
+                    <div class="fg">
+                        <label for="grassV">M&sup2; gras</label>
+                        <input type="number" id="grassV" placeholder="0" step="0.1">
+                    </div>
+                    <div class="fg">
+                        <label for="tilesV">M&sup2; tegels / terras</label>
+                        <input type="number" id="tilesV" placeholder="0" step="0.1">
+                    </div>
+                    <div class="fg">
+                        <label for="hedgeV">Meters heg</label>
+                        <input type="number" id="hedgeV" placeholder="0" step="0.1">
+                    </div>
+                    <div class="fg">
+                        <label for="options1V">Extra wensen</label>
+                        <input type="text" id="options1V" placeholder="Bijv. bladblazeren...">
+                    </div>
                 </div>
-                <div class="fg">
-                    <label for="cEmail">E-mail *</label>
-                    <input type="email" id="cEmail" placeholder="jan@email.nl" required>
-                </div>
-                <div class="fg">
-                    <label for="cTel">Telefoon</label>
-                    <input type="tel"   id="cTel"   placeholder="06-12345678">
-                </div>
-                <div class="fg">
-                    <label for="cAdres">Adres tuin</label>
-                    <input type="text"  id="cAdres" placeholder="Straat 1, Rotterdam">
-                </div>
-                <div class="fg">
-                    <label for="grassV">M&sup2; gras</label>
-                    <input type="number" id="grassV" placeholder="0" step="0.1">
-                </div>
-                <div class="fg">
-                    <label for="tilesV">M&sup2; tegels / terras</label>
-                    <input type="number" id="tilesV" placeholder="0" step="0.1">
-                </div>
-                <div class="fg">
-                    <label for="hedgeV">Meters heg</label>
-                    <input type="number" id="hedgeV" placeholder="0" step="0.1">
-                </div>
-                <div class="fg">
-                    <label for="options1V">Extra wensen</label>
-                    <input type="text" id="options1V" placeholder="Bijv. bladblazeren...">
-                </div>
-            </div>
 
-            <!--
-                Price estimate — labels and rates filled by loadTarieven()
-                from data/tarieven.json. Amounts updated live by updateCalc().
-            -->
-            <div class="price-est">
-                <h4>Geschatte prijs <span class="est-note">(indicatie, excl. BTW)</span></h4>
-                <div class="est-line">
-                    <span>Gras (<span id="eGM">0</span> m&sup2;, &euro; <span id="eGRate">–</span>/m&sup2;)</span>
-                    <span>&euro; <span id="eGP">0,00</span></span>
+                <!-- Chosen date display for custom -->
+                <div class="fg" style="margin-bottom:14px;">
+                    <label>Gewenste datum *</label>
+                    <div class="chosen-date-display" id="chosenDateCustom">
+                        <span class="no-date">Kies een datum in de kalender →</span>
+                    </div>
+                    <input type="hidden" id="customDate" name="customDate">
                 </div>
-                <div class="est-line">
-                    <span>Tegels (<span id="eTM">0</span> m&sup2;, &euro; <span id="eTRate">–</span>/m&sup2;)</span>
-                    <span>&euro; <span id="eTP">0,00</span></span>
-                </div>
-                <div class="est-line">
-                    <span>Heg (<span id="eHM">0</span> m, &euro; <span id="eHRate">–</span>/m)</span>
-                    <span>&euro; <span id="eHP">0,00</span></span>
-                </div>
-                <div class="est-total">
-                    <span>Totaal</span>
-                    <span>&euro; <span id="eTot">0,00</span></span>
-                </div>
-            </div>
 
-            <div class="form-submit">
-                <button type="submit" class="btn btn-solid btn-lg">Offerte aanvragen</button>
+                <div class="price-est">
+                    <h4>Geschatte prijs <span class="est-note">(indicatie, excl. BTW)</span></h4>
+                    <div class="est-line">
+                        <span>Gras (<span id="eGM">0</span> m&sup2;, &euro; <span id="eGRate">–</span>/m&sup2;)</span>
+                        <span>&euro; <span id="eGP">0,00</span></span>
+                    </div>
+                    <div class="est-line">
+                        <span>Tegels (<span id="eTM">0</span> m&sup2;, &euro; <span id="eTRate">–</span>/m&sup2;)</span>
+                        <span>&euro; <span id="eTP">0,00</span></span>
+                    </div>
+                    <div class="est-line">
+                        <span>Heg (<span id="eHM">0</span> m, &euro; <span id="eHRate">–</span>/m)</span>
+                        <span>&euro; <span id="eHP">0,00</span></span>
+                    </div>
+                    <div class="est-total">
+                        <span>Totaal</span>
+                        <span>&euro; <span id="eTot">0,00</span></span>
+                    </div>
+                </div>
+
+                <div class="form-submit">
+                    <button type="submit" class="btn btn-solid btn-lg">Offerte aanvragen</button>
+                </div>
+            </form>
+
+            <!-- Inline calendar for custom offerte -->
+            <div class="inline-cal-wrap">
+                <div class="inline-cal-label">Kies een datum</div>
+                <div class="calendar" id="calCustom">
+                    <div class="month">
+                        <ul>
+                            <li class="prev" onclick="changeMonth(-1, 'custom')">&#10094;</li>
+                            <li class="next" onclick="changeMonth(1, 'custom')">&#10095;</li>
+                            <li id="monthLabelCustom"></li>
+                        </ul>
+                    </div>
+                    <ul class="weekdays">
+                        <li>Ma</li><li>Di</li><li>Wo</li><li>Do</li><li>Vr</li><li>Za</li><li>Zo</li>
+                    </ul>
+                    <ul class="days" id="calDaysCustom"></ul>
+                </div>
+                <div class="cal-legend-inline">
+                    <span><span class="dot dot-available"></span> Beschikbaar</span>
+                    <span><span class="dot dot-selected"></span> Geselecteerd</span>
+                    <span><span class="dot dot-busy"></span> Volgeboekt</span>
+                </div>
             </div>
-        </form>
+        </div>
     </section>
 
 </div><!-- /wrap -->
-
-<!-- KALENDER -->
-<div id="agenda" class="cal-section">
-    <div class="cal-head">
-        <h2>Afspraak Inplannen</h2>
-        <p>Kies een beschikbare datum. Groene dagen zijn vrij.</p>
-    </div>
-    <div class="calendar-wrapper">
-        <div class="calendar">
-            <div class="month">
-                <ul>
-                    <li class="prev" onclick="changeMonth(-1)">&#10094;</li>
-                    <li class="next" onclick="changeMonth(1)">&#10095;</li>
-                    <li id="monthLabel"></li>
-                </ul>
-            </div>
-            <ul class="weekdays">
-                <li>Ma</li><li>Di</li><li>Wo</li><li>Do</li><li>Vr</li><li>Za</li><li>Zo</li>
-            </ul>
-            <ul class="days" id="calendarDays"></ul>
-        </div>
-        <div class="calendar-sidebar">
-            <div class="calendar-legend">
-                <h3>Legenda</h3>
-                <div class="legend-item"><span class="dot dot-available"></span> Beschikbaar</div>
-                <div class="legend-item"><span class="dot dot-selected"></span> Geselecteerd</div>
-                <div class="legend-item"><span class="dot dot-busy"></span> Volgeboekt</div>
-            </div>
-            <div class="calendar-booking" id="bookingPanel">
-                <h3>Geen datum geselecteerd</h3>
-                <p>Selecteer een beschikbare datum om een afspraak te maken.</p>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- CONTACT -->
 <div class="contact-band">
