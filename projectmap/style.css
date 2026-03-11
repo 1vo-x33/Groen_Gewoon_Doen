@@ -154,6 +154,15 @@ h1, h2, h3 {
     border-color: var(--green);
 }
 
+/* Error styling for validation */
+.fg input.error,
+.fg select.error,
+.fg textarea.error,
+.chosen-date-display.error {
+    border-color: var(--danger);
+    background: #fdf0ee;
+}
+
 .fg-btn {
     display: flex;
     align-items: flex-end;
