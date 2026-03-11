@@ -495,17 +495,41 @@ function completeOrder(id) { alert('Afgerond: order #'  + id + ' (nog te impleme
 function invoiceOrder(id)  { alert('Factuur: order #'   + id + ' (nog te implementeren)'); }
 function deleteOrder(id)   { if (confirm('Order #' + id + ' verwijderen?')) alert('Verwijderd (nog te implementeren)'); }
 
-
-// ============================================================
 //  BESTELFORMULIER  (index)
 // ============================================================
 
 function handlePackageForm(e) {
     e.preventDefault();
+
+    // Reset errors
+    document.querySelectorAll('#packageForm .error').forEach(el => el.classList.remove('error'));
+
     const pkgId = new FormData(e.target).get('packages');
     const date  = document.getElementById('orderDate').value;
-    if (!pkgId) { alert('Selecteer eerst een pakket'); return; }
-    if (!date)  { alert('Selecteer eerst een datum in de kalender'); return; }
+    const name  = document.getElementById('orderName').value.trim();
+    const phone = document.getElementById('orderPhone').value.trim();
+
+    let hasError = false;
+
+    if (!pkgId) {
+        document.getElementById('packages').classList.add('error');
+        hasError = true;
+    }
+    if (!date) {
+        document.getElementById('chosenDateStandaard').classList.add('error');
+        hasError = true;
+    }
+    if (!name) {
+        document.getElementById('orderName').classList.add('error');
+        hasError = true;
+    }
+    if (!phone) {
+        document.getElementById('orderPhone').classList.add('error');
+        hasError = true;
+    }
+
+    if (hasError) return;
+
     console.log('Bestelling pakket id:', pkgId, 'datum:', date);
     alert('Bestelling geplaatst voor ' + date + '! (nog te implementeren in backend)');
 }
@@ -514,8 +538,29 @@ function handleCustomForm(e) {
     e.preventDefault();
     syncVisibleToHidden();
 
-    const date = document.getElementById('customDate').value;
-    if (!date) { alert('Selecteer eerst een datum in de kalender'); return; }
+    // Reset errors
+    document.querySelectorAll('#customForm .error').forEach(el => el.classList.remove('error'));
+
+    const date  = document.getElementById('customDate').value;
+    const naam  = document.getElementById('cNaam').value.trim();
+    const email = document.getElementById('cEmail').value.trim();
+
+    let hasError = false;
+
+    if (!naam) {
+        document.getElementById('cNaam').classList.add('error');
+        hasError = true;
+    }
+    if (!email) {
+        document.getElementById('cEmail').classList.add('error');
+        hasError = true;
+    }
+    if (!date) {
+        document.getElementById('chosenDateCustom').classList.add('error');
+        hasError = true;
+    }
+
+    if (hasError) return;
 
     const order = {
         grass:    document.getElementById('grass').value    || 0,
@@ -528,26 +573,7 @@ function handleCustomForm(e) {
     alert('Offerte aangevraagd voor ' + date + '! We nemen spoedig contact op.');
 }
 
-
-// ============================================================
-//  PRIJSSCHATTER  (index)
-// ============================================================
-
-function syncVisibleToHidden() {
-    const map = { grassV: 'grass', tilesV: 'tiles', hedgeV: 'hedge', options1V: 'options1' };
-    Object.entries(map).forEach(([visId, hidId]) => {
-        const vis = document.getElementById(visId);
-        const hid = document.getElementById(hidId);
-        if (vis && hid) hid.value = vis.value;
-    });
-}
-
-function updateCalc() {
-    syncVisibleToHidden();
-
-    const g  = parseFloat(document.getElementById('grassV')?.value)  || 0;
-    const t  = parseFloat(document.getElementById('tilesV')?.value)  || 0;
-    const h  = parseFloat(document.getElementById('hedgeV')?.value)  || 0;
+// ... rest of the code remains the same ...
     const gp = g * rates.gras;
     const tp = t * rates.tegels;
     const hp = h * rates.heg;
