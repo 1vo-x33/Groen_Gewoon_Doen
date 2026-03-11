@@ -2,25 +2,21 @@
   {
     "id": 1,
     "naam": "Miet planten",
-    "beschrijving": "Basis tuinonderhoud met diverse planten.",
-    "prijs": 35.00
+    "beschrijving": "Basis tuinonderhoud met diverse planten."
   },
   {
     "id": 2,
     "naam": "Venus fly trap",
-    "beschrijving": "Exotische verzorging voor vleesetende planten.",
-    "prijs": 55.00
+    "beschrijving": "Exotische verzorging voor vleesetende planten."
   },
   {
     "id": 3,
     "naam": "Coca colief",
-    "beschrijving": "Speciale bladvorming en verzorging.",
-    "prijs": 45.00
+    "beschrijving": "Speciale bladvorming en verzorging."
   },
   {
     "id": 4,
     "naam": "de Sagoenie package",
-    "beschrijving": "de speciale sagoenie item",
-    "prijs": 65.00
+    "beschrijving": "de speciale sagoenie item  "
   }
 ]
