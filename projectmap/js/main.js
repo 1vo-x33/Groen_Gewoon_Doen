@@ -1,20 +1,3 @@
-// ============================================================
-//  GROEN & GEWOON DOEN — js/main.js
-//
-//  Verwachte data bestanden in ./data/
-//
-//  users.json      [ { id, username, password, role } ]
-//  packages.json   [ { id, naam, beschrijving, prijs } ]
-//  diensten.json   [ { id, naam, beschrijving } ]
-//  orders.json     [ { id, klant, pakket, details, offerte, status } ]
-//  tarieven.json   { gras, tegels, heg, uurtarief }
-// ============================================================
-
-
-// ============================================================
-//  LOGIN
-// ============================================================
-
 async function getInfo() {
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
