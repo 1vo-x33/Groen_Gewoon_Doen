@@ -13,7 +13,10 @@ const port = 3000;
 >>>>>>> parent of 542de71 (Added tarieven.json and fixed agenda)
 app.use(express.static(__dirname));
 
+<<<<<<< HEAD
 // Dit stuurt je index.html naar de browser
+=======
+>>>>>>> parent of cab1d92 (Merge branch 'development' of https://github.com/1vo-x33/Groen_Gewoon_Doen into development)
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });

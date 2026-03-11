@@ -200,9 +200,15 @@ function selectPkg(id) {
     if (form) form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
+<<<<<<< HEAD
 function editPackage(id)                     { alert('Bewerken: pakket #' + id + ' (nog te implementeren)'); }
 function deletePackage(id, naam)             { if (confirm('Verwijder pakket "' + naam + '"?')) alert('Verwijderd (nog te implementeren)'); }
 function viewPackageQuestions(id)            { alert('Vragen voor pakket #' + id + ' (nog te implementeren)'); }
+=======
+function editPackage(id)          { alert('Bewerken: pakket #' + id + ' (nog te implementeren)'); }
+function deletePackage(id, naam)  { if (confirm('Verwijder pakket "' + naam + '"?')) alert('Verwijderd (nog te implementeren)'); }
+function viewPackageQuestions(id) { alert('Vragen voor pakket #' + id + ' (nog te implementeren)'); }
+>>>>>>> parent of cab1d92 (Merge branch 'development' of https://github.com/1vo-x33/Groen_Gewoon_Doen into development)
 
 function handleNewPackage() {
     const naam         = document.getElementById('naam').value;
@@ -218,16 +224,15 @@ function openNewOrderForm() {
 
 
 // ============================================================
-//  TARIEVEN  (index + admin) — data/rates.json
-//  Velden: { gras, tegels, heg, uurtarief }
+//  TARIEVEN  (index + admin) — data/tarieven.json
 // ============================================================
 
 var rates = { gras: 0, tegels: 0, heg: 0, uurtarief: 0 };
 
 async function loadTarieven() {
     try {
-        const res      = await fetch('./data/rates.json');
-        if (!res.ok) throw new Error('rates.json niet gevonden');
+        const res      = await fetch('./data/tarieven.json');
+        if (!res.ok) throw new Error('tarieven.json niet gevonden');
         const tarieven = await res.json();
 
         rates.gras      = tarieven.gras      || 0;
@@ -250,6 +255,7 @@ async function loadTarieven() {
     }
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 async function loadRates() {
@@ -293,6 +299,8 @@ function calculateQuote() {
 >>>>>>> parent of 542de71 (Added tarieven.json and fixed agenda)
 =======
 >>>>>>> parent of 542de71 (Added tarieven.json and fixed agenda)
+=======
+>>>>>>> parent of cab1d92 (Merge branch 'development' of https://github.com/1vo-x33/Groen_Gewoon_Doen into development)
 function saveTarieven() {
     const data = {
         gras:      parseFloat(document.getElementById('tGras').value)      || 0,
@@ -307,7 +315,10 @@ function saveTarieven() {
 
 // ============================================================
 //  ORDERS  (admin) — data/orders.json
+<<<<<<< HEAD
 //  Velden: { id, klant, pakket, details, offerte, status }
+=======
+>>>>>>> parent of cab1d92 (Merge branch 'development' of https://github.com/1vo-x33/Groen_Gewoon_Doen into development)
 // ============================================================
 
 async function loadOrders() {
