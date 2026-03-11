@@ -296,33 +296,30 @@ function openNewOrderForm() {
 //  Velden: { gras, tegels, heg, uurtarief }
 // ============================================================
 
-var rates = { gras: 0, tegels: 0, heg: 0, uurtarief: 0 };
-
-async function loadTarieven() {
+async function loadRates() {
     try {
-        const res      = await fetch('./data/tarieven.json');
+        const res = await fetch('./data/tarieven.json');
         if (!res.ok) throw new Error('tarieven.json niet gevonden');
-        const tarieven = await res.json();
+        const rates = await res.json();
 
-        rates.gras      = tarieven.gras      || 0;
-        rates.tegels    = tarieven.tegels    || 0;
-        rates.heg       = tarieven.heg       || 0;
-        rates.uurtarief = tarieven.uurtarief || 0;
+        // Store rates globally so calculateQuote() can access them
+        window.rates = rates;
 
-        // Tarieven tonen in de prijsschatter (index)
+        // Display the rate per unit in the price estimate (index)
         setText('eGRate', fmt(rates.gras));
         setText('eTRate', fmt(rates.tegels));
         setText('eHRate', fmt(rates.heg));
 
-        // Tarieven invullen in admin-formulier
-        setVal('tGras',      tarieven.gras);
-        setVal('tTegels',    tarieven.tegels);
-        setVal('tHeg',       tarieven.heg);
-        setVal('tUurtarief', tarieven.uurtarief);
+        // Fill in admin form fields (if on admin page)
+        setVal('tGras',      rates.gras);
+        setVal('tTegels',    rates.tegels);
+        setVal('tHeg',       rates.heg);
+        setVal('tUurtarief', rates.uurtarief);
 
-        updateCalc();
+        // Run the calculation so prices are up-to-date
+        calculateQuote();
     } catch (err) {
-        console.error('Fout bij laden tarieven:', err);
+        console.error('Fout bij laden rates:', err);
     }
 }
 
@@ -342,7 +339,7 @@ async function saveTarieven() {
         const result = await res.json();
         if (result.success) {
             alert('Tarieven opgeslagen!');
-            rates = { ...data };
+            window.rates = { ...data };
         } else {
             alert('Fout: ' + result.error);
         }
@@ -511,29 +508,40 @@ function syncVisibleToHidden() {
     });
 }
 
-function updateCalc() {
+function calculateQuote() {
     syncVisibleToHidden();
 
-    const g  = parseFloat(document.getElementById('grassV')?.value)  || 0;
-    const t  = parseFloat(document.getElementById('tilesV')?.value)  || 0;
-    const h  = parseFloat(document.getElementById('hedgeV')?.value)  || 0;
-    const gp = g * rates.gras;
-    const tp = t * rates.tegels;
-    const hp = h * rates.heg;
+    // 1. Read how many m² / meters the user entered
+    const grassV = parseFloat(document.getElementById('grassV')?.value) || 0;
+    const tilesV = parseFloat(document.getElementById('tilesV')?.value) || 0;
+    const hedgeV = parseFloat(document.getElementById('hedgeV')?.value) || 0;
 
-    setText('eGM',  g);
-    setText('eTM',  t);
-    setText('eHM',  h);
-    setText('eGP',  fmt(gp));
-    setText('eTP',  fmt(tp));
-    setText('eHP',  fmt(hp));
-    setText('eTot', fmt(gp + tp + hp));
+    // 2. Get the rates (set earlier by loadRates)
+    const rates = window.rates || { gras: 0, tegels: 0, heg: 0 };
+
+    // 3. Calculate the price for each service
+    const grassTotal = grassV * rates.gras;
+    const tilesTotal = tilesV * rates.tegels;
+    const hedgeTotal = hedgeV * rates.heg;
+
+    // 4. Update the quantities shown in the HTML
+    setText('eGM',  grassV);
+    setText('eTM',  tilesV);
+    setText('eHM',  hedgeV);
+
+    // 5. Update the calculated prices in the HTML
+    setText('eGP',  fmt(grassTotal));
+    setText('eTP',  fmt(tilesTotal));
+    setText('eHP',  fmt(hedgeTotal));
+
+    // 6. Calculate and show the grand total
+    setText('eTot', fmt(grassTotal + tilesTotal + hedgeTotal));
 }
 
 function initPriceCalc() {
     ['grassV', 'tilesV', 'hedgeV'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.addEventListener('input', updateCalc);
+        if (el) el.addEventListener('input', calculateQuote);
     });
     const opt1 = document.getElementById('options1V');
     if (opt1) opt1.addEventListener('input', () => {
@@ -712,13 +720,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const isAdmin = document.body.classList.contains('admin-body');
 
     if (isAdmin) {
-        await Promise.all([ loadPackages(), loadOrders(), loadTarieven() ]);
+        await Promise.all([ loadPackages(), loadOrders(), loadRates() ]);
         showSection('orders');
     } else {
         initPopup();
         initPriceCalc();
 
-        await Promise.all([ loadDiensten(), loadPackages(), loadTarieven() ]);
+        await Promise.all([ loadDiensten(), loadPackages(), loadRates() ]);
 
         const packageForm = document.getElementById('packageForm');
         const customForm  = document.getElementById('customForm');
