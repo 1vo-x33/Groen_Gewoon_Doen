@@ -585,7 +585,15 @@ function calculateQuote() {
 function initPriceCalc() {
     ['grassV', 'tilesV', 'hedgeV'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.addEventListener('input', calculateQuote);
+        if (el) {
+            el.addEventListener('input', calculateQuote);
+            // Clear error styling when user types
+            el.addEventListener('input', function() {
+                this.classList.remove('error');
+                const msg = this.parentElement.querySelector('.error-msg');
+                if (msg) msg.remove();
+            });
+        }
     });
     const opt1 = document.getElementById('options1V');
     if (opt1) opt1.addEventListener('input', () => {
@@ -593,6 +601,7 @@ function initPriceCalc() {
         if (h) h.value = opt1.value;
     });
 }
+
 
 
 // ============================================================
