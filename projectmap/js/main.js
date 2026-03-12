@@ -62,12 +62,10 @@ function showSection(id) {
     const target = document.getElementById(id);
     if (target) { target.style.display = 'block'; target.classList.add('active'); }
 
-    // index tab buttons (inside .forms-nav)
     document.querySelectorAll('.forms-nav button[id^="tab-"]').forEach(b => b.classList.remove('tab-active'));
     const tab = document.getElementById('tab-' + id);
     if (tab) tab.classList.add('tab-active');
 
-    // admin sidebar buttons
     document.querySelectorAll('nav ul button[id^="nav-"]').forEach(b => b.classList.remove('nav-active'));
     const nav = document.getElementById('nav-' + id);
     if (nav) nav.classList.add('nav-active');
@@ -335,7 +333,10 @@ async function loadOrders() {
 
         const searchInput = document.getElementById('orderSearch');
         if (searchInput) {
-            searchInput.addEventListener('input', function () {
+            // Remove old listener by replacing the element
+            const fresh = searchInput.cloneNode(true);
+            searchInput.parentNode.replaceChild(fresh, searchInput);
+            fresh.addEventListener('input', function () {
                 const q = this.value.toLowerCase();
                 const filtered = orders.filter(o =>
                     String(o.id).toLowerCase().includes(q) ||
@@ -346,7 +347,7 @@ async function loadOrders() {
         }
     } catch (err) {
         console.error('Fout bij laden orders:', err);
-        tbody.innerHTML = '<tr><td colspan="7" class="load-error">Orders konden niet worden geladen.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="load-error">Orders konden niet worden geladen.</td></tr>';
     }
 }
 
@@ -387,7 +388,6 @@ const STATUS_BADGE = {
     'Geannuleerd':    'badge-red'
 };
 
-// ★ Now renders 7 columns including datum
 function renderOrdersTable(orders, tbody) {
     tbody.innerHTML = '';
 
@@ -410,7 +410,6 @@ function renderOrdersTable(orders, tbody) {
             '<td><span class="badge ' + badge + '">' + o.status + '</span></td>' +
             '<td class="td-btns" onclick="event.stopPropagation()">' + acties + '</td>';
 
-        // Click row → open detail modal
         tr.addEventListener('click', () => openOrderModal(o));
         tbody.appendChild(tr);
     });
@@ -445,7 +444,6 @@ function btn(style, label, onclick) {
 // ── Order detail modal ─────────────────────────────────────
 
 function openOrderModal(o) {
-    // Remove any existing modal
     const existing = document.getElementById('orderModal');
     if (existing) existing.remove();
 
@@ -484,10 +482,8 @@ function openOrderModal(o) {
             '</div>' +
         '</div>';
 
-    // Close on backdrop click
     modal.addEventListener('click', e => { if (e.target === modal) closeOrderModal(); });
     document.body.appendChild(modal);
-    // Trigger transition
     requestAnimationFrame(() => modal.classList.add('open'));
 }
 
@@ -547,7 +543,6 @@ function deleteOrder(id)   { if (confirm('Order #' + id + ' verwijderen?')) aler
 function handlePackageForm(e) {
     e.preventDefault();
 
-    // ★ Date is required
     if (!selectedDay) {
         highlightDateError();
         alert('Selecteer eerst een datum in de kalender.');
@@ -560,62 +555,56 @@ function handlePackageForm(e) {
     console.log('Bestelling pakket id:', pkgId, 'datum:', getSelectedDateString());
     alert('Bestelling geplaatst! (nog te implementeren in backend)');
 }
-// ★ POSTs order with chosen date; validates date is chosen first
+
+// ── Validation: at least one m² field must be filled ──────
+
+function validateCustomForm() {
+    const fields = ['grassV', 'tilesV', 'hedgeV'];
+
+    // Clear previous errors
+    fields.forEach(function (id) {
+        const input = document.getElementById(id);
+        if (!input) return;
+        input.classList.remove('error');
+        const old = input.parentElement.querySelector('.error-msg');
+        if (old) old.remove();
+    });
+
+    const grassV = parseFloat(document.getElementById('grassV').value) || 0;
+    const tilesV = parseFloat(document.getElementById('tilesV').value) || 0;
+    const hedgeV = parseFloat(document.getElementById('hedgeV').value) || 0;
+
+    if (grassV === 0 && tilesV === 0 && hedgeV === 0) {
+        fields.forEach(function (id) {
+            const input = document.getElementById(id);
+            if (!input) return;
+            input.classList.add('error');
+            const msg = document.createElement('span');
+            msg.className = 'error-msg';
+            msg.textContent = 'Vul minimaal een veld in';
+            input.parentElement.appendChild(msg);
+        });
+        return false;
+    }
+
+    return true;
+}
+
+// ── Single, authoritative handleCustomForm ─────────────────
+
 function handleCustomForm(e) {
     e.preventDefault();
 
+    // 1. Date required
     if (!selectedDay) {
         highlightDateError();
         alert('Selecteer eerst een datum in de kalender.');
         return;
     }
-}
-function validateCustomForm() {
-    //1. Start by assuming the form is valid
-    let isValid = true;
 
-    //2. List the IDs of the fields we want to check
-    const fields = ['grassV', 'tilesV', 'hedgeV'];
-
-    //3. Loop through each field
-    fields.forEach(function(id) {
-        const input = document.getElementById(id);
-        // Remove any previous error state first
-        input.classList.remove('error');
-        // Remove old error message if it existed
-        const oldMsg = input.parentElement.querySelector('.error-msg');
-        if (oldMsg) oldMsg.remove();
-    });
-
-    // 4. Check does at least one field have value > 0?
-    const grassV = parseFloat(document.getElementById('grassV').value) || 0;
-    const tilesV = parseFloat(document.getElementById('tilesV').value) || 0;
-    const hedgeV = parseFloat(document.getElementById('hedgeV').value) || 0;
-
-    if (grassV === 0 && tilesV === 0 && hedgeV === 0){
-        //5. None filled in = mark all three as error
-        fields.forEach(function(id) {
-            const input = document.getElementById(id);
-            input.classList.add('error');
-
-            // 6. Create a small <span> with the error txt
-            const msg = document.createElement('span');
-            msg.className = 'error-msg';
-            msg.textContent = 'Vul minimaal een veld in';
-
-            //7. Add it inside the parent .fg div (after the input)
-            input.parentElement.appendChild(msg);
-        });
-
-        isValid = false;
-    }
-
-    return isValid;
-}
-
-function handleCustomForm(e) {
-    e.preventDefault();
+    // 2. At least one service field required
     if (!validateCustomForm()) return;
+
     syncVisibleToHidden();
 
     const order = {
@@ -623,7 +612,7 @@ function handleCustomForm(e) {
         email:    document.getElementById('cEmail') ? document.getElementById('cEmail').value : '',
         telefoon: document.getElementById('cTel')   ? document.getElementById('cTel').value   : '',
         adres:    document.getElementById('cAdres') ? document.getElementById('cAdres').value : '',
-        datum:    getSelectedDateString(),   // ★ chosen date stored here
+        datum:    getSelectedDateString(),
         details:
             'Gras: '   + (document.getElementById('grass').value  || 0) + 'm², ' +
             'Tegels: ' + (document.getElementById('tiles').value  || 0) + 'm², ' +
@@ -645,7 +634,6 @@ function handleCustomForm(e) {
             alert('Offerte aangevraagd! We nemen spoedig contact op.');
             document.getElementById('customForm').reset();
             calculateQuote();
-            // Reset selected date
             selectedDay = null;
             renderCalendar();
             updateDateDisplay();
@@ -700,8 +688,8 @@ function initPriceCalc() {
         const el = document.getElementById(id);
         if (el) {
             el.addEventListener('input', calculateQuote);
-            // Clear error styling when user types
-            el.addEventListener('input', function() {
+            // Clear error state when user starts typing
+            el.addEventListener('input', function () {
                 this.classList.remove('error');
                 const msg = this.parentElement.querySelector('.error-msg');
                 if (msg) msg.remove();
@@ -714,7 +702,6 @@ function initPriceCalc() {
         if (h) h.value = opt1.value;
     });
 }
-
 
 
 // ============================================================
@@ -783,14 +770,12 @@ function renderCalendar() {
     }
 }
 
-// ★ Just stores the selected date and updates the display pill
 function selectDay(d, m, y, dateObj) {
     selectedDay = { d, m, y, dateObj };
     updateDateDisplay();
     renderCalendar();
 }
 
-// ★ Updates the chosen-date pill below the calendar
 function updateDateDisplay() {
     const display = document.getElementById('chosenDateDisplay');
     if (!display) return;
@@ -807,7 +792,6 @@ function updateDateDisplay() {
     }
 }
 
-// ★ Turns the date pill red and scrolls to it when no date chosen on submit
 function highlightDateError() {
     const display = document.getElementById('chosenDateDisplay');
     if (display) {
@@ -817,7 +801,6 @@ function highlightDateError() {
     }
 }
 
-// ★ Returns a human-readable date string to store in the order
 function getSelectedDateString() {
     if (!selectedDay) return '';
     return DAGEN[selectedDay.dateObj.getDay()] + ' ' +

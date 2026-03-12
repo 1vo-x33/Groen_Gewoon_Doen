@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "klant": "eerre",
+    "email": "fdlfdsklf@gmail.com",
+    "telefoon": "0628172934",
+    "adres": "sudistuin 4, Rotterdam",
+    "details": "Gras: 4m², Tegels: 4m², Heg: 4m",
+    "offerte": 120,
+    "status": "In afwachting"
+  }
+]
