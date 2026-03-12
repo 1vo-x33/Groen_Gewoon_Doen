@@ -154,11 +154,9 @@ h1, h2, h3 {
     border-color: var(--green);
 }
 
-/* Error styling for validation */
 .fg input.error,
 .fg select.error,
-.fg textarea.error,
-.chosen-date-display.error {
+.fg textarea.error {
     border-color: var(--danger);
     background: #fdf0ee;
 }
@@ -512,7 +510,148 @@ hr { display: none; }
 .section-head p  { color: var(--muted); font-size: 14px; margin-top: 4px; }
 
 /* ============================================================
-   TAB NAV  (index)
+   BOOKING LAYOUT — calendar left, forms right
+   ============================================================ */
+
+.booking-layout {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    padding-top: 32px;
+}
+
+/* ── Left column: calendar ── */
+.booking-calendar-col {
+    width: 280px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 84px;          /* clears the sticky site-header */
+}
+
+.cal-head-inline {
+    margin-bottom: 14px;
+}
+
+.cal-head-inline h3 {
+    font-size: 16px;
+    color: var(--green-dark);
+    font-family: 'Libre Baskerville', serif;
+}
+
+.cal-head-inline p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 3px;
+}
+
+.required-star {
+    color: var(--danger);
+    font-style: normal;
+}
+
+/* Chosen date pill shown below the calendar */
+.chosen-date-display {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: var(--green-light);
+    border: 1.5px solid #c0d8c8;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green-dark);
+    text-align: center;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.chosen-date-display.error {
+    border-color: var(--danger);
+    background: #fdf0ee;
+    color: var(--danger);
+}
+
+/* Legend sits below the date pill */
+.booking-calendar-col .calendar-legend {
+    margin-top: 10px;
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+.calendar-legend {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px;
+}
+
+.calendar-legend h3 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    margin-bottom: 10px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+.dot-available { background: var(--green-light); border: 1.5px solid #c0d8c8; }
+.dot-selected  { background: var(--green); }
+.dot-busy      { background: #f5f5f5; border: 1px solid #e8e8e8; }
+
+/* ── Right column: tab nav + forms ── */
+.booking-forms-col {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Tab nav scoped inside forms col */
+.forms-nav {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.forms-nav ul {
+    list-style: none;
+    display: flex;
+    border-bottom: 2px solid var(--border);
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+.forms-nav ul button {
+    background: transparent;
+    border: none;
+    padding: 14px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Source Sans 3', sans-serif;
+    cursor: pointer;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.15s, border-color 0.15s;
+}
+.forms-nav ul button:hover     { color: var(--green); }
+.forms-nav ul button.tab-active { color: var(--green); border-bottom-color: var(--green); }
+
+/* ============================================================
+   TAB NAV  (index — kept for any standalone nav usage)
    ============================================================ */
 
 nav {
@@ -542,7 +681,7 @@ nav ul button {
     margin-bottom: -2px;
     transition: color 0.15s, border-color 0.15s;
 }
-nav ul button:hover    { color: var(--green); }
+nav ul button:hover     { color: var(--green); }
 nav ul button.tab-active { color: var(--green); border-bottom-color: var(--green); }
 
 /* ============================================================
@@ -559,7 +698,7 @@ nav ul button.tab-active { color: var(--green); border-bottom-color: var(--green
 .pkg-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 24px 0 20px;
+    margin: 0 0 20px;
 }
 
 .pkg-table th {
@@ -608,7 +747,7 @@ nav ul button.tab-active { color: var(--green); border-bottom-color: var(--green
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 14px;
-    margin: 24px 0 18px;
+    margin: 0 0 18px;
 }
 
 .price-est {
@@ -650,24 +789,8 @@ nav ul button.tab-active { color: var(--green); border-bottom-color: var(--green
 }
 
 /* ============================================================
-   CALENDAR SECTION  (index)
+   CALENDAR  (shared styles used in booking layout)
    ============================================================ */
-
-.cal-section {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 0 40px 60px;
-}
-
-.cal-head { margin-bottom: 20px; padding-top: 48px; }
-.cal-head h2 { font-size: 24px; color: var(--green-dark); }
-.cal-head p  { color: var(--muted); font-size: 14px; margin-top: 4px; }
-
-.calendar-wrapper {
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-}
 
 .calendar {
     flex: 1;
@@ -756,7 +879,7 @@ nav ul button.tab-active { color: var(--green); border-bottom-color: var(--green
     align-items: center;
     justify-content: center;
     font-size: 14px;
-    min-height: 38px;
+    min-height: 34px;
     border-radius: 3px;
     color: var(--text);
 }
@@ -791,86 +914,6 @@ nav ul button.tab-active { color: var(--green); border-bottom-color: var(--green
     color: var(--white) !important;
     border-color: var(--green-dark) !important;
 }
-
-/* Calendar sidebar */
-.calendar-sidebar {
-    width: 210px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.calendar-legend {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 14px;
-}
-
-.calendar-legend h3 {
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--muted);
-    margin-bottom: 10px;
-}
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    margin-bottom: 6px;
-}
-
-.dot {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border-radius: 2px;
-    flex-shrink: 0;
-}
-.dot-available { background: var(--green-light); border: 1.5px solid #c0d8c8; }
-.dot-selected  { background: var(--green); }
-.dot-busy      { background: #f5f5f5; border: 1px solid #e8e8e8; }
-
-.calendar-booking {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 14px;
-    font-size: 13px;
-    color: var(--muted);
-}
-.calendar-booking h3 { font-size: 14px; color: var(--text); font-weight: 700; margin-bottom: 8px; font-family: 'Source Sans 3', sans-serif; }
-.calendar-booking p  { margin-bottom: 10px; line-height: 1.5; }
-
-.booking-form input {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1.5px solid var(--border);
-    border-radius: 3px;
-    font-size: 13px;
-    font-family: 'Source Sans 3', sans-serif;
-    margin-bottom: 8px;
-}
-
-.booking-form button {
-    width: 100%;
-    background: var(--green);
-    color: var(--white);
-    border: none;
-    padding: 9px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 700;
-    font-family: 'Source Sans 3', sans-serif;
-}
-.booking-form button:hover { background: var(--green-dark); }
 
 /* ============================================================
    CONTACT BAND  (index)
@@ -955,7 +998,6 @@ header button:hover { background: rgba(255, 255, 255, 0.18); color: var(--white)
     min-height: calc(100vh - 60px);
 }
 
-/* Admin sidebar nav */
 .admin-body nav {
     width: 200px;
     background: var(--white);
@@ -1136,18 +1178,6 @@ header button:hover { background: rgba(255, 255, 255, 0.18); color: var(--white)
     font-family: 'Source Sans 3', sans-serif;
     width: 240px;
 }
-.form-p input:invalid:not(:placeholder-shown),
-.tarief-item input:invalid:not(:placeholder-shown) {
-    border-color: var(--danger);
-    background: #fdf0ee;
-}
-
-/* Highlight empty required price fields */
-.form-p input:required:invalid,
-.tarief-item input:required:invalid {
-    border-color: var(--danger);
-    background: #fdf0ee;
-}
 
 /* ============================================================
    TARIEVEN GRID  (admin)
@@ -1198,19 +1228,133 @@ header button:hover { background: rgba(255, 255, 255, 0.18); color: var(--white)
 }
 
 /* ============================================================
+   ORDER DETAIL MODAL  (admin)
+   ============================================================ */
+
+.order-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+    transition: background 0.2s;
+}
+
+.order-modal-overlay.open {
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.order-modal {
+    background: var(--white);
+    border-radius: 6px;
+    border-top: 3px solid var(--green);
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    transform: translateY(16px);
+    opacity: 0;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.order-modal-overlay.open .order-modal {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.order-modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px 22px 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.order-modal-head h3 {
+    font-size: 18px;
+    color: var(--green-dark);
+    font-family: 'Libre Baskerville', serif;
+    margin-bottom: 5px;
+}
+
+.order-modal-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: #aaa;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+    font-family: inherit;
+}
+.order-modal-close:hover { color: var(--text); }
+
+.order-modal-body {
+    padding: 18px 22px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.order-modal-section h4 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.modal-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--muted);
+    margin-bottom: 2px;
+}
+
+.modal-value {
+    font-size: 14px;
+    color: var(--text);
+    word-break: break-word;
+}
+
+.order-modal-foot {
+    padding: 14px 22px;
+    border-top: 1px solid var(--border);
+    background: #f9faf9;
+    border-radius: 0 0 6px 6px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 
 @media (max-width: 800px) {
-    .diensten          { grid-template-columns: 1fr 1fr; }
-    .custom-grid       { grid-template-columns: 1fr; }
-    .calendar-wrapper  { flex-direction: column; }
-    .calendar-sidebar  { width: 100%; }
-    .hdr-links         { display: none; }
-    .contact-band      { flex-direction: column; text-align: center; }
-    .stats-row         { grid-template-columns: 1fr 1fr; }
-    .tarief-grid       { grid-template-columns: 1fr; }
-    .admin-body nav    { display: none; }
+    .booking-layout        { flex-direction: column; }
+    .booking-calendar-col  { width: 100%; position: static; }
+    .diensten              { grid-template-columns: 1fr 1fr; }
+    .custom-grid           { grid-template-columns: 1fr; }
+    .hdr-links             { display: none; }
+    .contact-band          { flex-direction: column; text-align: center; }
+    .stats-row             { grid-template-columns: 1fr 1fr; }
+    .tarief-grid           { grid-template-columns: 1fr; }
+    .admin-body nav        { display: none; }
 }
 
 @media (max-width: 560px) {

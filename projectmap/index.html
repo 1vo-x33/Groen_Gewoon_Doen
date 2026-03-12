@@ -56,171 +56,150 @@
     </div>
 </div>
 
-<!-- DIENSTEN — filled by loadDiensten() -->
+<!-- DIENSTEN -->
 <div id="diensten" class="diensten-wrap">
-    <div class="diensten" id="dienstenGrid">
-        <!-- JS renders dienst cards here from data/diensten.json -->
-    </div>
+    <div class="diensten" id="dienstenGrid"></div>
 </div>
 
-<!-- PAKKETTEN SECTION HEADER -->
+<!-- SECTION HEADER -->
 <div id="pakketten" class="wrap">
     <div class="section-head">
         <h2>Pakketten &amp; Offerte</h2>
-        <p>Kies een standaardpakket of vraag een offerte op maat aan.</p>
+        <p>Kies een datum, selecteer een pakket of vraag een offerte op maat aan.</p>
     </div>
 </div>
 
-<!-- TAB NAV -->
-<nav>
-    <ul>
-        <button id="tab-standaard" class="tab-active" onclick="showSection('standaard')">Standaard Pakketten</button>
-        <button id="tab-custom"    onclick="showSection('custom')">Custom Offerte</button>
-    </ul>
-</nav>
+<!-- BOOKING LAYOUT: forms left, calendar right -->
+<div id="offerte" class="booking-layout wrap">
 
-<hr>
+    <!-- LEFT: tab nav + forms -->
+    <div class="booking-forms-col">
 
-<div class="wrap">
+        <nav class="forms-nav">
+            <ul>
+                <button id="tab-standaard" class="tab-active" onclick="showSection('standaard')">Standaard Pakketten</button>
+                <button id="tab-custom"    onclick="showSection('custom')">Custom Offerte</button>
+            </ul>
+        </nav>
 
-    <!-- STANDAARD PAKKETTEN -->
-    <section id="standaard" class="admin-section">
+        <!-- STANDAARD PAKKETTEN -->
+        <section id="standaard" class="admin-section">
+            <table class="pkg-table">
+                <thead>
+                    <tr>
+                        <th>Pakket</th>
+                        <th>Inhoud</th>
+                        <th>Prijs</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="packageTableBody"></tbody>
+            </table>
 
-        <!--
-            Package table — filled by loadPackages() from data/packages.json.
-            thead stays in HTML; tbody is rendered by JS.
-        -->
-        <table class="pkg-table">
-            <thead>
-                <tr>
-                    <th>Pakket</th>
-                    <th>Inhoud</th>
-                    <th>Prijs</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="packageTableBody">
-                <!-- JS renders rows here -->
-            </tbody>
-        </table>
+            <form id="packageForm">
+                <fieldset>
+                    <legend>Snel Bestellen</legend>
+                    <div class="form-row">
+                        <div class="fg">
+                            <label for="packages">Pakket</label>
+                            <select name="packages" id="packages" required>
+                                <option value="">Selecteer pakket...</option>
+                            </select>
+                        </div>
+                        <div class="fg">
+                            <label for="orderName">Naam</label>
+                            <input type="text" id="orderName" placeholder="Uw naam">
+                        </div>
+                        <div class="fg">
+                            <label for="orderPhone">Telefoon</label>
+                            <input type="tel" id="orderPhone" placeholder="06-12345678">
+                        </div>
+                        <div class="fg-btn">
+                            <button type="submit" class="btn btn-solid">Bestellen</button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </section>
 
-        <!-- Quick order form -->
-        <form id="packageForm">
-            <fieldset>
-                <legend>Snel Bestellen</legend>
-                <div class="form-row">
+        <!-- CUSTOM OFFERTE -->
+        <section id="custom" class="admin-section">
+            <input type="hidden" id="grass"    name="grass">
+            <input type="hidden" id="tiles"    name="tiles">
+            <input type="hidden" id="hedge"    name="hedge">
+            <input type="hidden" id="options1" name="options1">
+
+            <form id="customForm">
+                <div class="custom-grid">
                     <div class="fg">
-                        <label for="packages">Pakket</label>
-                        <!--
-                            Options filled by loadPackages() from data/packages.json
-                        -->
-                        <select name="packages" id="packages" required>
-                            <option value="">Selecteer pakket...</option>
-                        </select>
+                        <label for="cNaam">Naam *</label>
+                        <input type="text"  id="cNaam"  placeholder="Jan de Vries" required>
                     </div>
                     <div class="fg">
-                        <label for="orderName">Naam</label>
-                        <input type="text" id="orderName" placeholder="Uw naam">
+                        <label for="cEmail">E-mail *</label>
+                        <input type="email" id="cEmail" placeholder="jan@email.nl" required>
                     </div>
                     <div class="fg">
-                        <label for="orderPhone">Telefoon</label>
-                        <input type="tel" id="orderPhone" placeholder="06-12345678">
+                        <label for="cTel">Telefoon</label>
+                        <input type="tel"   id="cTel"   placeholder="06-12345678">
                     </div>
-                    <div class="fg-btn">
-                        <button type="submit" class="btn btn-solid">Bestellen</button>
+                    <div class="fg">
+                        <label for="cAdres">Adres tuin</label>
+                        <input type="text"  id="cAdres" placeholder="Straat 1, Rotterdam">
+                    </div>
+                    <div class="fg">
+                        <label for="grassV">M&#178; gras</label>
+                        <input type="number" id="grassV" placeholder="0" step="0.1">
+                    </div>
+                    <div class="fg">
+                        <label for="tilesV">M&#178; tegels / terras</label>
+                        <input type="number" id="tilesV" placeholder="0" step="0.1">
+                    </div>
+                    <div class="fg">
+                        <label for="hedgeV">Meters heg</label>
+                        <input type="number" id="hedgeV" placeholder="0" step="0.1">
+                    </div>
+                    <div class="fg">
+                        <label for="options1V">Extra wensen</label>
+                        <input type="text" id="options1V" placeholder="Bijv. bladblazeren...">
                     </div>
                 </div>
-            </fieldset>
-        </form>
-    </section>
 
-    <!-- CUSTOM OFFERTE -->
-    <section id="custom" class="admin-section">
+                <div class="price-est">
+                    <h4>Geschatte prijs <span class="est-note">(indicatie, excl. BTW)</span></h4>
+                    <div class="est-line">
+                        <span>Gras (<span id="eGM">0</span> m&#178;, &euro; <span id="eGRate">&#8211;</span>/m&#178;)</span>
+                        <span>&euro; <span id="eGP">0,00</span></span>
+                    </div>
+                    <div class="est-line">
+                        <span>Tegels (<span id="eTM">0</span> m&#178;, &euro; <span id="eTRate">&#8211;</span>/m&#178;)</span>
+                        <span>&euro; <span id="eTP">0,00</span></span>
+                    </div>
+                    <div class="est-line">
+                        <span>Heg (<span id="eHM">0</span> m, &euro; <span id="eHRate">&#8211;</span>/m)</span>
+                        <span>&euro; <span id="eHP">0,00</span></span>
+                    </div>
+                    <div class="est-total">
+                        <span>Totaal</span>
+                        <span>&euro; <span id="eTot">0,00</span></span>
+                    </div>
+                </div>
 
-        <!--
-            Hidden inputs read by handleCustomForm().
-            These mirror the visible inputs so the original FormData logic still works.
-        -->
-        <input type="hidden" id="grass"    name="grass">
-        <input type="hidden" id="tiles"    name="tiles">
-        <input type="hidden" id="hedge"    name="hedge">
-        <input type="hidden" id="options1" name="options1">
+                <div class="form-submit">
+                    <button type="submit" class="btn btn-solid btn-lg">Offerte aanvragen</button>
+                </div>
+            </form>
+        </section>
 
-        <form id="customForm">
-            <div class="custom-grid">
-                <div class="fg">
-                    <label for="cNaam">Naam *</label>
-                    <input type="text"  id="cNaam"  placeholder="Jan de Vries" required>
-                </div>
-                <div class="fg">
-                    <label for="cEmail">E-mail *</label>
-                    <input type="email" id="cEmail" placeholder="jan@email.nl" required>
-                </div>
-                <div class="fg">
-                    <label for="cTel">Telefoon</label>
-                    <input type="tel"   id="cTel"   placeholder="06-12345678">
-                </div>
-                <div class="fg">
-                    <label for="cAdres">Adres tuin</label>
-                    <input type="text"  id="cAdres" placeholder="Straat 1, Rotterdam">
-                </div>
-                <div class="fg">
-                    <label for="grassV">M&sup2; gras</label>
-                    <input type="number" id="grassV" placeholder="0" step="0.1">
-                </div>
-                <div class="fg">
-                    <label for="tilesV">M&sup2; tegels / terras</label>
-                    <input type="number" id="tilesV" placeholder="0" step="0.1">
-                </div>
-                <div class="fg">
-                    <label for="hedgeV">Meters heg</label>
-                    <input type="number" id="hedgeV" placeholder="0" step="0.1">
-                </div>
-                <div class="fg">
-                    <label for="options1V">Extra wensen</label>
-                    <input type="text" id="options1V" placeholder="Bijv. bladblazeren...">
-                </div>
-            </div>
+    </div><!-- /booking-forms-col -->
 
-            <!--
-                Price estimate — labels and rates filled by loadTarieven()
-                from data/tarieven.json. Amounts updated live by updateCalc().
-            -->
-            <div class="price-est">
-                <h4>Geschatte prijs <span class="est-note">(indicatie, excl. BTW)</span></h4>
-                <div class="est-line">
-                    <span>Gras (<span id="eGM">0</span> m&sup2;, &euro; <span id="eGRate">–</span>/m&sup2;)</span>
-                    <span>&euro; <span id="eGP">0,00</span></span>
-                </div>
-                <div class="est-line">
-                    <span>Tegels (<span id="eTM">0</span> m&sup2;, &euro; <span id="eTRate">–</span>/m&sup2;)</span>
-                    <span>&euro; <span id="eTP">0,00</span></span>
-                </div>
-                <div class="est-line">
-                    <span>Heg (<span id="eHM">0</span> m, &euro; <span id="eHRate">–</span>/m)</span>
-                    <span>&euro; <span id="eHP">0,00</span></span>
-                </div>
-                <div class="est-total">
-                    <span>Totaal</span>
-                    <span>&euro; <span id="eTot">0,00</span></span>
-                </div>
-            </div>
+    <!-- RIGHT: calendar -->
+    <div id="agenda" class="booking-calendar-col">
+        <div class="cal-head-inline">
+            <h3>Kies een datum <span class="required-star">*</span></h3>
+            <p>Selecteer een beschikbare dag om verder te gaan.</p>
+        </div>
 
-            <div class="form-submit">
-                <button type="submit" class="btn btn-solid btn-lg">Offerte aanvragen</button>
-            </div>
-        </form>
-    </section>
-
-</div><!-- /wrap -->
-
-<!-- KALENDER -->
-<div id="agenda" class="cal-section">
-    <div class="cal-head">
-        <h2>Afspraak Inplannen</h2>
-        <p>Kies een beschikbare datum. Groene dagen zijn vrij.</p>
-    </div>
-    <div class="calendar-wrapper">
         <div class="calendar">
             <div class="month">
                 <ul>
@@ -234,20 +213,19 @@
             </ul>
             <ul class="days" id="calendarDays"></ul>
         </div>
-        <div class="calendar-sidebar">
-            <div class="calendar-legend">
-                <h3>Legenda</h3>
-                <div class="legend-item"><span class="dot dot-available"></span> Beschikbaar</div>
-                <div class="legend-item"><span class="dot dot-selected"></span> Geselecteerd</div>
-                <div class="legend-item"><span class="dot dot-busy"></span> Volgeboekt</div>
-            </div>
-            <div class="calendar-booking" id="bookingPanel">
-                <h3>Geen datum geselecteerd</h3>
-                <p>Selecteer een beschikbare datum om een afspraak te maken.</p>
-            </div>
+
+        <div class="chosen-date-display" id="chosenDateDisplay">
+            Geen datum geselecteerd
         </div>
-    </div>
-</div>
+
+        <div class="calendar-legend">
+            <div class="legend-item"><span class="dot dot-available"></span> Beschikbaar</div>
+            <div class="legend-item"><span class="dot dot-selected"></span> Geselecteerd</div>
+            <div class="legend-item"><span class="dot dot-busy"></span> Volgeboekt</div>
+        </div>
+    </div><!-- /booking-calendar-col -->
+
+</div><!-- /booking-layout -->
 
 <!-- CONTACT -->
 <div class="contact-band">
@@ -265,6 +243,6 @@
     <p>&copy; 2026 Groen &amp; Gewoon Doen &nbsp;&middot;&nbsp; Rotterdam &nbsp;&middot;&nbsp; KVK 12345678</p>
 </footer>
 
-<script src="js/main.js"></script>
+<script src="js/main.js?v=3"></script>
 </body>
 </html>

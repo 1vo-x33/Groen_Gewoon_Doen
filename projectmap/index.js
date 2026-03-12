@@ -67,6 +67,8 @@ app.post('/api/packages', (req, res) => {
 });
 
 // POST single package (add new)
+// NOTE: this route must be defined BEFORE app.put('/api/packages/:id')
+// so Express doesn't try to match "add" as an :id parameter
 app.post('/api/packages/add', (req, res) => {
     const { naam, beschrijving, prijs } = req.body;
     if (!naam || prijs === undefined) {
@@ -100,6 +102,53 @@ app.delete('/api/packages/:id', (req, res) => {
     packages.splice(index, 1);
     writeJson('packages.json', packages);
     res.json({ success: true, message: 'Pakket verwijderd' });
+});
+
+// ── ORDERS ─────────────────────────────────────────────────
+
+// POST /api/orders — klant submits a new quote request
+app.post('/api/orders', (req, res) => {
+    const { klant, email, telefoon, adres, datum, details, offerte } = req.body;
+    if (!klant) {
+        return res.status(400).json({ success: false, error: 'Naam is verplicht' });
+    }
+    const orders = readJson('orders.json') || [];
+    const newOrder = {
+        id:       orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1,
+        klant:    klant,
+        email:    email    || '',
+        telefoon: telefoon || '',
+        adres:    adres    || '',
+        datum:    datum    || '',
+        details:  details  || '',
+        offerte:  parseFloat(offerte) || 0,
+        status:   'In afwachting'
+    };
+    orders.push(newOrder);
+    writeJson('orders.json', orders);
+    res.json({ success: true, id: newOrder.id });
+});
+
+// PATCH /api/orders/:id — admin updates order status
+app.patch('/api/orders/:id', (req, res) => {
+    const id      = parseInt(req.params.id);
+    const allowed = ['Geaccepteerd', 'Afgewezen', 'Ingepland', 'Klaar', 'Geannuleerd'];
+    const { status } = req.body;
+
+    if (!allowed.includes(status)) {
+        return res.status(400).json({ success: false, error: 'Ongeldige status: ' + status });
+    }
+
+    const orders = readJson('orders.json') || [];
+    const order  = orders.find(o => o.id === id);
+
+    if (!order) {
+        return res.status(404).json({ success: false, error: 'Order #' + id + ' niet gevonden' });
+    }
+
+    order.status = status;
+    writeJson('orders.json', orders);
+    res.json({ success: true });
 });
 
 app.listen(port, () => {
