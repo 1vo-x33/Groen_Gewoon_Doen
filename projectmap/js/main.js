@@ -1,13 +1,5 @@
 // ============================================================
 //  GROEN & GEWOON DOEN — js/main.js
-//
-//  Verwachte data bestanden in ./data/
-//
-//  users.json      [ { id, username, password, role } ]
-//  packages.json   [ { id, naam, beschrijving, prijs } ]
-//  diensten.json   [ { id, naam, beschrijving } ]
-//  orders.json     [ { id, klant, pakket, details, offerte, status } ]
-//  tarieven.json   { gras, tegels, heg, uurtarief }
 // ============================================================
 
 
@@ -24,7 +16,6 @@ async function getInfo() {
         if (!res.ok) throw new Error('Kon gebruikerslijst niet laden');
         const users = await res.json();
 
-        // users.json: [ { id, username, password, role } ]
         const user = users.find(u => u.username === username && u.password === password);
 
         if (user) {
@@ -71,8 +62,8 @@ function showSection(id) {
     const target = document.getElementById(id);
     if (target) { target.style.display = 'block'; target.classList.add('active'); }
 
-    // index tab buttons
-    document.querySelectorAll('nav ul button[id^="tab-"]').forEach(b => b.classList.remove('tab-active'));
+    // index tab buttons (inside .forms-nav)
+    document.querySelectorAll('.forms-nav button[id^="tab-"]').forEach(b => b.classList.remove('tab-active'));
     const tab = document.getElementById('tab-' + id);
     if (tab) tab.classList.add('tab-active');
 
@@ -83,7 +74,9 @@ function showSection(id) {
 }
 
 
-
+// ============================================================
+//  DIENSTEN
+// ============================================================
 
 async function loadDiensten() {
     const grid = document.getElementById('dienstenGrid');
@@ -98,7 +91,6 @@ async function loadDiensten() {
         diensten.forEach(d => {
             const div = document.createElement('div');
             div.className = 'dienst';
-            // gebruik d.naam (niet d.titel)
             div.innerHTML =
                 '<div class="dienst-bar"></div>' +
                 '<h4>' + d.naam + '</h4>' +
@@ -113,9 +105,7 @@ async function loadDiensten() {
 
 
 // ============================================================
-//  PACKAGES  (index + admin) — data/packages.json
-//  Velden: { id, naam, beschrijving, prijs }
-//  Geen 'populair' veld — eerste pakket is standaard uitgelicht
+//  PAKKETTEN
 // ============================================================
 
 async function loadPackages() {
@@ -137,7 +127,6 @@ async function loadPackages() {
     }
 }
 
-// index: tabel met pakket-rijen
 function renderPackageTable(packages) {
     const tbody = document.getElementById('packageTableBody');
     if (!tbody) return;
@@ -146,7 +135,6 @@ function renderPackageTable(packages) {
     packages.forEach((pkg, index) => {
         const tr = document.createElement('tr');
 
-        // Markeer het middelste pakket als aanbevolen (of het eerste als er maar 1 is)
         const isAanbevolen = packages.length >= 3
             ? index === Math.floor(packages.length / 2)
             : index === 0;
@@ -174,7 +162,6 @@ function renderPackageTable(packages) {
     });
 }
 
-// index: <select> dropdown in bestelformulier
 function renderPackageSelect(packages) {
     const sel = document.getElementById('packages');
     if (!sel) return;
@@ -188,7 +175,6 @@ function renderPackageSelect(packages) {
     });
 }
 
-// admin: beheertabel
 function renderAdminPackageTable(packages) {
     const tbody = document.getElementById('packageTableBody');
     if (!tbody) return;
@@ -207,7 +193,6 @@ function renderAdminPackageTable(packages) {
     });
 }
 
-// Selecteer pakket via id, scroll naar bestelformulier
 function selectPkg(id) {
     const sel = document.getElementById('packages');
     if (!sel) return;
@@ -231,12 +216,8 @@ async function editPackage(id) {
             body: JSON.stringify({ naam, beschrijving, prijs: parseFloat(prijs) })
         });
         const result = await res.json();
-        if (result.success) {
-            alert('Pakket bijgewerkt!');
-            loadPackages();
-        } else {
-            alert('Fout: ' + result.error);
-        }
+        if (result.success) { alert('Pakket bijgewerkt!'); loadPackages(); }
+        else alert('Fout: ' + result.error);
     } catch (err) {
         console.error('Fout bij bewerken pakket:', err);
         alert('Er is een fout opgetreden.');
@@ -248,18 +229,15 @@ async function deletePackage(id, naam) {
     try {
         const res = await fetch('/api/packages/' + id, { method: 'DELETE' });
         const result = await res.json();
-        if (result.success) {
-            alert('Pakket verwijderd!');
-            loadPackages();
-        } else {
-            alert('Fout: ' + result.error);
-        }
+        if (result.success) { alert('Pakket verwijderd!'); loadPackages(); }
+        else alert('Fout: ' + result.error);
     } catch (err) {
         console.error('Fout bij verwijderen pakket:', err);
         alert('Er is een fout opgetreden.');
     }
 }
-function viewPackageQuestions(id)            { alert('Vragen voor pakket #' + id + ' (nog te implementeren)'); }
+
+function viewPackageQuestions(id) { alert('Vragen voor pakket #' + id + ' (nog te implementeren)'); }
 
 async function handleNewPackage() {
     const naam         = document.getElementById('naam').value;
@@ -285,15 +263,11 @@ async function handleNewPackage() {
     }
 }
 
-function openNewOrderForm() {
-    alert('Nieuwe order formulier (nog te implementeren).');
-}
+function openNewOrderForm() { alert('Nieuwe order formulier (nog te implementeren).'); }
 
-// ... (rest of the code remains the same)
 
 // ============================================================
-//  TARIEVEN  (index + admin) — data/tarieven.json
-//  Velden: { gras, tegels, heg, uurtarief }
+//  TARIEVEN
 // ============================================================
 
 async function loadRates() {
@@ -302,21 +276,17 @@ async function loadRates() {
         if (!res.ok) throw new Error('tarieven.json niet gevonden');
         const rates = await res.json();
 
-        // Store rates globally so calculateQuote() can access them
         window.rates = rates;
 
-        // Display the rate per unit in the price estimate (index)
         setText('eGRate', fmt(rates.gras));
         setText('eTRate', fmt(rates.tegels));
         setText('eHRate', fmt(rates.heg));
 
-        // Fill in admin form fields (if on admin page)
         setVal('tGras',      rates.gras);
         setVal('tTegels',    rates.tegels);
         setVal('tHeg',       rates.heg);
         setVal('tUurtarief', rates.uurtarief);
 
-        // Run the calculation so prices are up-to-date
         calculateQuote();
     } catch (err) {
         console.error('Fout bij laden rates:', err);
@@ -337,17 +307,18 @@ async function saveTarieven() {
             body: JSON.stringify(data)
         });
         const result = await res.json();
-        if (result.success) {
-            alert('Tarieven opgeslagen!');
-            window.rates = { ...data };
-        } else {
-            alert('Fout: ' + result.error);
-        }
+        if (result.success) { alert('Tarieven opgeslagen!'); window.rates = { ...data }; }
+        else alert('Fout: ' + result.error);
     } catch (err) {
         console.error('Fout bij opslaan tarieven:', err);
         alert('Er is een fout opgetreden bij het opslaan.');
     }
 }
+
+
+// ============================================================
+//  ORDERS  (admin)
+// ============================================================
 
 async function loadOrders() {
     const tbody    = document.getElementById('ordersTableBody');
@@ -362,7 +333,6 @@ async function loadOrders() {
         renderOrderStats(orders, statsDiv);
         renderOrdersTable(orders, tbody);
 
-        // Live zoeken
         const searchInput = document.getElementById('orderSearch');
         if (searchInput) {
             searchInput.addEventListener('input', function () {
@@ -376,36 +346,39 @@ async function loadOrders() {
         }
     } catch (err) {
         console.error('Fout bij laden orders:', err);
-        tbody.innerHTML = '<tr><td colspan="6" class="load-error">Orders konden niet worden geladen.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="load-error">Orders konden niet worden geladen.</td></tr>';
     }
 }
 
 function renderOrderStats(orders, container) {
     if (!container) return;
 
-    const nieuw     = orders.filter(o => o.status === 'Nieuw').length;
-    const ingepland = orders.filter(o => o.status === 'Ingepland').length;
-    const afgerond  = orders.filter(o => o.status === 'Klaar').length;
-    const omzet     = orders
+    const afwachting = orders.filter(o => o.status === 'In afwachting').length;
+    const ingepland  = orders.filter(o => o.status === 'Ingepland').length;
+    const afgerond   = orders.filter(o => o.status === 'Klaar').length;
+    const omzet      = orders
         .filter(o => o.status === 'Klaar')
         .reduce((sum, o) => sum + (parseFloat(o.offerte) || 0), 0);
 
     container.innerHTML =
-        statCard('Nieuw',     nieuw,                     nieuw > 0 ? 'warn' : 'ok', 'Wacht op verwerking') +
-        statCard('Ingepland', ingepland,                 'ok', 'Deze week') +
-        statCard('Afgerond',  afgerond,                  'ok', 'Deze maand') +
-        statCard('Omzet',     '&euro;' + fmt(omzet),     'ok', 'Afgeronde orders');
+        statCard('In afwachting', afwachting,           afwachting > 0 ? 'warn' : 'ok', 'Wacht op beoordeling') +
+        statCard('Ingepland',     ingepland,             'ok', 'Deze week') +
+        statCard('Afgerond',      afgerond,              'ok', 'Deze maand') +
+        statCard('Omzet',         '&euro;' + fmt(omzet), 'ok', 'Afgeronde orders');
 }
 
 function statCard(label, value, modifier, sub) {
     return '<div class="stat-card">' +
-        '<div class="stat-label">'              + label + '</div>' +
-        '<div class="stat-value">'              + value + '</div>' +
-        '<div class="stat-sub ' + modifier + '">' + sub + '</div>' +
+        '<div class="stat-label">'               + label + '</div>' +
+        '<div class="stat-value">'               + value + '</div>' +
+        '<div class="stat-sub ' + modifier + '">' + sub  + '</div>' +
     '</div>';
 }
 
 const STATUS_BADGE = {
+    'In afwachting':  'badge-yellow',
+    'Geaccepteerd':   'badge-green',
+    'Afgewezen':      'badge-red',
     'Nieuw':          'badge-blue',
     'In behandeling': 'badge-blue',
     'Ingepland':      'badge-blue',
@@ -414,6 +387,7 @@ const STATUS_BADGE = {
     'Geannuleerd':    'badge-red'
 };
 
+// ★ Now renders 7 columns including datum
 function renderOrdersTable(orders, tbody) {
     tbody.innerHTML = '';
 
@@ -426,25 +400,32 @@ function renderOrdersTable(orders, tbody) {
         const badge  = STATUS_BADGE[o.status] || 'badge-blue';
         const acties = buildOrderActions(o);
         const tr     = document.createElement('tr');
+        tr.style.cursor = 'pointer';
 
         tr.innerHTML =
             '<td><strong>#' + o.id + '</strong></td>' +
             '<td>' + o.klant + '</td>' +
-            '<td class="td-muted">' + (o.details || o.pakket || '–') + '</td>' +
+            '<td class="td-muted">' + (o.datum || '–') + '</td>' +
             '<td>&euro;&nbsp;' + parseFloat(o.offerte || 0).toFixed(2).replace('.', ',') + '</td>' +
             '<td><span class="badge ' + badge + '">' + o.status + '</span></td>' +
-            '<td class="td-btns">' + acties + '</td>';
+            '<td class="td-btns" onclick="event.stopPropagation()">' + acties + '</td>';
 
+        // Click row → open detail modal
+        tr.addEventListener('click', () => openOrderModal(o));
         tbody.appendChild(tr);
     });
 }
 
 function buildOrderActions(order) {
     switch (order.status) {
+        case 'In afwachting':
+            return btn('solid',  'Accepteren', 'acceptOrder(' + order.id + ')') +
+                   btn('danger', 'Afwijzen',   'rejectOrder('  + order.id + ')');
+        case 'Geaccepteerd':
         case 'Nieuw':
         case 'In behandeling':
-            return btn('warn',   'Inplannen', 'planOrder('     + order.id + ')') +
-                   btn('ghost',  'Bewerken',  'editOrder('     + order.id + ')');
+            return btn('warn',  'Inplannen', 'planOrder('     + order.id + ')') +
+                   btn('ghost', 'Bewerken',  'editOrder('     + order.id + ')');
         case 'Ingepland':
         case 'Wachtend':
             return btn('solid',  'Afgerond',  'completeOrder(' + order.id + ')') +
@@ -461,6 +442,97 @@ function btn(style, label, onclick) {
     return '<button class="btn btn-' + style + ' btn-sm" onclick="' + onclick + '">' + label + '</button>';
 }
 
+// ── Order detail modal ─────────────────────────────────────
+
+function openOrderModal(o) {
+    // Remove any existing modal
+    const existing = document.getElementById('orderModal');
+    if (existing) existing.remove();
+
+    const badge  = STATUS_BADGE[o.status] || 'badge-blue';
+    const acties = buildOrderActions(o);
+
+    const modal = document.createElement('div');
+    modal.id = 'orderModal';
+    modal.className = 'order-modal-overlay';
+    modal.innerHTML =
+        '<div class="order-modal">' +
+            '<div class="order-modal-head">' +
+                '<div>' +
+                    '<h3>Order #' + o.id + '</h3>' +
+                    '<span class="badge ' + badge + '">' + o.status + '</span>' +
+                '</div>' +
+                '<button class="order-modal-close" onclick="closeOrderModal()">&times;</button>' +
+            '</div>' +
+            '<div class="order-modal-body">' +
+                '<div class="order-modal-section">' +
+                    '<h4>Klantgegevens</h4>' +
+                    modalRow('Naam',     o.klant    || '–') +
+                    modalRow('E-mail',   o.email    || '–') +
+                    modalRow('Telefoon', o.telefoon || '–') +
+                    modalRow('Adres',    o.adres    || '–') +
+                '</div>' +
+                '<div class="order-modal-section">' +
+                    '<h4>Opdracht</h4>' +
+                    modalRow('Datum',   o.datum   || '–') +
+                    modalRow('Details', o.details || o.pakket || '–') +
+                    modalRow('Offerte', '€ ' + parseFloat(o.offerte || 0).toFixed(2).replace('.', ',')) +
+                '</div>' +
+            '</div>' +
+            '<div class="order-modal-foot">' +
+                acties +
+            '</div>' +
+        '</div>';
+
+    // Close on backdrop click
+    modal.addEventListener('click', e => { if (e.target === modal) closeOrderModal(); });
+    document.body.appendChild(modal);
+    // Trigger transition
+    requestAnimationFrame(() => modal.classList.add('open'));
+}
+
+function closeOrderModal() {
+    const modal = document.getElementById('orderModal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.addEventListener('transitionend', () => modal.remove(), { once: true });
+}
+
+function modalRow(label, value) {
+    return '<div class="modal-row">' +
+        '<span class="modal-label">' + label + '</span>' +
+        '<span class="modal-value">' + value + '</span>' +
+    '</div>';
+}
+
+async function updateOrderStatus(id, newStatus) {
+    try {
+        const res = await fetch('/api/orders/' + id, {
+            method:  'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ status: newStatus })
+        });
+        const result = await res.json();
+        if (result.success) loadOrders();
+        else alert('Fout: ' + result.error);
+    } catch (err) {
+        console.error('Fout bij bijwerken status:', err);
+        alert('Er is een technisch probleem opgetreden.');
+    }
+}
+
+function acceptOrder(id) {
+    if (confirm('Order #' + id + ' accepteren?')) {
+        closeOrderModal();
+        updateOrderStatus(id, 'Geaccepteerd');
+    }
+}
+function rejectOrder(id) {
+    if (confirm('Order #' + id + ' afwijzen?')) {
+        closeOrderModal();
+        updateOrderStatus(id, 'Afgewezen');
+    }
+}
 function planOrder(id)     { alert('Inplannen: order #' + id + ' (nog te implementeren)'); }
 function editOrder(id)     { alert('Bewerken: order #'  + id + ' (nog te implementeren)'); }
 function completeOrder(id) { alert('Afgerond: order #'  + id + ' (nog te implementeren)'); }
@@ -474,24 +546,72 @@ function deleteOrder(id)   { if (confirm('Order #' + id + ' verwijderen?')) aler
 
 function handlePackageForm(e) {
     e.preventDefault();
+
+    // ★ Date is required
+    if (!selectedDay) {
+        highlightDateError();
+        alert('Selecteer eerst een datum in de kalender.');
+        return;
+    }
+
     const pkgId = new FormData(e.target).get('packages');
     if (!pkgId) { alert('Selecteer eerst een pakket'); return; }
-    console.log('Bestelling pakket id:', pkgId);
+
+    console.log('Bestelling pakket id:', pkgId, 'datum:', getSelectedDateString());
     alert('Bestelling geplaatst! (nog te implementeren in backend)');
 }
 
+// ★ POSTs order with chosen date; validates date is chosen first
 function handleCustomForm(e) {
     e.preventDefault();
+
+    if (!selectedDay) {
+        highlightDateError();
+        alert('Selecteer eerst een datum in de kalender.');
+        return;
+    }
+
     syncVisibleToHidden();
 
     const order = {
-        grass:    document.getElementById('grass').value    || 0,
-        tiles:    document.getElementById('tiles').value    || 0,
-        hedge:    document.getElementById('hedge').value    || 0,
-        options1: document.getElementById('options1').value || ''
+        klant:    document.getElementById('cNaam')  ? document.getElementById('cNaam').value  : '',
+        email:    document.getElementById('cEmail') ? document.getElementById('cEmail').value : '',
+        telefoon: document.getElementById('cTel')   ? document.getElementById('cTel').value   : '',
+        adres:    document.getElementById('cAdres') ? document.getElementById('cAdres').value : '',
+        datum:    getSelectedDateString(),   // ★ chosen date stored here
+        details:
+            'Gras: '   + (document.getElementById('grass').value  || 0) + 'm², ' +
+            'Tegels: ' + (document.getElementById('tiles').value  || 0) + 'm², ' +
+            'Heg: '    + (document.getElementById('hedge').value  || 0) + 'm',
+        offerte: document.getElementById('eTot')
+                    ? document.getElementById('eTot').textContent.replace(',', '.')
+                    : '0',
+        status: 'In afwachting'
     };
-    console.log('Offerte aangevraagd:', order);
-    alert('Offerte aangevraagd! We nemen spoedig contact op.');
+
+    fetch('/api/orders', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(order)
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (result) {
+        if (result.success) {
+            alert('Offerte aangevraagd! We nemen spoedig contact op.');
+            document.getElementById('customForm').reset();
+            calculateQuote();
+            // Reset selected date
+            selectedDay = null;
+            renderCalendar();
+            updateDateDisplay();
+        } else {
+            alert('Fout: ' + result.error);
+        }
+    })
+    .catch(function (err) {
+        console.error('Fout bij versturen:', err);
+        alert('Er is een technisch probleem opgetreden.');
+    });
 }
 
 
@@ -511,30 +631,22 @@ function syncVisibleToHidden() {
 function calculateQuote() {
     syncVisibleToHidden();
 
-    // 1. Read how many m² / meters the user entered
     const grassV = parseFloat(document.getElementById('grassV')?.value) || 0;
     const tilesV = parseFloat(document.getElementById('tilesV')?.value) || 0;
     const hedgeV = parseFloat(document.getElementById('hedgeV')?.value) || 0;
 
-    // 2. Get the rates (set earlier by loadRates)
     const rates = window.rates || { gras: 0, tegels: 0, heg: 0 };
 
-    // 3. Calculate the price for each service
     const grassTotal = grassV * rates.gras;
     const tilesTotal = tilesV * rates.tegels;
     const hedgeTotal = hedgeV * rates.heg;
 
-    // 4. Update the quantities shown in the HTML
     setText('eGM',  grassV);
     setText('eTM',  tilesV);
     setText('eHM',  hedgeV);
-
-    // 5. Update the calculated prices in the HTML
     setText('eGP',  fmt(grassTotal));
     setText('eTP',  fmt(tilesTotal));
     setText('eHP',  fmt(hedgeTotal));
-
-    // 6. Calculate and show the grand total
     setText('eTot', fmt(grassTotal + tilesTotal + hedgeTotal));
 }
 
@@ -617,32 +729,47 @@ function renderCalendar() {
     }
 }
 
+// ★ Just stores the selected date and updates the display pill
 function selectDay(d, m, y, dateObj) {
-    selectedDay = { d, m, y };
-    const panel = document.getElementById('bookingPanel');
-    if (!panel) return;
-
-    panel.innerHTML =
-        '<h3>' + DAGEN[dateObj.getDay()] + ' ' + d + ' ' + MAANDEN[m] + ' ' + y + '</h3>' +
-        '<p>Vul uw gegevens in om de afspraak te bevestigen.</p>' +
-        '<div class="booking-form">' +
-            '<input type="text" placeholder="Uw naam">' +
-            '<input type="tel"  placeholder="Telefoonnummer">' +
-            '<button onclick="confirmBooking()">Afspraak Bevestigen</button>' +
-        '</div>';
-
+    selectedDay = { d, m, y, dateObj };
+    updateDateDisplay();
     renderCalendar();
 }
 
-function confirmBooking() {
-    const panel = document.getElementById('bookingPanel');
-    if (panel) {
-        panel.innerHTML =
-            '<h3>Afspraak aangevraagd!</h3>' +
-            '<p>We nemen zo snel mogelijk contact met u op om de afspraak te bevestigen.</p>';
+// ★ Updates the chosen-date pill below the calendar
+function updateDateDisplay() {
+    const display = document.getElementById('chosenDateDisplay');
+    if (!display) return;
+
+    if (selectedDay) {
+        display.textContent = DAGEN[selectedDay.dateObj.getDay()] + ' ' +
+                              selectedDay.d + ' ' +
+                              MAANDEN[selectedDay.m] + ' ' +
+                              selectedDay.y;
+        display.classList.remove('error');
+    } else {
+        display.textContent = 'Geen datum geselecteerd';
+        display.classList.remove('error');
     }
-    selectedDay = null;
-    renderCalendar();
+}
+
+// ★ Turns the date pill red and scrolls to it when no date chosen on submit
+function highlightDateError() {
+    const display = document.getElementById('chosenDateDisplay');
+    if (display) {
+        display.textContent = 'Kies een datum om door te gaan';
+        display.classList.add('error');
+        display.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+// ★ Returns a human-readable date string to store in the order
+function getSelectedDateString() {
+    if (!selectedDay) return '';
+    return DAGEN[selectedDay.dateObj.getDay()] + ' ' +
+           selectedDay.d + ' ' +
+           MAANDEN[selectedDay.m] + ' ' +
+           selectedDay.y;
 }
 
 function changeMonth(dir) {
@@ -734,6 +861,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (customForm)  customForm.addEventListener('submit', handleCustomForm);
 
         showSection('standaard');
-        if (document.getElementById('calendarDays')) renderCalendar();
+        renderCalendar();
+        updateDateDisplay();
     }
 });
