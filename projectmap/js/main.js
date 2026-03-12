@@ -536,9 +536,9 @@ function invoiceOrder(id)  { alert('Factuur: order #'   + id + ' (nog te impleme
 function deleteOrder(id)   { if (confirm('Order #' + id + ' verwijderen?')) alert('Verwijderd (nog te implementeren)'); }
 
 
-// ============================================================
+
 //  BESTELFORMULIER  (index)
-// ============================================================
+
 
 function handlePackageForm(e) {
     e.preventDefault();
