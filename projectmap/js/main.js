@@ -560,7 +560,6 @@ function handlePackageForm(e) {
     console.log('Bestelling pakket id:', pkgId, 'datum:', getSelectedDateString());
     alert('Bestelling geplaatst! (nog te implementeren in backend)');
 }
-
 // ★ POSTs order with chosen date; validates date is chosen first
 function handleCustomForm(e) {
     e.preventDefault();
@@ -570,7 +569,53 @@ function handleCustomForm(e) {
         alert('Selecteer eerst een datum in de kalender.');
         return;
     }
+}
+function validateCustomForm() {
+    //1. Start by assuming the form is valid
+    let isValid = true;
 
+    //2. List the IDs of the fields we want to check
+    const fields = ['grassV', 'tilesV', 'hedgeV'];
+
+    //3. Loop through each field
+    fields.forEach(function(id) {
+        const input = document.getElementById(id);
+        // Remove any previous error state first
+        input.classList.remove('error');
+        // Remove old error message if it existed
+        const oldMsg = input.parentElement.querySelector('.error-msg');
+        if (oldMsg) oldMsg.remove();
+    });
+
+    // 4. Check does at least one field have value > 0?
+    const grassV = parseFloat(document.getElementById('grassV').value) || 0;
+    const tilesV = parseFloat(document.getElementById('tilesV').value) || 0;
+    const hedgeV = parseFloat(document.getElementById('hedgeV').value) || 0;
+
+    if (grassV === 0 && tilesV === 0 && hedgeV === 0){
+        //5. None filled in = mark all three as error
+        fields.forEach(function(id) {
+            const input = document.getElementById(id);
+            input.classList.add('error');
+
+            // 6. Create a small <span> with the error txt
+            const msg = document.createElement('span');
+            msg.className = 'error-msg';
+            msg.textContent = 'Vul minimaal een veld in';
+
+            //7. Add it inside the parent .fg div (after the input)
+            input.parentElement.appendChild(msg);
+        });
+
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+function handleCustomForm(e) {
+    e.preventDefault();
+    if (!validateCustomForm()) return;
     syncVisibleToHidden();
 
     const order = {
@@ -653,7 +698,15 @@ function calculateQuote() {
 function initPriceCalc() {
     ['grassV', 'tilesV', 'hedgeV'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.addEventListener('input', calculateQuote);
+        if (el) {
+            el.addEventListener('input', calculateQuote);
+            // Clear error styling when user types
+            el.addEventListener('input', function() {
+                this.classList.remove('error');
+                const msg = this.parentElement.querySelector('.error-msg');
+                if (msg) msg.remove();
+            });
+        }
     });
     const opt1 = document.getElementById('options1V');
     if (opt1) opt1.addEventListener('input', () => {
@@ -661,6 +714,7 @@ function initPriceCalc() {
         if (h) h.value = opt1.value;
     });
 }
+
 
 
 // ============================================================
