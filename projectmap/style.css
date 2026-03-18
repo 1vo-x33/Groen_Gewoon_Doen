@@ -1364,3 +1364,95 @@ header button:hover { background: rgba(255, 255, 255, 0.18); color: var(--white)
     .diensten      { grid-template-columns: 1fr; }
     .stats-row     { grid-template-columns: 1fr; }
 }
+
+/* ============================================================
+   MIJN ORDERS  — nieuwe stijlen (alleen hieronder toegevoegd)
+   ============================================================ */
+
+/* Lijst van order-regels */
+.mijn-orders-lijst {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--white);
+    margin-bottom: 10px;
+}
+
+.mijn-order-rij {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.12s;
+    gap: 12px;
+}
+.mijn-order-rij:last-child { border-bottom: none; }
+.mijn-order-rij:hover      { background: var(--green-light); }
+
+.mijn-order-rij-links {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.mijn-order-nr {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--green-dark);
+    min-width: 36px;
+}
+
+.mijn-order-datum {
+    font-size: 13px;
+    color: var(--muted);
+    min-width: 90px;
+}
+
+.mijn-order-details {
+    font-size: 13px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+}
+
+.mijn-order-rij-rechts {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.mijn-order-prijs {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--green-dark);
+}
+
+.mijn-orders-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+}
+
+/* Datum input in de klant modal */
+.klant-datum-input {
+    padding: 7px 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: 'Source Sans 3', sans-serif;
+    color: var(--text);
+    background: var(--white);
+    width: 100%;
+    margin-top: 4px;
+}
+.klant-datum-input:focus {
+    outline: none;
+    border-color: var(--green);
+}

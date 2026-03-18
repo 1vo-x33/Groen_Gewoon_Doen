@@ -28,5 +28,27 @@
     "details": "Gras: 3m², Tegels: 3m², Heg: 3m",
     "offerte": 90,
     "status": "In afwachting"
+  },
+  {
+    "id": 4,
+    "klant": "Rik",
+    "email": "sddnn@sdlksd.com",
+    "telefoon": "0628172934",
+    "adres": "sudistuin 4, Rotterdam",
+    "datum": "Donderdag 26 Maart 2026",
+    "details": "Gras: 3m², Tegels: 3m², Heg: 3m",
+    "offerte": 90,
+    "status": "In afwachting"
+  },
+  {
+    "id": 5,
+    "klant": "user",
+    "email": "user@gmail.com",
+    "telefoon": "0628172934",
+    "adres": "sudistuin 4, Rotterdam",
+    "datum": "Donderdag 26 Maart 2026",
+    "details": "Gras: 11m², Tegels: 22m², Heg: 11m",
+    "offerte": 440,
+    "status": "Geaccepteerd"
   }
 ]
