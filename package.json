@@ -13,9 +13,9 @@
   "license": "ISC",
   "author": "",
   "type": "commonjs",
-  "main": "index.js",
+  "main": "projectmap/server.js",
   "scripts": {
-    "dev": "node index.js",
+    "dev": "node projectmap/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
