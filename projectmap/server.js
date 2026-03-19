@@ -84,8 +84,10 @@ app.put('/api/orders/:id', (req, res) => {
         return res.status(404).json({ success: false, error: 'Order niet gevonden' });
     }
 
-    // Update the status (e.g. "In afwachting" -> "Nieuw" or "Geannuleerd")
-    order.status = req.body.status;
+    // Merge all sent fields into the order
+    // e.g. { status: "Geaccepteerd" } from admin
+    // e.g. { datum: "2026-04-01" }    from klant
+    Object.assign(order, req.body);
     writeOrders(orders);
 
     res.json({ success: true, order: order });

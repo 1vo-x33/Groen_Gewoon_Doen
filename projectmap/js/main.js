@@ -538,7 +538,7 @@ function modalRow(label, value) {
 async function updateOrderStatus(id, newStatus) {
     try {
         const res = await fetch('/api/orders/' + id, {
-            method:  'PATCH',
+            method:  'PUT',
             headers: { 'Content-Type': 'application/json' },
             body:    JSON.stringify({ status: newStatus })
         });
@@ -998,6 +998,9 @@ async function openKlantModal(orderId) {
     document.getElementById('klantModalAdres').textContent    = o.adres    || '–';
     document.getElementById('klantModalOfferte').textContent  = '€ ' + parseFloat(o.offerte || 0).toFixed(2).replace('.', ',');
 
+    // Reset datum input
+    const datumInput = document.getElementById('klantDatumInput');
+    if (datumInput) datumInput.value = '';
 
     // Actieknoppen: verbergen voor klant (alleen admin mag status wijzigen)
     const actieBalk = document.getElementById('klantModalActies');
@@ -1028,10 +1031,17 @@ async function klantGeeftNietAkkoord() {
 }
 
 
+async function klantSlaatDatumOp() {
+    if (!huidigKlantOrder) return;
+    const input = document.getElementById('klantDatumInput');
+    if (!input || !input.value) { alert('Kies eerst een datum.'); return; }
+    await klantPatchOrder(huidigKlantOrder.id, { datum: input.value });
+}
+
 async function klantPatchOrder(id, data) {
     try {
         const res    = await fetch('/api/orders/' + id, {
-            method:  'PATCH',
+            method:  'PUT',
             headers: { 'Content-Type': 'application/json' },
             body:    JSON.stringify(data)
         });
