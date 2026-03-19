@@ -998,9 +998,6 @@ async function openKlantModal(orderId) {
     document.getElementById('klantModalAdres').textContent    = o.adres    || '–';
     document.getElementById('klantModalOfferte').textContent  = '€ ' + parseFloat(o.offerte || 0).toFixed(2).replace('.', ',');
 
-    // Datum input: probeer ISO formaat
-    const datumInput = document.getElementById('klantDatumInput');
-    if (datumInput) datumInput.value = '';
 
     // Actieknoppen: verbergen voor klant (alleen admin mag status wijzigen)
     const actieBalk = document.getElementById('klantModalActies');
@@ -1030,12 +1027,6 @@ async function klantGeeftNietAkkoord() {
     await klantPatchOrder(huidigKlantOrder.id, { status: 'Niet akkoord' });
 }
 
-async function klantSlaatDatumOp() {
-    if (!huidigKlantOrder) return;
-    const input = document.getElementById('klantDatumInput');
-    if (!input || !input.value) { alert('Kies eerst een datum.'); return; }
-    await klantPatchOrder(huidigKlantOrder.id, { datum: input.value });
-}
 
 async function klantPatchOrder(id, data) {
     try {
