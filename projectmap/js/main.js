@@ -41,15 +41,16 @@ async function getInfo() {
 
 function onKlantIngelogd(user) {
     // Pas de inlog-knop aan naar gebruikersnaam
-    const loginBtn = document.getElementById('button');
-    if (loginBtn) {
+    const oldBtn = document.getElementById('button');
+    if (oldBtn) {
+        // Clone the button to remove ALL old event listeners (from initPopup)
+        const loginBtn = oldBtn.cloneNode(true);
+        oldBtn.parentNode.replaceChild(loginBtn, oldBtn);
+
         loginBtn.textContent = '👤 ' + user.username;
         loginBtn.onclick = (e) => {
             e.preventDefault();
-            if (confirm('Uitloggen?')) {
-                sessionStorage.removeItem('klant');
-                window.location.reload();
-            }
+            document.getElementById('logoutPopup').style.display = 'flex';
         };
     }
 
@@ -62,6 +63,11 @@ function onKlantIngelogd(user) {
     // Navigeer naar de orders sectie en laad de data
     showSection('mijn-orders');
     laadMijnOrders(user);
+}
+
+function logoutUser() {
+    sessionStorage.removeItem('klant');
+    window.location.reload();
 }
 
 
