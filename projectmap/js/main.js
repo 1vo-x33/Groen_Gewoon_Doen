@@ -31,11 +31,11 @@ async function getInfo() {
                 onKlantIngelogd(user);
             }
         } else {
-            alert('Onjuiste gebruikersnaam of wachtwoord');
+            showToast('Inloggen mislukt', 'Onjuiste gebruikersnaam of wachtwoord.', 'error');
         }
     } catch (err) {
         console.error('Fout bij inloggen:', err);
-        alert('Er is een technisch probleem bij het inloggen.');
+        showToast('Technisch probleem', 'Er is een fout opgetreden bij het inloggen.', 'error');
     }
 }
 
@@ -179,7 +179,7 @@ function renderPackageTable(packages) {
             '<td class="td-muted">' + pkg.beschrijving + '</td>' +
             '<td>' +
                 '<span class="pkg-price">&euro;&nbsp;' + pkg.prijs + '</span>' +
-                ' <span class="pkg-unit">/bezoek</span>' +
+                ' <span class="pkg-unit">' + (pkg.uren ? pkg.uren + ' uur' : '/bezoek') + '</span>' +
             '</td>' +
             '<td>' +
                 '<button class="btn btn-' + (isAanbevolen ? 'solid' : 'outline') + ' btn-sm"' +
@@ -246,11 +246,11 @@ async function editPackage(id) {
             body: JSON.stringify({ naam, beschrijving, prijs: parseFloat(prijs) })
         });
         const result = await res.json();
-        if (result.success) { alert('Pakket bijgewerkt!'); loadPackages(); }
-        else alert('Fout: ' + result.error);
+        if (result.success) { showToast('Pakket bijgewerkt!', '', 'success'); loadPackages(); }
+        else showToast('Fout', result.error, 'error');
     } catch (err) {
         console.error('Fout bij bewerken pakket:', err);
-        alert('Er is een fout opgetreden.');
+        showToast('Technisch probleem', 'Er is een fout opgetreden.', 'error');
     }
 }
 
@@ -259,15 +259,15 @@ async function deletePackage(id, naam) {
     try {
         const res = await fetch('/api/packages/' + id, { method: 'DELETE' });
         const result = await res.json();
-        if (result.success) { alert('Pakket verwijderd!'); loadPackages(); }
-        else alert('Fout: ' + result.error);
+        if (result.success) { showToast('Pakket verwijderd!', '', 'success'); loadPackages(); }
+        else showToast('Fout', result.error, 'error');
     } catch (err) {
         console.error('Fout bij verwijderen pakket:', err);
-        alert('Er is een fout opgetreden.');
+        showToast('Technisch probleem', 'Er is een fout opgetreden.', 'error');
     }
 }
 
-function viewPackageQuestions(id) { alert('Vragen voor pakket #' + id + ' (nog te implementeren)'); }
+function viewPackageQuestions(id) { showToast('Nog te implementeren', 'Vragen voor pakket #' + id, 'warning'); }
 
 async function handleNewPackage() {
     const naam         = document.getElementById('naam').value;
@@ -281,19 +281,19 @@ async function handleNewPackage() {
         });
         const result = await res.json();
         if (result.success) {
-            alert('Pakket "' + naam + '" toegevoegd!');
+            showToast('Pakket toegevoegd!', naam, 'success');
             document.getElementById('newPackageForm').reset();
             loadPackages();
         } else {
-            alert('Fout: ' + result.error);
+            showToast('Fout', result.error, 'error');
         }
     } catch (err) {
         console.error('Fout bij toevoegen pakket:', err);
-        alert('Er is een fout opgetreden.');
+        showToast('Technisch probleem', 'Er is een fout opgetreden.', 'error');
     }
 }
 
-function openNewOrderForm() { alert('Nieuwe order formulier (nog te implementeren).'); }
+function openNewOrderForm() { showToast('Nog te implementeren', 'Nieuwe order formulier.', 'warning'); }
 
 
 // ============================================================
@@ -337,11 +337,11 @@ async function saveTarieven() {
             body: JSON.stringify(data)
         });
         const result = await res.json();
-        if (result.success) { alert('Tarieven opgeslagen!'); window.rates = { ...data }; }
-        else alert('Fout: ' + result.error);
+        if (result.success) { showToast('Tarieven opgeslagen!', 'De nieuwe tarieven zijn actief.', 'success'); window.rates = { ...data }; }
+        else showToast('Fout', result.error, 'error');
     } catch (err) {
         console.error('Fout bij opslaan tarieven:', err);
-        alert('Er is een fout opgetreden bij het opslaan.');
+        showToast('Technisch probleem', 'Er is een fout opgetreden bij het opslaan.', 'error');
     }
 }
 
@@ -544,10 +544,10 @@ async function updateOrderStatus(id, newStatus) {
         });
         const result = await res.json();
         if (result.success) loadOrders();
-        else alert('Fout: ' + result.error);
+        else showToast('Fout', result.error, 'error');
     } catch (err) {
         console.error('Fout bij bijwerken status:', err);
-        alert('Er is een technisch probleem opgetreden.');
+        showToast('Technisch probleem', 'Er is een fout opgetreden.', 'error');
     }
 }
 
@@ -563,37 +563,90 @@ function rejectOrder(id) {
         updateOrderStatus(id, 'Afgewezen');
     }
 }
-function planOrder(id)     { alert('Inplannen: order #' + id + ' (nog te implementeren)'); }
-function editOrder(id)     { alert('Bewerken: order #'  + id + ' (nog te implementeren)'); }
-function completeOrder(id) { alert('Afgerond: order #'  + id + ' (nog te implementeren)'); }
-function invoiceOrder(id)  { alert('Factuur: order #'   + id + ' (nog te implementeren)'); }
-function deleteOrder(id)   { if (confirm('Order #' + id + ' verwijderen?')) alert('Verwijderd (nog te implementeren)'); }
+function planOrder(id)     { showToast('Nog te implementeren', 'Inplannen: order #' + id, 'warning'); }
+function editOrder(id)     { showToast('Nog te implementeren', 'Bewerken: order #' + id, 'warning'); }
+function completeOrder(id) { showToast('Nog te implementeren', 'Afgerond: order #' + id, 'warning'); }
+function invoiceOrder(id)  { showToast('Nog te implementeren', 'Factuur: order #' + id, 'warning'); }
+function deleteOrder(id)   { if (confirm('Order #' + id + ' verwijderen?')) showToast('Nog te implementeren', 'Verwijder order #' + id, 'warning'); }
 
 
 
 //  BESTELFORMULIER  (index)
 
 
-function handlePackageForm(e) {
+async function handlePackageForm(e) {
     e.preventDefault();
 
     if (!selectedDay) {
         highlightDateError();
-        alert('Selecteer eerst een datum in de kalender.');
+        showToast('Datum vereist', 'Selecteer eerst een datum in de kalender.', 'error');
         return;
     }
 
-    const pkgId = new FormData(e.target).get('packages');
-    if (!pkgId) { alert('Selecteer eerst een pakket'); return; }
+    // Login check
+    const sessieKlant = sessionStorage.getItem('klant');
+    if (!sessieKlant) {
+        showToast('Niet ingelogd', 'Log eerst in om een bestelling te plaatsen.', 'error');
+        document.querySelector('.popup').style.display = 'flex';
+        return;
+    }
 
-    console.log('Bestelling pakket id:', pkgId, 'datum:', getSelectedDateString());
-    alert('Bestelling geplaatst! (nog te implementeren in backend)');
+    const form  = e.target;
+    const pkgId = form.querySelector('#packages')?.value;
+    if (!pkgId) { showToast('Pakket vereist', 'Selecteer eerst een pakket.', 'error'); return; }
+
+    // Haal de pakket naam op uit de select
+    const pkgSel  = form.querySelector('#packages');
+    const pkgNaam = pkgSel ? pkgSel.options[pkgSel.selectedIndex].text : 'Pakket #' + pkgId;
+
+    const naam     = (form.querySelector('#orderName')?.value  || '').trim();
+    const email    = (form.querySelector('#orderEmail')?.value   || '').trim();
+    const telefoon = (form.querySelector('#orderPhone')?.value   || '').trim();
+    const locatie  = (form.querySelector('#orderLocatie')?.value || '').trim();
+
+    if (!naam)    { showToast('Naam vereist', 'Vul uw naam in.', 'error'); return; }
+    if (!email)   { showToast('E-mail vereist', 'Vul uw e-mailadres in.', 'error'); return; }
+    if (!locatie) { showToast('Locatie vereist', 'Vul uw locatie in.', 'error'); return; }
+
+    const order = {
+        klant:    naam,
+        email:    email,
+        telefoon: telefoon,
+        adres:    locatie,
+        datum:    getSelectedDateString(),
+        pakket:   pkgNaam,
+        details:  'Pakket: ' + pkgNaam,
+        offerte:  0,
+        status:   'In afwachting'
+    };
+
+    try {
+        const res    = await fetch('/api/orders', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify(order)
+        });
+        const result = await res.json();
+        if (result.success) {
+            showToast('Bestelling geplaatst!', 'We nemen spoedig contact met u op.', 'success');
+            form.reset();
+            selectedDay = null;
+            renderCalendar();
+            updateDateDisplay();
+        } else {
+            showToast('Fout', result.error, 'error');
+        }
+    } catch (err) {
+        console.error('Fout bij versturen pakket order:', err);
+        showToast('Technisch probleem', 'Er is een fout opgetreden.', 'error');
+    }
 }
 
 // ── Validation: at least one m² field must be filled ──────
 
 function validateCustomForm() {
     const fields = ['grassV', 'tilesV', 'hedgeV'];
+    var valid = true;
 
     // Clear previous errors
     fields.forEach(function (id) {
@@ -608,6 +661,7 @@ function validateCustomForm() {
     const tilesV = parseFloat(document.getElementById('tilesV').value) || 0;
     const hedgeV = parseFloat(document.getElementById('hedgeV').value) || 0;
 
+    // At least one field must be filled
     if (grassV === 0 && tilesV === 0 && hedgeV === 0) {
         fields.forEach(function (id) {
             const input = document.getElementById(id);
@@ -618,10 +672,31 @@ function validateCustomForm() {
             msg.textContent = 'Vul minimaal een veld in';
             input.parentElement.appendChild(msg);
         });
+        showToast('Veld vereist', 'Vul minimaal één oppervlakte in.', 'error');
         return false;
     }
 
-    return true;
+    // Min/max checks
+    var limits = { grassV: { max: 1000 }, tilesV: { max: 1000 }, hedgeV: { max: 1000 } };
+    var vals   = { grassV: grassV, tilesV: tilesV, hedgeV: hedgeV };
+    var labels = { grassV: 'Gras', tilesV: 'Tegels', hedgeV: 'Heg' };
+    fields.forEach(function (id) {
+        var v = vals[id];
+        if (v === 0) return; // not filled, skip
+        if (v < 1) {
+            const input = document.getElementById(id);
+            if (input) { input.classList.add('error'); }
+            showToast(labels[id] + ': te weinig', 'Minimaal 10 m² of meter invullen.', 'error');
+            valid = false;
+        } else if (v > limits[id].max) {
+            const input = document.getElementById(id);
+            if (input) { input.classList.add('error'); }
+            showToast(labels[id] + ': te veel', 'Maximum is ' + limits[id].max + '.', 'error');
+            valid = false;
+        }
+    });
+
+    return valid;
 }
 
 // ── Single, authoritative handleCustomForm ─────────────────
@@ -632,11 +707,28 @@ function handleCustomForm(e) {
     // 1. Date required
     if (!selectedDay) {
         highlightDateError();
-        alert('Selecteer eerst een datum in de kalender.');
+        showToast('Datum vereist', 'Selecteer eerst een datum in de kalender.', 'error');
         return;
     }
 
-    // 2. At least one service field required
+    // 2. Login check
+    const sessieKlantCustom = sessionStorage.getItem('klant');
+    if (!sessieKlantCustom) {
+        showToast('Niet ingelogd', 'Log eerst in om een offerte aan te vragen.', 'error');
+        document.querySelector('.popup').style.display = 'flex';
+        return;
+    }
+
+    // 3. Adres verplicht
+    const adresVal = document.getElementById('cAdres') ? document.getElementById('cAdres').value.trim() : '';
+    if (!adresVal) {
+        const adresEl = document.getElementById('cAdres');
+        if (adresEl) adresEl.classList.add('error');
+        showToast('Adres vereist', 'Vul het adres van de tuin in.', 'error');
+        return;
+    }
+
+    // 3. At least one service field required
     if (!validateCustomForm()) return;
 
     syncVisibleToHidden();
@@ -665,19 +757,19 @@ function handleCustomForm(e) {
     .then(function (res) { return res.json(); })
     .then(function (result) {
         if (result.success) {
-            alert('Offerte aangevraagd! We nemen spoedig contact op.');
+            showToast('Offerte aangevraagd!', 'We nemen spoedig contact met u op.', 'success');
             document.getElementById('customForm').reset();
             calculateQuote();
             selectedDay = null;
             renderCalendar();
             updateDateDisplay();
         } else {
-            alert('Fout: ' + result.error);
+            showToast('Fout', result.error, 'error');
         }
     })
     .catch(function (err) {
         console.error('Fout bij versturen:', err);
-        alert('Er is een technisch probleem opgetreden.');
+        showToast('Technisch probleem', 'Er is een fout opgetreden.', 'error');
     });
 }
 
@@ -717,19 +809,68 @@ function calculateQuote() {
     setText('eTot', fmt(grassTotal + tilesTotal + hedgeTotal));
 }
 
+function updateRangeBar(inputId, barId, hintId, min, max) {
+    const input = document.getElementById(inputId);
+    const bar   = document.getElementById(barId);
+    const hint  = document.getElementById(hintId);
+    if (!input || !bar || !hint) return;
+
+    const val = parseFloat(input.value);
+
+    if (!input.value || isNaN(val)) {
+        bar.style.width = '0%';
+        bar.className = 'range-bar';
+        hint.textContent = '';
+        hint.className = 'range-hint';
+        input.classList.remove('error');
+        return;
+    }
+
+    const pct = Math.min(Math.max((val / max) * 100, 0), 100);
+    bar.style.width = pct + '%';
+
+    if (val < min) {
+        bar.className = 'range-bar bar-error';
+        hint.textContent = 'Minimaal ' + min + (inputId === 'hedgeV' ? ' m' : ' m²');
+        hint.className = 'range-hint hint-error';
+        input.classList.add('error');
+    } else if (val > max) {
+        bar.className = 'range-bar bar-error';
+        hint.textContent = 'Maximaal ' + max + (inputId === 'hedgeV' ? ' m' : ' m²');
+        hint.className = 'range-hint hint-error';
+        input.classList.add('error');
+    } else if (val >= max * 0.85) {
+        bar.className = 'range-bar bar-warn';
+        hint.textContent = val + (inputId === 'hedgeV' ? ' m' : ' m²') + ' — bijna maximum';
+        hint.className = 'range-hint hint-warn';
+        input.classList.remove('error');
+    } else {
+        bar.className = 'range-bar';
+        hint.textContent = val + (inputId === 'hedgeV' ? ' m' : ' m²');
+        hint.className = 'range-hint';
+        input.classList.remove('error');
+    }
+}
+
 function initPriceCalc() {
-    ['grassV', 'tilesV', 'hedgeV'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.addEventListener('input', calculateQuote);
-            // Clear error state when user starts typing
-            el.addEventListener('input', function () {
-                this.classList.remove('error');
-                const msg = this.parentElement.querySelector('.error-msg');
-                if (msg) msg.remove();
-            });
-        }
+    var fieldCfg = [
+        { id: 'grassV', bar: 'barGrassV', hint: 'hintGrassV', min: 10, max: 1000 },
+        { id: 'tilesV', bar: 'barTilesV', hint: 'hintTilesV', min: 10, max: 1000 },
+        { id: 'hedgeV', bar: 'barHedgeV', hint: 'hintHedgeV', min: 10, max: 1000 },
+    ];
+
+    fieldCfg.forEach(function(cfg) {
+        const el = document.getElementById(cfg.id);
+        if (!el) return;
+        el.addEventListener('input', function() {
+            calculateQuote();
+            updateRangeBar(cfg.id, cfg.bar, cfg.hint, cfg.min, cfg.max);
+            // Clear generic error-msg spans
+            const msg = this.parentElement.querySelector('.error-msg');
+            if (msg) msg.remove();
+        });
     });
+
     const opt1 = document.getElementById('options1V');
     if (opt1) opt1.addEventListener('input', () => {
         const h = document.getElementById('options1');
@@ -931,13 +1072,8 @@ async function laadMijnOrders(user) {
         if (!res.ok) throw new Error('orders.json niet gevonden');
         const orders = await res.json();
 
-        // Filter op naam (klant veld, case-insensitive)
-        const mijnOrders = orders.filter(o =>
-            (o.klant && o.klant.toLowerCase() === user.username.toLowerCase()) ||
-            (o.email && o.email.toLowerCase() === user.username.toLowerCase())
-        );
-
-        renderMijnOrders(mijnOrders, container);
+        // Alle orders zichtbaar voor ingelogde klanten
+        renderMijnOrders(orders, container);
     } catch (err) {
         console.error('Fout bij laden orders:', err);
         container.innerHTML = '<p style="color:var(--danger);font-size:14px;">Orders konden niet worden geladen.</p>';
@@ -1034,7 +1170,7 @@ async function klantGeeftNietAkkoord() {
 async function klantSlaatDatumOp() {
     if (!huidigKlantOrder) return;
     const input = document.getElementById('klantDatumInput');
-    if (!input || !input.value) { alert('Kies eerst een datum.'); return; }
+    if (!input || !input.value) { showToast('Datum vereist', 'Kies eerst een datum.', 'error'); return; }
     await klantPatchOrder(huidigKlantOrder.id, { datum: input.value });
 }
 
@@ -1051,11 +1187,11 @@ async function klantPatchOrder(id, data) {
             const opgeslagenUser = JSON.parse(sessionStorage.getItem('klant'));
             if (opgeslagenUser) laadMijnOrders(opgeslagenUser);
         } else {
-            alert('Fout: ' + result.error);
+            showToast('Fout', result.error, 'error');
         }
     } catch (err) {
         console.error('Fout bij opslaan:', err);
-        alert('Er is een technisch probleem opgetreden.');
+        showToast('Technisch probleem', 'Er is een fout opgetreden.', 'error');
     }
 }
 
@@ -1064,6 +1200,46 @@ async function klantPatchOrder(id, data) {
 //  OPSTARTEN
 // ============================================================
 
+
+
+// ============================================================
+//  TOAST NOTIFICATIONS
+// ============================================================
+
+function showToast(title, msg, type) {
+    type = type || 'success';
+    var duration = 4000;
+    var icons = { success: '✅', error: '❌', warning: '⚠️' };
+
+    var container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    var toast = document.createElement('div');
+    toast.className = 'toast toast-' + type;
+    toast.style.position = 'relative';
+    toast.innerHTML =
+        '<span class="toast-icon">' + (icons[type] || 'ℹ️') + '</span>' +
+        '<div class="toast-body">' +
+            '<div class="toast-title">' + title + '</div>' +
+            (msg ? '<div class="toast-msg">' + msg + '</div>' : '') +
+        '</div>' +
+        '<button class="toast-close" onclick="this.closest(\'.toast\').remove()">&times;</button>' +
+        '<div class="toast-progress" style="animation-duration:' + duration + 'ms"></div>';
+
+    container.appendChild(toast);
+    requestAnimationFrame(function() {
+        requestAnimationFrame(function() { toast.classList.add('toast-show'); });
+    });
+
+    setTimeout(function() {
+        toast.classList.add('toast-hide');
+        toast.addEventListener('transitionend', function() { toast.remove(); }, { once: true });
+    }, duration);
+}
 document.addEventListener('DOMContentLoaded', async () => {
     const isAdmin = document.body.classList.contains('admin-body');
 

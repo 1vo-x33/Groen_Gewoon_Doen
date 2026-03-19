@@ -20,10 +20,10 @@
 <div class="site-header">
     <a href="index.html" class="logo">Groen &amp; <span>Gewoon Doen</span></a>
     <div class="hdr-links">
-        <a href="#diensten">Diensten</a>
-        <a href="#pakketten">Pakketten</a>
-        <a href="#offerte">Offerte</a>
-        <a href="#agenda">Afspraak</a>
+        <a href="#diensten"></a>
+        <a href="#pakketten"></a>
+        <a href="#offerte"></a>
+        <a href="#agenda"></a>
     </div>
     <div class="hdr-actions">
         <a href="#" id="button" class="btn btn-outline">Inloggen</a>
@@ -115,8 +115,16 @@
                             <input type="text" id="orderName" placeholder="Uw naam">
                         </div>
                         <div class="fg">
+                            <label for="orderEmail">E-mail *</label>
+                            <input type="email" id="orderEmail" placeholder="jan@email.nl" required>
+                        </div>
+                        <div class="fg">
                             <label for="orderPhone">Telefoon</label>
                             <input type="tel" id="orderPhone" placeholder="06-12345678">
+                        </div>
+                        <div class="fg">
+                            <label for="orderLocatie">Locatie *</label>
+                            <input type="text" id="orderLocatie" placeholder="Straat 1, Rotterdam" required>
                         </div>
                         <div class="fg-btn">
                             <button type="submit" class="btn btn-solid">Bestellen</button>
@@ -149,19 +157,25 @@
                     </div>
                     <div class="fg">
                         <label for="cAdres">Adres tuin</label>
-                        <input type="text"  id="cAdres" placeholder="Straat 1, Rotterdam">
+                        <input type="text"  id="cAdres" placeholder="Straat 1, Rotterdam" required>
                     </div>
                     <div class="fg">
-                        <label for="grassV">M&#178; gras</label>
-                        <input type="number" id="grassV" placeholder="0" step="0.1">
+                        <label for="grassV">M&#178; gras <span class="field-limits">(10 – 1000 m²)</span></label>
+                        <input type="number" id="grassV" placeholder="min. 10" step="0.1" min="10" max="1000">
+                        <div class="range-bar-wrap"><div class="range-bar" id="barGrassV"></div></div>
+                        <span class="range-hint" id="hintGrassV"></span>
                     </div>
                     <div class="fg">
-                        <label for="tilesV">M&#178; tegels / terras</label>
-                        <input type="number" id="tilesV" placeholder="0" step="0.1">
+                        <label for="tilesV">M&#178; tegels / terras <span class="field-limits">(10 – 1000 m²)</span></label>
+                        <input type="number" id="tilesV" placeholder="min. 10" step="0.1" min="10" max="1000">
+                        <div class="range-bar-wrap"><div class="range-bar" id="barTilesV"></div></div>
+                        <span class="range-hint" id="hintTilesV"></span>
                     </div>
                     <div class="fg">
-                        <label for="hedgeV">Meters heg</label>
-                        <input type="number" id="hedgeV" placeholder="0" step="0.1">
+                        <label for="hedgeV">Meters heg <span class="field-limits">(10 – 1000 m)</span></label>
+                        <input type="number" id="hedgeV" placeholder="min. 10" step="0.1" min="10" max="1000">
+                        <div class="range-bar-wrap"><div class="range-bar" id="barHedgeV"></div></div>
+                        <span class="range-hint" id="hintHedgeV"></span>
                     </div>
                     <div class="fg">
                         <label for="options1V">Extra wensen</label>
@@ -290,5 +304,6 @@
 </footer>
 
 <script src="js/main.js?v=4"></script>
+    <div id="toast-container"></div>
 </body>
 </html>

@@ -70,15 +70,11 @@ app.post('/api/orders', (req, res) => {
     res.json({ success: true, order: newOrder });
 });
 
-// ── 7. PUT /api/orders/:id — UPDATE AN ORDER'S STATUS ──────
-// This runs when the admin clicks "Accepteren" or "Afwijzen".
-// :id is a URL parameter — e.g. PUT /api/orders/3 means id = 3.
-app.put('/api/orders/:id', (req, res) => {
+// ── 7. PUT/PATCH /api/orders/:id — UPDATE AN ORDER ─────────
+// Supports both PUT and PATCH. Updates any provided fields.
+function handleOrderUpdate(req, res) {
     const orders = readOrders();
-
-    // Find the order with the matching id
-    // parseInt converts the string "3" from the URL to the number 3
-    const order = orders.find(o => o.id === parseInt(req.params.id));
+    const order  = orders.find(o => o.id === parseInt(req.params.id));
 
     if (!order) {
         return res.status(404).json({ success: false, error: 'Order niet gevonden' });
@@ -90,8 +86,12 @@ app.put('/api/orders/:id', (req, res) => {
     Object.assign(order, req.body);
     writeOrders(orders);
 
+    writeOrders(orders);
     res.json({ success: true, order: order });
-});
+}
+
+app.put('/api/orders/:id',   handleOrderUpdate);
+app.patch('/api/orders/:id', handleOrderUpdate);
 
 // ── 8. DELETE /api/orders/:id — DELETE AN ORDER ─────────────
 // This runs when the admin clicks "Verwijderen".

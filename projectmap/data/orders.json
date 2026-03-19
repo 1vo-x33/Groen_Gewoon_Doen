@@ -1,43 +1,13 @@
 [
   {
     "id": 1,
-    "klant": "eerre",
-    "email": "fdlfdsklf@gmail.com",
-    "telefoon": "0628172934",
-    "adres": "sudistuin 4, Rotterdam",
-    "details": "Gras: 4m², Tegels: 4m², Heg: 4m",
-    "offerte": 120,
-    "status": "In afwachting"
-  },
-  {
-    "id": 2,
-    "klant": "Rik",
-    "email": "sdsds@sdsds.com",
-    "telefoon": "0628172934",
-    "adres": "sudistuin 4, Rotterdam",
-    "details": "Gras: 3m², Tegels: 3m², Heg: 3m",
-    "offerte": 90,
-    "status": "In afwachting"
-  },
-  {
-    "id": 3,
-    "klant": "Rik",
-    "email": "asasas@gmail.com",
-    "telefoon": "0628172934",
-    "adres": "sudistuin 4, Rotterdam",
-    "details": "Gras: 3m², Tegels: 3m², Heg: 3m",
-    "offerte": 90,
-    "status": "In afwachting"
-  },
-  {
-    "id": 4,
-    "klant": "Rik",
-    "email": "sddnn@sdlksd.com",
+    "klant": "qwertyu45678",
+    "email": "Jan@gmail.com",
     "telefoon": "0628172934",
     "adres": "sudistuin 4, Rotterdam",
     "datum": "Donderdag 26 Maart 2026",
-    "details": "Gras: 3m², Tegels: 3m², Heg: 3m",
-    "offerte": 90,
+    "details": "Gras: 10m², Tegels: 11m², Heg: 200m",
+    "offerte": 2431,
     "status": "In afwachting"
   },
   {
