@@ -46,18 +46,6 @@
     </div>
 </div>
 
-<div class="popup" id="logoutPopup">
-    <div class="popup-content">
-        <span class="close-btn" onclick="document.getElementById('logoutPopup').style.display='none'">&times;</span>
-        <h2>Uitloggen</h2>
-        <p>Weet je zeker dat je wilt uitloggen?</p>
-        <div class="logout-buttons">
-            <button class="btn btn-solid" onclick="logoutUser()">Uitloggen</button>
-            <button class="btn btn-outline" onclick="document.getElementById('logoutPopup').style.display='none'">Annuleren</button>
-        </div>
-    </div>
-</div>
-
 <!-- HERO -->
 <div class="hero">
     <div class="hero-inner">
@@ -285,10 +273,13 @@
                 <div class="modal-row"><span class="modal-label">Offerte</span><span class="modal-value" id="klantModalOfferte">–</span></div>
             </div>
             <div class="order-modal-section">
-                <h4>Datum wijzigen</h4>
+                <h4>Datum aanpassen</h4>
                 <div class="modal-row">
-                    <input type="date" id="klantDatumInput">
-                    <button class="btn btn-outline btn-sm" onclick="klantSlaatDatumOp()">Opslaan</button>
+                    <span class="modal-label">Nieuwe datum</span>
+                    <input type="date" id="klantDatumInput" class="klant-datum-input">
+                </div>
+                <div style="margin-top:10px;">
+                    <button class="btn btn-outline btn-sm" onclick="klantSlaatDatumOp()">Datum opslaan</button>
                 </div>
             </div>
         </div>

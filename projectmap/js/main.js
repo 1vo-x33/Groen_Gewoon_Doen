@@ -41,16 +41,15 @@ async function getInfo() {
 
 function onKlantIngelogd(user) {
     // Pas de inlog-knop aan naar gebruikersnaam
-    const oldBtn = document.getElementById('button');
-    if (oldBtn) {
-        // Clone the button to remove ALL old event listeners (from initPopup)
-        const loginBtn = oldBtn.cloneNode(true);
-        oldBtn.parentNode.replaceChild(loginBtn, oldBtn);
-
+    const loginBtn = document.getElementById('button');
+    if (loginBtn) {
         loginBtn.textContent = '👤 ' + user.username;
         loginBtn.onclick = (e) => {
             e.preventDefault();
-            document.getElementById('logoutPopup').style.display = 'flex';
+            if (confirm('Uitloggen?')) {
+                sessionStorage.removeItem('klant');
+                window.location.reload();
+            }
         };
     }
 
@@ -63,11 +62,6 @@ function onKlantIngelogd(user) {
     // Navigeer naar de orders sectie en laad de data
     showSection('mijn-orders');
     laadMijnOrders(user);
-}
-
-function logoutUser() {
-    sessionStorage.removeItem('klant');
-    window.location.reload();
 }
 
 
@@ -544,7 +538,7 @@ function modalRow(label, value) {
 async function updateOrderStatus(id, newStatus) {
     try {
         const res = await fetch('/api/orders/' + id, {
-            method:  'PUT',
+            method:  'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body:    JSON.stringify({ status: newStatus })
         });
@@ -1140,7 +1134,7 @@ async function openKlantModal(orderId) {
     document.getElementById('klantModalAdres').textContent    = o.adres    || '–';
     document.getElementById('klantModalOfferte').textContent  = '€ ' + parseFloat(o.offerte || 0).toFixed(2).replace('.', ',');
 
-    // Reset datum input
+    // Datum input: probeer ISO formaat
     const datumInput = document.getElementById('klantDatumInput');
     if (datumInput) datumInput.value = '';
 
@@ -1172,7 +1166,6 @@ async function klantGeeftNietAkkoord() {
     await klantPatchOrder(huidigKlantOrder.id, { status: 'Niet akkoord' });
 }
 
-
 async function klantSlaatDatumOp() {
     if (!huidigKlantOrder) return;
     const input = document.getElementById('klantDatumInput');
@@ -1183,7 +1176,7 @@ async function klantSlaatDatumOp() {
 async function klantPatchOrder(id, data) {
     try {
         const res    = await fetch('/api/orders/' + id, {
-            method:  'PUT',
+            method:  'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body:    JSON.stringify(data)
         });

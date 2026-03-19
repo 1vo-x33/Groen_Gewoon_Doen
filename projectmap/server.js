@@ -80,11 +80,11 @@ function handleOrderUpdate(req, res) {
         return res.status(404).json({ success: false, error: 'Order niet gevonden' });
     }
 
-    // Merge all sent fields into the order
-    // e.g. { status: "Geaccepteerd" } from admin
-    // e.g. { datum: "2026-04-01" }    from klant
-    Object.assign(order, req.body);
-    writeOrders(orders);
+    // Update any fields that are present in the request body
+    const allowed = ['status', 'klant', 'email', 'telefoon', 'adres', 'details', 'offerte', 'datum', 'pakket'];
+    allowed.forEach(field => {
+        if (req.body[field] !== undefined) order[field] = req.body[field];
+    });
 
     writeOrders(orders);
     res.json({ success: true, order: order });
