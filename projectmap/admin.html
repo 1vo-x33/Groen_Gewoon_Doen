@@ -35,6 +35,59 @@
     <!-- MAIN CONTENT -->
     <div class="admin-main">
 
+        <div class="popup" id="confirmPopup">
+            <div class="popup-content">
+                <h2 id="confirmTitle">Bevestigen</h2>
+                <p id="confirmMessage"></p>
+                <div class="logout-buttons">
+                    <button class="btn btn-solid" id="confirmYes">Bevestigen</button>
+                    <button class="btn btn-outline" id="confirmNo">Annuleren</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="popup" id="editOrderPopup" style="display:none">
+    <div class="popup-content" style="min-width:400px">
+        <span class="close-btn" onclick="document.getElementById('editOrderPopup').style.display='none'">&times;</span>
+        <h2 id="editOrderTitle">Order bewerken</h2>
+        <div class="custom-grid">
+            <div class="fg">
+                <label for="editKlant">Klant</label>
+                <input type="text" id="editKlant">
+            </div>
+            <div class="fg">
+                <label for="editEmail">E-mail</label>
+                <input type="email" id="editEmail">
+            </div>
+            <div class="fg">
+                <label for="editTelefoon">Telefoon</label>
+                <input type="tel" id="editTelefoon">
+            </div>
+            <div class="fg">
+                <label for="editAdres">Adres</label>
+                <input type="text" id="editAdres">
+            </div>
+            <div class="fg">
+                <label for="editDatum">Datum</label>
+                <input type="date" id="editDatum">
+            </div>
+            <div class="fg">
+                <label for="editDetails">Details</label>
+                <input type="text" id="editDetails">
+            </div>
+            <div class="fg">
+                <label for="editOfferte">Offerte (&euro;)</label>
+                <input type="number" id="editOfferte" step="0.01">
+            </div>
+        </div>
+        <div class="logout-buttons" style="margin-top:20px">
+            <button class="btn btn-solid" onclick="saveEditOrder()">Opslaan</button>
+            <button class="btn btn-outline" onclick="document.getElementById('editOrderPopup').style.display='none'">Annuleren</button>
+        </div>
+    </div>
+</div>
+
+
         <!-- ORDERS -->
         <section id="orders" class="admin-section">
             <div class="page-title-row">

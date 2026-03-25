@@ -260,16 +260,16 @@ async function editPackage(id) {
 }
 
 async function deletePackage(id, naam) {
-    if (!confirm('Verwijder pakket "' + naam + '"?')) return;
-    try {
-        const res = await fetch('/api/packages/' + id, { method: 'DELETE' });
-        const result = await res.json();
-        if (result.success) { showToast('Pakket verwijderd!', '', 'success'); loadPackages(); }
-        else showToast('Fout', result.error, 'error');
-    } catch (err) {
-        console.error('Fout bij verwijderen pakket:', err);
-        showToast('Technisch probleem', 'Er is een fout opgetreden.', 'error');
-    }
+    showConfirm('Verwijderen', 'Pakket "' + naam + '" verwijderen?', async function () {
+        try {
+            const res = await fetch('/api/packages/' + id, { method: 'DELETE' });
+            const result = await res.json();
+            if (result.success) { showToast('Gelukt', 'Pakket verwijderd!', 'success'); loadPackages(); }
+            else showToast('Fout', result.error, 'error');
+        } catch (err) {
+            console.error('Fout bij verwijderen pakket:', err);
+        }
+    });
 }
 
 function viewPackageQuestions(id) { showToast('Nog te implementeren', 'Vragen voor pakket #' + id, 'warning'); }
@@ -557,23 +557,91 @@ async function updateOrderStatus(id, newStatus) {
 }
 
 function acceptOrder(id) {
-    if (confirm('Order #' + id + ' accepteren?')) {
+    showConfirm('Accepteren', 'Order #' + id + ' accepteren?', function () {
         closeOrderModal();
         updateOrderStatus(id, 'Geaccepteerd');
-    }
+    });
 }
 function rejectOrder(id) {
-    if (confirm('Order #' + id + ' afwijzen?')) {
+    showConfirm('Afwijzen', 'Order #' + id + ' afwijzen?', function () {
         closeOrderModal();
         updateOrderStatus(id, 'Afgewezen');
-    }
+    });
 }
 function planOrder(id)     { showToast('Nog te implementeren', 'Inplannen: order #' + id, 'warning'); }
-function editOrder(id)     { showToast('Nog te implementeren', 'Bewerken: order #' + id, 'warning'); }
+let editingOrderId = null;
+
+function editOrder(id) {
+    // 1. Read the current orders from the server
+    fetch('./data/orders.json')
+        .then(function (res) { return res.json(); })
+        .then(function (orders) {
+            // 2. Find the order with this id
+            var order = orders.find(function (o) { return o.id === id; });
+            if (!order) return;
+
+            // 3. Store which order we're editing
+            editingOrderId = id;
+
+            // 4. Fill the form with the current values
+            document.getElementById('editOrderTitle').textContent = 'Order #' + id + ' bewerken';
+            document.getElementById('editKlant').value     = order.klant    || '';
+            document.getElementById('editEmail').value     = order.email    || '';
+            document.getElementById('editTelefoon').value  = order.telefoon || '';
+            document.getElementById('editAdres').value     = order.adres    || '';
+            document.getElementById('editDatum').value     = order.datum    || '';
+            document.getElementById('editDetails').value   = order.details  || '';
+            document.getElementById('editOfferte').value   = order.offerte  || '';
+
+            // 5. Close the detail modal if open, then show the edit popup
+            closeOrderModal();
+            document.getElementById('editOrderPopup').style.display = 'flex';
+        });
+}
+
+function saveEditOrder() {
+    if (!editingOrderId) return;
+
+    // 1. Collect the values from the form
+    var data = {
+        klant:    document.getElementById('editKlant').value,
+        email:    document.getElementById('editEmail').value,
+        telefoon: document.getElementById('editTelefoon').value,
+        adres:    document.getElementById('editAdres').value,
+        datum:    document.getElementById('editDatum').value,
+        details:  document.getElementById('editDetails').value,
+        offerte:  document.getElementById('editOfferte').value
+    };
+
+    // 2. Send a PUT request to update the order
+    fetch('/api/orders/' + editingOrderId, {
+        method:  'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(data)
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (result) {
+        if (result.success) {
+            // 3. Close popup, refresh the orders table
+            document.getElementById('editOrderPopup').style.display = 'none';
+            loadOrders();
+            showToast('Gelukt', 'Order #' + editingOrderId + ' bijgewerkt!', 'success');
+        } else {
+            showToast('Fout', result.error, 'error');
+        }
+    })
+    .catch(function (err) {
+        console.error('Fout bij bewerken:', err);
+        showToast('Fout', 'Er is een technisch probleem opgetreden.', 'error');
+    });
+}
 function completeOrder(id) { showToast('Nog te implementeren', 'Afgerond: order #' + id, 'warning'); }
 function invoiceOrder(id)  { showToast('Nog te implementeren', 'Factuur: order #' + id, 'warning'); }
-function deleteOrder(id)   { if (confirm('Order #' + id + ' verwijderen?')) showToast('Nog te implementeren', 'Verwijder order #' + id, 'warning'); }
-
+function deleteOrder(id) {
+    showConfirm('Verwijderen', 'Order #' + id + ' verwijderen?', function () {
+        showToast('Nog te implementeren', 'Verwijder order #' + id, 'warning');
+    });
+}
 
 
 //  BESTELFORMULIER  (index)
@@ -1055,6 +1123,20 @@ function fmt(n)        { return Number(n).toFixed(2).replace('.', ','); }
 function setText(id, v){ const el = document.getElementById(id); if (el) el.textContent = v; }
 function setVal(id, v) { const el = document.getElementById(id); if (el && v !== undefined) el.value = v; }
 
+function showConfirm(title, message, onYes) {
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmMessage').textContent = message;
+    document.getElementById('confirmPopup').style.display = 'flex';
+
+    document.getElementById('confirmYes').onclick = function () {
+        document.getElementById('confirmPopup').style.display = 'none';
+        onYes();
+    };
+    document.getElementById('confirmNo').onclick = function () {
+        document.getElementById('confirmPopup').style.display = 'none';
+    };
+}
+
 
 // ============================================================
 //  MIJN ORDERS  (klant)
@@ -1115,6 +1197,8 @@ function renderMijnOrders(orders, container) {
     container.innerHTML = html;
 }
 
+
+
 async function openKlantModal(orderId) {
     // Laad de verse order data
     const res    = await fetch('./data/orders.json');
@@ -1159,16 +1243,18 @@ function sluitKlantModal() {
     modal.addEventListener('transitionend', () => { modal.style.display = 'none'; }, { once: true });
 }
 
-async function klantGeeftAkkoord() {
+function klantGeeftAkkoord() {
     if (!huidigKlantOrder) return;
-    if (!confirm('Geeft u akkoord op deze offerte?')) return;
-    await klantPatchOrder(huidigKlantOrder.id, { status: 'Akkoord' });
+    showConfirm('Akkoord', 'Geeft u akkoord op deze offerte?', function () {
+        klantPatchOrder(huidigKlantOrder.id, { status: 'Akkoord' });
+    });
 }
 
-async function klantGeeftNietAkkoord() {
+function klantGeeftNietAkkoord() {
     if (!huidigKlantOrder) return;
-    if (!confirm('Weet u zeker dat u deze offerte afwijst?')) return;
-    await klantPatchOrder(huidigKlantOrder.id, { status: 'Niet akkoord' });
+    showConfirm('Niet akkoord', 'Weet u zeker dat u deze offerte afwijst?', function () {
+        klantPatchOrder(huidigKlantOrder.id, { status: 'Niet akkoord' });
+    });
 }
 
 async function klantSlaatDatumOp() {
