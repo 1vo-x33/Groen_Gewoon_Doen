@@ -8,7 +8,7 @@
     "datum": "Donderdag 26 Maart 2026",
     "details": "Gras: 10m², Tegels: 11m², Heg: 200m",
     "offerte": 2431,
-    "status": "In afwachting"
+    "status": "Geaccepteerd"
   },
   {
     "id": 5,
@@ -16,9 +16,9 @@
     "email": "user@gmail.com",
     "telefoon": "0628172934",
     "adres": "sudistuin 4, Rotterdam",
-    "datum": "Donderdag 26 Maart 2026",
+    "datum": "",
     "details": "Gras: 11m², Tegels: 22m², Heg: 11m",
-    "offerte": 440,
+    "offerte": "440",
     "status": "Geaccepteerd"
   },
   {
@@ -29,7 +29,7 @@
     "adres": "2",
     "details": "Gras: 2m², Tegels: 2m², Heg: 2m",
     "offerte": "60.00",
-    "status": "In afwachting"
+    "status": "Geaccepteerd"
   },
   {
     "id": 7,
@@ -39,7 +39,7 @@
     "adres": "123",
     "details": "Gras: 2m², Tegels: 2m², Heg: 2m",
     "offerte": "60.00",
-    "status": "In afwachting"
+    "status": "Afgewezen"
   },
   {
     "id": 8,
@@ -61,5 +61,25 @@
     "details": "Gras: 3m², Tegels: 2m², Heg: 2m",
     "offerte": "70.00",
     "status": "Geaccepteerd"
+  },
+  {
+    "id": 10,
+    "klant": "d",
+    "email": "ivo@gmail.com",
+    "telefoon": "",
+    "adres": "emaa",
+    "details": "Pakket: Sagoenie package — €130",
+    "offerte": 0,
+    "status": "In afwachting"
+  },
+  {
+    "id": 11,
+    "klant": "ivo",
+    "email": "ivo@gmail.com",
+    "telefoon": "12",
+    "adres": "eeee",
+    "details": "Gras: 10.4m², Tegels: 30m², Heg: 44m",
+    "offerte": "928.40",
+    "status": "In afwachting"
   }
 ]
