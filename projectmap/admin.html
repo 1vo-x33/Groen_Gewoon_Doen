@@ -53,32 +53,16 @@
         <h2 id="editOrderTitle">Order bewerken</h2>
         <div class="custom-grid">
             <div class="fg">
-                <label for="editKlant">Klant</label>
-                <input type="text" id="editKlant">
-            </div>
-            <div class="fg">
-                <label for="editEmail">E-mail</label>
-                <input type="email" id="editEmail">
-            </div>
-            <div class="fg">
-                <label for="editTelefoon">Telefoon</label>
-                <input type="tel" id="editTelefoon">
-            </div>
-            <div class="fg">
-                <label for="editAdres">Adres</label>
-                <input type="text" id="editAdres">
+                <label for="editStatus">Status</label>
+                <select id="editStatus">
+                    <option value="In afwachting">In afwachting</option>
+                    <option value="Geaccepteerd">Geaccepteerd</option>
+                    <option value="Afgewezen">Afgewezen</option>
+                </select>
             </div>
             <div class="fg">
                 <label for="editDatum">Datum</label>
                 <input type="date" id="editDatum">
-            </div>
-            <div class="fg">
-                <label for="editDetails">Details</label>
-                <input type="text" id="editDetails">
-            </div>
-            <div class="fg">
-                <label for="editOfferte">Offerte (&euro;)</label>
-                <input type="number" id="editOfferte" step="0.01">
             </div>
         </div>
         <div class="logout-buttons" style="margin-top:20px">

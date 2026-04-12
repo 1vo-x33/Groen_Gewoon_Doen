@@ -458,21 +458,10 @@ function buildOrderActions(order) {
     switch (order.status) {
         case 'In afwachting':
             return btn('solid',  'Accepteren', 'acceptOrder(' + order.id + ')') +
-                   btn('danger', 'Afwijzen',   'rejectOrder('  + order.id + ')');
-        case 'Geaccepteerd':
-        case 'Nieuw':
-        case 'In behandeling':
-            return btn('warn',  'Inplannen', 'planOrder('     + order.id + ')') +
-                   btn('ghost', 'Bewerken',  'editOrder('     + order.id + ')');
-        case 'Ingepland':
-        case 'Wachtend':
-            return btn('solid',  'Afgerond',  'completeOrder(' + order.id + ')') +
-                   btn('ghost',  'Bewerken',  'editOrder('     + order.id + ')');
-        case 'Klaar':
-            return btn('ghost',  'Factuur',   'invoiceOrder('  + order.id + ')') +
-                   btn('danger', 'Verwijder', 'deleteOrder('   + order.id + ')');
+                   btn('danger', 'Afwijzen',   'rejectOrder(' + order.id + ')') +
+                   btn('ghost',  'Bewerken',   'editOrder('   + order.id + ')');
         default:
-            return btn('ghost',  'Bewerken',  'editOrder('     + order.id + ')');
+            return btn('ghost',  'Bewerken',   'editOrder('   + order.id + ')');
     }
 }
 
@@ -568,32 +557,21 @@ function rejectOrder(id) {
         updateOrderStatus(id, 'Afgewezen');
     });
 }
-function planOrder(id)     { showToast('Nog te implementeren', 'Inplannen: order #' + id, 'warning'); }
 let editingOrderId = null;
 
 function editOrder(id) {
-    // 1. Read the current orders from the server
     fetch('./data/orders.json')
         .then(function (res) { return res.json(); })
         .then(function (orders) {
-            // 2. Find the order with this id
             var order = orders.find(function (o) { return o.id === id; });
             if (!order) return;
 
-            // 3. Store which order we're editing
             editingOrderId = id;
 
-            // 4. Fill the form with the current values
             document.getElementById('editOrderTitle').textContent = 'Order #' + id + ' bewerken';
-            document.getElementById('editKlant').value     = order.klant    || '';
-            document.getElementById('editEmail').value     = order.email    || '';
-            document.getElementById('editTelefoon').value  = order.telefoon || '';
-            document.getElementById('editAdres').value     = order.adres    || '';
-            document.getElementById('editDatum').value     = order.datum    || '';
-            document.getElementById('editDetails').value   = order.details  || '';
-            document.getElementById('editOfferte').value   = order.offerte  || '';
+            document.getElementById('editStatus').value = order.status || 'In afwachting';
+            document.getElementById('editDatum').value  = order.datum  || '';
 
-            // 5. Close the detail modal if open, then show the edit popup
             closeOrderModal();
             document.getElementById('editOrderPopup').style.display = 'flex';
         });
@@ -602,15 +580,9 @@ function editOrder(id) {
 function saveEditOrder() {
     if (!editingOrderId) return;
 
-    // 1. Collect the values from the form
     var data = {
-        klant:    document.getElementById('editKlant').value,
-        email:    document.getElementById('editEmail').value,
-        telefoon: document.getElementById('editTelefoon').value,
-        adres:    document.getElementById('editAdres').value,
-        datum:    document.getElementById('editDatum').value,
-        details:  document.getElementById('editDetails').value,
-        offerte:  document.getElementById('editOfferte').value
+        status: document.getElementById('editStatus').value,
+        datum:  document.getElementById('editDatum').value
     };
 
     // 2. Send a PUT request to update the order
@@ -633,13 +605,6 @@ function saveEditOrder() {
     .catch(function (err) {
         console.error('Fout bij bewerken:', err);
         showToast('Fout', 'Er is een technisch probleem opgetreden.', 'error');
-    });
-}
-function completeOrder(id) { showToast('Nog te implementeren', 'Afgerond: order #' + id, 'warning'); }
-function invoiceOrder(id)  { showToast('Nog te implementeren', 'Factuur: order #' + id, 'warning'); }
-function deleteOrder(id) {
-    showConfirm('Verwijderen', 'Order #' + id + ' verwijderen?', function () {
-        showToast('Nog te implementeren', 'Verwijder order #' + id, 'warning');
     });
 }
 
