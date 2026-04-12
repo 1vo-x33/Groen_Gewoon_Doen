@@ -49,7 +49,7 @@
     "adres": "",
     "details": "Gras: 2m², Tegels: 2m², Heg: 22m",
     "offerte": "260.00",
-    "status": "In afwachting",
+    "status": "Afgewezen",
     "datum": "2026-05-22"
   },
   {
@@ -81,5 +81,38 @@
     "details": "Gras: 10.4m², Tegels: 30m², Heg: 44m",
     "offerte": "928.40",
     "status": "In afwachting"
+  },
+  {
+    "id": 12,
+    "klant": "Ivo",
+    "email": "ivo@gmail.com",
+    "telefoon": "12345678",
+    "adres": "Emmapark 16",
+    "details": "Pakket: Basis — 2 uur — €70",
+    "offerte": 0,
+    "status": "In afwachting",
+    "datum": "2026-04-23"
+  },
+  {
+    "id": 13,
+    "klant": "Ivo",
+    "email": "ivo@gmail.com",
+    "telefoon": "12345678",
+    "adres": "Emmapark 16",
+    "details": "Pakket: Basis",
+    "offerte": 70,
+    "status": "In afwachting",
+    "datum": "2026-04-30"
+  },
+  {
+    "id": 14,
+    "klant": "Ivo",
+    "email": "ivo@gmail.com",
+    "telefoon": "12345678",
+    "adres": "Emmapark 17",
+    "details": "Gras: 15m², Tegels: 20m², Heg: 50m",
+    "offerte": "935.00",
+    "status": "Geaccepteerd",
+    "datum": "2026-04-25"
   }
 ]

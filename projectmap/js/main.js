@@ -182,9 +182,9 @@ function renderPackageTable(packages) {
                 (isAanbevolen ? '<span class="badge-pop">Aanbevolen</span>' : '') +
             '</td>' +
             '<td class="td-muted">' + pkg.beschrijving + '</td>' +
+            '<td><strong>' + (pkg.uren || '–') + ' uur</strong></td>' +
             '<td>' +
                 '<span class="pkg-price">&euro;&nbsp;' + pkg.prijs + '</span>' +
-                ' <span class="pkg-unit">' + (pkg.uren ? pkg.uren + ' uur' : '/bezoek') + '</span>' +
             '</td>' +
             '<td>' +
                 '<button class="btn btn-' + (isAanbevolen ? 'solid' : 'outline') + ' btn-sm"' +
@@ -205,7 +205,7 @@ function renderPackageSelect(packages) {
     packages.forEach(pkg => {
         const opt = document.createElement('option');
         opt.value = pkg.id;
-        opt.textContent = pkg.naam + ' — \u20ac' + pkg.prijs;
+        opt.textContent = pkg.naam + ' — ' + (pkg.uren || '?') + ' uur — \u20ac' + pkg.prijs;
         sel.appendChild(opt);
     });
 }
@@ -221,9 +221,8 @@ function renderAdminPackageTable(packages) {
             '<td><strong>' + pkg.naam + '</strong></td>' +
             '<td class="td-muted">' + pkg.beschrijving + '</td>' +
             '<td>&euro;&nbsp;' + pkg.prijs + '</td>' +
-            '<td><button class="btn btn-ghost btn-sm" onclick="editPackage(' + pkg.id + ')">Bewerken</button></td>' +
-            '<td><button class="btn btn-danger btn-sm" onclick="deletePackage(' + pkg.id + ', \'' + pkg.naam + '\')">Verwijder</button></td>' +
-            '<td><button class="btn btn-ghost btn-sm" onclick="viewPackageQuestions(' + pkg.id + ')">Vragen</button></td>';
+            '<td><button class="btn btn-ghost btn-sm" onclick="editPackage(' + pkg.id + ')">Wijzigen</button></td>' +
+            '<td><button class="btn btn-danger btn-sm" onclick="deletePackage(' + pkg.id + ', \'' + pkg.naam + '\')">Verwijder</button></td>';
         tbody.appendChild(tr);
     });
 }
@@ -238,25 +237,51 @@ function selectPkg(id) {
     if (form) form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-async function editPackage(id) {
-    const naam = prompt('Nieuwe naam:');
-    if (!naam) return;
-    const beschrijving = prompt('Nieuwe beschrijving:');
-    const prijs = prompt('Nieuwe prijs (€):');
-    if (!prijs) return;
-    try {
-        const res = await fetch('/api/packages/' + id, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ naam, beschrijving, prijs: parseFloat(prijs) })
+let editingPackageId = null;
+
+function editPackage(id) {
+    fetch('./data/packages.json')
+        .then(function (res) { return res.json(); })
+        .then(function (packages) {
+            var pkg = packages.find(function (p) { return p.id === id; });
+            if (!pkg) return;
+
+            editingPackageId = id;
+            document.getElementById('editPkgTitle').textContent = 'Pakket #' + id + ' bewerken';
+            document.getElementById('editPkgNaam').value        = pkg.naam;
+            document.getElementById('editPkgBeschrijving').value = pkg.beschrijving;
+            document.getElementById('editPkgPrijs').value       = pkg.prijs;
+            document.getElementById('editPackagePopup').style.display = 'flex';
         });
-        const result = await res.json();
-        if (result.success) { showToast('Pakket bijgewerkt!', '', 'success'); loadPackages(); }
-        else showToast('Fout', result.error, 'error');
-    } catch (err) {
-        console.error('Fout bij bewerken pakket:', err);
-        showToast('Technisch probleem', 'Er is een fout opgetreden.', 'error');
-    }
+}
+
+function saveEditPackage() {
+    if (!editingPackageId) return;
+
+    var data = {
+        naam:         document.getElementById('editPkgNaam').value,
+        beschrijving: document.getElementById('editPkgBeschrijving').value,
+        prijs:        parseFloat(document.getElementById('editPkgPrijs').value)
+    };
+
+    fetch('/api/packages/' + editingPackageId, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (result) {
+        if (result.success) {
+            document.getElementById('editPackagePopup').style.display = 'none';
+            showToast('Gelukt', 'Pakket bijgewerkt!', 'success');
+            loadPackages();
+        } else {
+            showToast('Fout', result.error, 'error');
+        }
+    })
+    .catch(function () {
+        showToast('Fout', 'Er is een technisch probleem opgetreden.', 'error');
+    });
 }
 
 async function deletePackage(id, naam) {
@@ -272,7 +297,6 @@ async function deletePackage(id, naam) {
     });
 }
 
-function viewPackageQuestions(id) { showToast('Nog te implementeren', 'Vragen voor pakket #' + id, 'warning'); }
 
 async function handleNewPackage() {
     const naam         = document.getElementById('naam').value;
@@ -532,7 +556,7 @@ function modalRow(label, value) {
 async function updateOrderStatus(id, newStatus) {
     try {
         const res = await fetch('/api/orders/' + id, {
-            method:  'PATCH',
+            method:  'PUT',
             headers: { 'Content-Type': 'application/json' },
             body:    JSON.stringify({ status: newStatus })
         });
@@ -633,9 +657,12 @@ async function handlePackageForm(e) {
     const pkgId = form.querySelector('#packages')?.value;
     if (!pkgId) { showToast('Pakket vereist', 'Selecteer eerst een pakket.', 'error'); return; }
 
-    // Haal de pakket naam op uit de select
-    const pkgSel  = form.querySelector('#packages');
-    const pkgNaam = pkgSel ? pkgSel.options[pkgSel.selectedIndex].text : 'Pakket #' + pkgId;
+    // Fetch the package data to get name and price
+    const pkgRes  = await fetch('./data/packages.json');
+    const pkgList = await pkgRes.json();
+    const pkg     = pkgList.find(p => p.id === parseInt(pkgId));
+    const pkgNaam  = pkg ? pkg.naam : 'Pakket #' + pkgId;
+    const pkgPrijs = pkg ? pkg.prijs : 0;
 
     const naam     = (form.querySelector('#orderName')?.value  || '').trim();
     const email    = (form.querySelector('#orderEmail')?.value   || '').trim();
@@ -654,7 +681,7 @@ async function handlePackageForm(e) {
         datum:    getSelectedDateString(),
         pakket:   pkgNaam,
         details:  'Pakket: ' + pkgNaam,
-        offerte:  0,
+        offerte:  pkgPrijs,
         status:   'In afwachting'
     };
 
@@ -680,13 +707,15 @@ async function handlePackageForm(e) {
     }
 }
 
-// ── Validation: at least one m² field must be filled ──────
+//Validation: at least one m² field must be filled
 
 function validateCustomForm() {
-    const fields = ['grassV', 'tilesV', 'hedgeV'];
-    var valid = true;
 
-    // Clear previous errors
+    // the 3 fields I want to validate
+    const fields = ['grassV', 'tilesV', 'hedgeV'];
+    let valid = true;
+
+    // first remove any old error styling so they don't stack up
     fields.forEach(function (id) {
         const input = document.getElementById(id);
         if (!input) return;
@@ -695,11 +724,12 @@ function validateCustomForm() {
         if (old) old.remove();
     });
 
+    // grab what the user typed convert to numbers
     const grassV = parseFloat(document.getElementById('grassV').value) || 0;
     const tilesV = parseFloat(document.getElementById('tilesV').value) || 0;
     const hedgeV = parseFloat(document.getElementById('hedgeV').value) || 0;
 
-    // At least one field must be filled
+    // nothing filled in mark all fields red
     if (grassV === 0 && tilesV === 0 && hedgeV === 0) {
         fields.forEach(function (id) {
             const input = document.getElementById(id);
@@ -714,13 +744,14 @@ function validateCustomForm() {
         return false;
     }
 
-    // Min/max checks
-    var limits = { grassV: { max: 1000 }, tilesV: { max: 1000 }, hedgeV: { max: 1000 } };
-    var vals   = { grassV: grassV, tilesV: tilesV, hedgeV: hedgeV };
-    var labels = { grassV: 'Gras', tilesV: 'Tegels', hedgeV: 'Heg' };
+    // check if values are within allowed range
+    const limits = { grassV: { max: 1000 }, tilesV: { max: 1000 }, hedgeV: { max: 1000 } };
+    const vals   = { grassV: grassV, tilesV: tilesV, hedgeV: hedgeV };
+    const labels = { grassV: 'Gras', tilesV: 'Tegels', hedgeV: 'Heg' };
+
     fields.forEach(function (id) {
-        var v = vals[id];
-        if (v === 0) return; // not filled, skip
+        const v = vals[id]; // get the value for this field (e.g. vals['grassV'] = 10)
+        if (v === 0) return; // not filled in, skip
         if (v < 1) {
             const input = document.getElementById(id);
             if (input) { input.classList.add('error'); }
@@ -1232,7 +1263,7 @@ async function klantSlaatDatumOp() {
 async function klantPatchOrder(id, data) {
     try {
         const res    = await fetch('/api/orders/' + id, {
-            method:  'PATCH',
+            method:  'PUT',
             headers: { 'Content-Type': 'application/json' },
             body:    JSON.stringify(data)
         });

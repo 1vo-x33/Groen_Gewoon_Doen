@@ -1375,14 +1375,68 @@ header button:hover { background: rgba(255, 255, 255, 0.18); color: var(--white)
     .stats-row             { grid-template-columns: 1fr 1fr; }
     .tarief-grid           { grid-template-columns: 1fr; }
     .admin-body nav        { display: none; }
+
+    /* Header shrink */
+    .site-header           { padding: 0 16px; height: 56px; }
+    .logo                  { font-size: 16px; }
+    .hdr-actions           { gap: 6px; }
+    .hdr-actions .btn      { padding: 6px 12px; font-size: 12px; }
+
+    /* Hero */
+    .hero                  { padding: 40px 20px; }
+    .hero-btns             { flex-direction: column; gap: 8px; }
+    .btn-hero, .btn-hero-ghost { width: 100%; text-align: center; }
+
+    /* Tables scroll on mobile */
+    .table-card            { overflow-x: auto; }
+    .pkg-table             { min-width: 500px; }
+
+    /* Package table readable */
+    .pkg-price             { font-size: 16px; }
+
+    /* Form row stack */
+    .form-row              { flex-direction: column; }
+    .fg                    { min-width: 0; }
+
+    /* Calendar full width */
+    .calendar              { max-width: 100%; }
+
+    /* Popups fit screen */
+    .popup-content         { min-width: 0; width: 90%; padding: 24px 20px; }
+
+    /* Contact band */
+    .contact-btns          { width: 100%; }
+    .contact-btns a        { flex: 1; text-align: center; }
+
+    /* Order modal */
+    .order-modal           { width: 95%; max-width: 95%; margin: 10px; }
+
+    /* Mijn orders rows stack */
+    .mijn-order-rij        { flex-direction: column; gap: 8px; }
+    .mijn-order-rij-rechts { align-self: flex-start; }
+
+    /* Logout buttons */
+    .logout-buttons        { flex-direction: column; }
+    .logout-buttons .btn   { width: 100%; text-align: center; }
 }
 
 @media (max-width: 560px) {
-    .topbar, .site-header, .wrap,
+    .topbar                { flex-direction: column; gap: 2px; text-align: center; padding: 8px 16px; font-size: 12px; }
+    .site-header, .wrap,
     .cal-section, .hero, .contact-band,
-    .diensten-wrap { padding-left: 20px; padding-right: 20px; }
-    .diensten      { grid-template-columns: 1fr; }
-    .stats-row     { grid-template-columns: 1fr; }
+    .diensten-wrap         { padding-left: 16px; padding-right: 16px; }
+    .diensten              { grid-template-columns: 1fr; }
+    .stats-row             { grid-template-columns: 1fr; }
+    .section-head h2       { font-size: 20px; }
+    footer                 { padding: 16px; font-size: 12px; }
+
+    /* Forms nav tabs wrap */
+    .forms-nav ul          { flex-wrap: wrap; }
+    .forms-nav ul button   { padding: 10px 14px; font-size: 13px; }
+
+    /* Price estimate compact */
+    .price-est             { padding: 12px; }
+    .est-line              { font-size: 12px; }
 }
 
 /* ============================================================

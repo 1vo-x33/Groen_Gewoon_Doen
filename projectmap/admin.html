@@ -73,6 +73,31 @@
 </div>
 
 
+        <div class="popup" id="editPackagePopup" style="display:none">
+            <div class="popup-content" style="min-width:400px">
+                <span class="close-btn" onclick="document.getElementById('editPackagePopup').style.display='none'">&times;</span>
+                <h2 id="editPkgTitle">Pakket bewerken</h2>
+                <div class="custom-grid">
+                    <div class="fg">
+                        <label for="editPkgNaam">Naam</label>
+                        <input type="text" id="editPkgNaam">
+                    </div>
+                    <div class="fg">
+                        <label for="editPkgBeschrijving">Beschrijving</label>
+                        <input type="text" id="editPkgBeschrijving">
+                    </div>
+                    <div class="fg">
+                        <label for="editPkgPrijs">Prijs (&euro;)</label>
+                        <input type="number" id="editPkgPrijs" step="0.01">
+                    </div>
+                </div>
+                <div class="logout-buttons" style="margin-top:20px">
+                    <button class="btn btn-solid" onclick="saveEditPackage()">Opslaan</button>
+                    <button class="btn btn-outline" onclick="document.getElementById('editPackagePopup').style.display='none'">Annuleren</button>
+                </div>
+            </div>
+        </div>
+
         <!-- ORDERS -->
         <section id="orders" class="admin-section">
             <div class="page-title-row">
@@ -80,7 +105,6 @@
                     <h2>Orders</h2>
                     <p>Overzicht van alle opdrachten</p>
                 </div>
-                <button class="btn btn-solid" onclick="openNewOrderForm()">+ Nieuwe order</button>
             </div>
 
             <!--
@@ -136,9 +160,8 @@
                             <th>Naam</th>
                             <th>Beschrijving</th>
                             <th>Prijs</th>
-                            <th>Bewerk</th>
+                            <th>Prijs wijzigen</th>
                             <th>Verwijder</th>
-                            <th>Vragen</th>
                         </tr>
                     </thead>
                     <tbody id="packageTableBody">

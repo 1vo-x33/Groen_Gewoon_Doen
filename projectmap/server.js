@@ -116,6 +116,7 @@ app.post('/api/orders', (req, res) => {
         email:    req.body.email    || '',
         telefoon: req.body.telefoon || '',
         adres:    req.body.adres    || '',
+        datum:    req.body.datum    || '',
         details:  req.body.details  || '',
         offerte:  req.body.offerte  || 0,
         status:   req.body.status   || 'In afwachting'
