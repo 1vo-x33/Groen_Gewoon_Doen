@@ -43,6 +43,65 @@ function writeOrders(orders) {
     fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2), 'utf8');
 }
 
+// ── HELPER: READ / WRITE ANY JSON FILE ─────────────────────
+function readJson(filename) {
+    const filePath = path.join(__dirname, 'data', filename);
+    try { return JSON.parse(fs.readFileSync(filePath, 'utf8')); }
+    catch (err) { return null; }
+}
+
+function writeJson(filename, data) {
+    const filePath = path.join(__dirname, 'data', filename);
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+}
+
+// ── TARIEVEN API ───────────────────────────────────────────
+app.get('/api/tarieven', (req, res) => {
+    const data = readJson('tarieven.json');
+    if (!data) return res.status(404).json({ error: 'Tarieven niet gevonden' });
+    res.json(data);
+});
+
+app.post('/api/tarieven', (req, res) => {
+    const { gras, tegels, heg, uurtarief } = req.body;
+    writeJson('tarieven.json', { gras, tegels, heg, uurtarief });
+    res.json({ success: true });
+});
+
+// ── PACKAGES API ───────────────────────────────────────────
+app.post('/api/packages/add', (req, res) => {
+    const { naam, beschrijving, prijs } = req.body;
+    if (!naam || prijs === undefined) {
+        return res.status(400).json({ success: false, error: 'Naam en prijs zijn verplicht' });
+    }
+    const packages = readJson('packages.json') || [];
+    const newId = packages.length > 0 ? Math.max(...packages.map(p => p.id)) + 1 : 1;
+    packages.push({ id: newId, naam, beschrijving: beschrijving || '', prijs: parseFloat(prijs) });
+    writeJson('packages.json', packages);
+    res.json({ success: true, id: newId });
+});
+
+app.put('/api/packages/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const { naam, beschrijving, prijs } = req.body;
+    const packages = readJson('packages.json') || [];
+    const index = packages.findIndex(p => p.id === id);
+    if (index === -1) return res.status(404).json({ success: false, error: 'Pakket niet gevonden' });
+    packages[index] = { ...packages[index], naam, beschrijving, prijs: parseFloat(prijs) };
+    writeJson('packages.json', packages);
+    res.json({ success: true });
+});
+
+app.delete('/api/packages/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const packages = readJson('packages.json') || [];
+    const index = packages.findIndex(p => p.id === id);
+    if (index === -1) return res.status(404).json({ success: false, error: 'Pakket niet gevonden' });
+    packages.splice(index, 1);
+    writeJson('packages.json', packages);
+    res.json({ success: true });
+});
+
 // ── 6. POST /api/orders — CREATE A NEW ORDER ───────────────
 // This runs when the customer submits the "Offerte aanvragen" form.
 // req.body contains the order data sent from handleCustomForm().
